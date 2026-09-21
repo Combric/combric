@@ -60,6 +60,7 @@ test("required semantic roles and square geometry are stable", () => {
     "color.accent",
     "color.accent.foreground",
     "color.focus",
+    "color.invalid",
     "font.family.body",
     "space.4",
     "size.layout.item.sm",

@@ -33,6 +33,11 @@ test("React CSS consumes canonical variables and preserves metriq geometry", () 
   assert.match(css, /^@import "@combric\/layout\/css";/);
   assert.match(css, /border-radius: var\(--combric-radius\)/);
   assert.match(css, /:focus-visible/);
+  assert.match(css, /var\(--combric-color-invalid\)/);
+  assert.match(css, /\.combric-input/);
+  assert.match(css, /\.combric-tabs__trigger/);
+  assert.match(css, /\.combric-avatar/);
+  assert.match(css, /\.combric-pagination__link/);
   assert.doesNotMatch(css, /#[\da-f]{3,8}\b/i);
   assert.doesNotMatch(css, /\b\d+(?:\.\d+)?(?:px|rem)\b/);
   assert.doesNotMatch(css, /tailwind/i);
@@ -48,6 +53,16 @@ test("real React consumer renders all primitives through public exports", () => 
   assert.match(markup, /class="combric-inline"/);
   assert.match(markup, /class="combric-grid"/);
   assert.match(markup, /class="combric-cluster"/);
+  assert.match(markup, /class="combric-input"/);
+  assert.match(markup, /class="combric-checkbox"/);
+  assert.match(markup, /class="combric-radio-group"/);
+  assert.match(markup, /class="combric-switch"/);
+  assert.match(markup, /class="combric-select"/);
+  assert.match(markup, /class="combric-badge"/);
+  assert.match(markup, /class="combric-avatar"/);
+  assert.match(markup, /role="tablist"/);
+  assert.match(markup, /aria-label="Breadcrumb"/);
+  assert.match(markup, /aria-label="Pagination"/);
   assert.match(markup, /aria-expanded="true"/);
   assert.doesNotMatch(markup, /tailwind/i);
 });

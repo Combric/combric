@@ -57,3 +57,7 @@ COMBRIC-0.6 adds the deliberately small `size.layout.item.sm`, `.md`, and `.lg`
 semantic contract. These values provide safe intrinsic Grid minimums for
 framework-independent CSS, React, and Tailwind consumers without introducing a
 breakpoint scale or arbitrary layout-value API.
+
+The `color.invalid` semantic token is the shared native-control invalid-state
+contract. It resolves to the deliberately limited `color.red.700` primitive;
+Combric styles invalid state but does not implement validation logic.

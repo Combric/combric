@@ -18,6 +18,7 @@ export const primitiveTokens: TokenValues<PrimitiveTokenName> = Object.freeze({
   "color.neutral.400": "#a3a39a",
   "color.neutral.600": "#5c5c55",
   "color.neutral.900": "#181816",
+  "color.red.700": "#b91c1c",
   "font.family.mono":
     "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
   "font.family.sans":
@@ -69,6 +70,7 @@ export const semanticTokenReferences: Readonly<
   "color.border": "color.neutral.200",
   "color.canvas": "color.neutral.0",
   "color.focus": "color.blue.600",
+  "color.invalid": "color.red.700",
   "color.surface": "color.neutral.50",
   "color.text": "color.neutral.900",
   "color.text.muted": "color.neutral.600",
