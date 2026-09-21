@@ -1,0 +1,34 @@
+{
+  "name": "combric",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Performance-first UI framework for modern web applications",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=11.0.0"
+  },
+  "scripts": {
+    "build": "pnpm clean && tsc -b tsconfig.build.json --force --pretty false",
+    "clean": "node scripts/clean.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "pnpm build && pnpm test:built",
+    "test:built": "node --test",
+    "typecheck": "tsc -p tsconfig.json --noEmit --pretty false",
+    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm build && pnpm test:built && pnpm validate:packages:built",
+    "validate:packages": "pnpm build && pnpm validate:packages:built",
+    "validate:packages:built": "node scripts/validate-packages.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.11.0",
+    "globals": "17.12.0",
+    "prettier": "3.9.8",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0"
+  }
+}
