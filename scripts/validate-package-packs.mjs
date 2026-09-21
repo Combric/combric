@@ -1,7 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const packageNames = ["core", "tokens", "react", "cli", "guard"];
+const packageNames = ["core", "tokens", "react", "cli", "guard", "tailwind"];
 const pnpmCli = process.env.npm_execpath;
 
 if (!pnpmCli) {
@@ -29,7 +29,10 @@ for (const packageName of packageNames) {
 
   const pack = JSON.parse(result.stdout);
   const filePaths = new Set(pack.files.map(({ path }) => path));
-  const requiredFiles = ["dist/index.d.ts", "dist/index.js", "package.json"];
+  const requiredFiles =
+    packageName === "tailwind"
+      ? ["dist/index.css", "README.md", "package.json"]
+      : ["dist/index.d.ts", "dist/index.js", "package.json"];
 
   if (packageName === "tokens") {
     requiredFiles.push("dist/tokens.css", "README.md");

@@ -10,10 +10,10 @@ not a dependency of the core.
 
 ## Repository status
 
-This repository contains the **COMBRIC-0.2 monorepo foundation** and the
-**COMBRIC-0.3 design-token and CSS foundation**. Public component APIs, the CSS
-component engine, layouts, recipes, Guard rules, and benchmark results
-intentionally belong to later milestones.
+This repository contains the **COMBRIC-0.2 monorepo foundation**, the
+**COMBRIC-0.3 design-token and CSS foundation**, and the **COMBRIC-0.4 Tailwind
+adapter**. Public component APIs, the CSS component engine, layouts, recipes,
+Guard rules, and benchmark results intentionally belong to later milestones.
 
 ## Requirements
 
@@ -36,6 +36,7 @@ Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 
 - `packages/core` — renderer-independent runtime boundary
 - `packages/tokens` — canonical typed tokens and generated public CSS variables
+- `packages/tailwind` — optional Tailwind v4 semantic theme adapter
 - `packages/react` — React renderer boundary
 - `packages/cli` — command-line tooling boundary
 - `packages/guard` — design-system enforcement tooling boundary
@@ -48,8 +49,7 @@ Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 - `@combric/tokens` does not depend on React or Tailwind.
 - `@combric/react` is the initial renderer integration.
 - CLI and Guard are tooling, not runtime requirements for applications.
-- Tailwind integration will remain optional and outside the core dependency
-  graph.
+- Tailwind integration is optional and depends only on `@combric/tokens`.
 
 These constraints are enforced by `pnpm validate:packages` and CI.
 
@@ -77,6 +77,25 @@ Typed ESM consumers can import `metriq`, `primitiveTokens`, `semanticTokens`,
 the semantic reference map, and their public CSS custom-property names from
 `@combric/tokens`. See [`packages/tokens/README.md`](packages/tokens/README.md)
 for the complete contract.
+
+## Tailwind adapter
+
+`@combric/tailwind` supports Tailwind CSS `>=4.3.0 <5` through the CSS-first
+`@theme inline` API. It maps Tailwind theme variables to the existing public
+Combric custom properties; it does not copy token values or introduce a second
+source of truth.
+
+```css
+@import "tailwindcss";
+@import "@combric/tailwind";
+```
+
+This enables semantic utilities such as `bg-combric-surface`,
+`text-combric-foreground`, `border-combric`, `p-combric-4`, and
+`rounded-combric`. The radius utility resolves through the metriq radius
+contract and is square by default. See
+[`packages/tailwind/README.md`](packages/tailwind/README.md) for the supported
+consumer setup.
 
 ## License
 

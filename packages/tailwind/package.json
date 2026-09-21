@@ -1,0 +1,36 @@
+{
+  "name": "@combric/tailwind",
+  "version": "0.0.0",
+  "description": "Official Tailwind CSS adapter for Combric design tokens",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "./dist/index.css"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./dist/index.css"
+  },
+  "style": "./dist/index.css",
+  "dependencies": {
+    "@combric/tokens": "workspace:*"
+  },
+  "peerDependencies": {
+    "tailwindcss": ">=4.3.0 <5"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Combric/combric.git",
+    "directory": "packages/tailwind"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

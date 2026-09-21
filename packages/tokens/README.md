@@ -50,5 +50,5 @@ Primitive tokens contain raw reusable values. Semantic tokens name UI roles and
 map to primitives. The CSS file is generated from these typed definitions during
 the repository build; it is not maintained as a second source of truth.
 
-The package has no React or Tailwind dependency. A future Tailwind adapter must
-consume this contract rather than redefine it.
+The package has no React or Tailwind dependency. The optional
+`@combric/tailwind` adapter consumes this contract rather than redefining it.

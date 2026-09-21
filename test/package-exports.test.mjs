@@ -30,3 +30,13 @@ for (const packageName of packageNames) {
     );
   });
 }
+
+test("@combric/tailwind exposes its public CSS entry point", async () => {
+  const packageUrl = new URL("../packages/tailwind/", import.meta.url);
+  const manifest = JSON.parse(
+    await readFile(new URL("package.json", packageUrl), "utf8"),
+  );
+
+  assert.equal(manifest.exports["."], "./dist/index.css");
+  await access(new URL(manifest.exports["."], packageUrl));
+});
