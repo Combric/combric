@@ -31,11 +31,15 @@ for (const packageName of packageNames) {
   const filePaths = new Set(pack.files.map(({ path }) => path));
   const requiredFiles =
     packageName === "tailwind"
-      ? ["dist/index.css", "README.md", "package.json"]
-      : ["dist/index.d.ts", "dist/index.js", "package.json"];
+      ? ["dist/index.css", "LICENSE", "README.md", "package.json"]
+      : ["dist/index.d.ts", "dist/index.js", "LICENSE", "package.json"];
 
   if (packageName === "tokens") {
     requiredFiles.push("dist/tokens.css", "README.md");
+  }
+
+  if (packageName === "react") {
+    requiredFiles.push("dist/index.css", "README.md");
   }
 
   for (const requiredFile of requiredFiles) {

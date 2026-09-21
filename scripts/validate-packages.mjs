@@ -72,6 +72,36 @@ for (const [directory, expectedName] of packages) {
     await access(new URL("dist/tokens.css", packageUrl));
   }
 
+  if (expectedName === "@combric/react") {
+    if (
+      manifest.exports?.["./css"] !== "./dist/index.css" ||
+      manifest.style !== "./dist/index.css" ||
+      !manifest.sideEffects?.includes("./dist/index.css")
+    ) {
+      throw new Error("@combric/react has an invalid CSS export contract");
+    }
+    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:*") {
+      throw new Error("@combric/react must consume @combric/tokens");
+    }
+    if (manifest.peerDependencies?.react !== ">=19.0.0 <20") {
+      throw new Error("@combric/react must declare its React 19 peer range");
+    }
+    for (const field of [
+      "dependencies",
+      "optionalDependencies",
+      "peerDependencies",
+    ]) {
+      if (
+        Object.keys(manifest[field] ?? {}).some((name) =>
+          name.includes("tailwind"),
+        )
+      ) {
+        throw new Error("@combric/react must not depend on Tailwind");
+      }
+    }
+    await access(new URL("dist/index.css", packageUrl));
+  }
+
   if (expectedName === "@combric/tailwind") {
     if (manifest.dependencies?.["@combric/tokens"] !== "workspace:*") {
       throw new Error("@combric/tailwind must consume @combric/tokens");

@@ -11,6 +11,19 @@ const tokenRuntimeExports = [
   "semanticTokenReferences",
   "semanticTokens",
 ];
+const reactRuntimeExports = [
+  "Accordion",
+  "AccordionContent",
+  "AccordionItem",
+  "AccordionTrigger",
+  "Button",
+  "Card",
+  "CardContent",
+  "CardDescription",
+  "CardFooter",
+  "CardHeader",
+  "CardTitle",
+];
 
 for (const packageName of packageNames) {
   test(`@combric/${packageName} exposes a loadable ESM entry point`, async () => {
@@ -26,7 +39,11 @@ for (const packageName of packageNames) {
 
     assert.deepEqual(
       Object.keys(entryPoint).sort(),
-      packageName === "tokens" ? tokenRuntimeExports : [],
+      packageName === "tokens"
+        ? tokenRuntimeExports
+        : packageName === "react"
+          ? reactRuntimeExports
+          : [],
     );
   });
 }
@@ -39,4 +56,14 @@ test("@combric/tailwind exposes its public CSS entry point", async () => {
 
   assert.equal(manifest.exports["."], "./dist/index.css");
   await access(new URL(manifest.exports["."], packageUrl));
+});
+
+test("@combric/react exposes its public CSS entry point", async () => {
+  const packageUrl = new URL("../packages/react/", import.meta.url);
+  const manifest = JSON.parse(
+    await readFile(new URL("package.json", packageUrl), "utf8"),
+  );
+
+  assert.equal(manifest.exports["./css"], "./dist/index.css");
+  await access(new URL(manifest.exports["./css"], packageUrl));
 });
