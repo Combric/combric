@@ -3,6 +3,14 @@ import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 const packageNames = ["core", "tokens", "react", "cli", "guard"];
+const tokenRuntimeExports = [
+  "metriq",
+  "primitiveCssVariableNames",
+  "primitiveTokens",
+  "semanticCssVariableNames",
+  "semanticTokenReferences",
+  "semanticTokens",
+];
 
 for (const packageName of packageNames) {
   test(`@combric/${packageName} exposes a loadable ESM entry point`, async () => {
@@ -16,6 +24,9 @@ for (const packageName of packageNames) {
     await access(typesUrl);
     const entryPoint = await import(importUrl);
 
-    assert.deepEqual(Object.keys(entryPoint), []);
+    assert.deepEqual(
+      Object.keys(entryPoint).sort(),
+      packageName === "tokens" ? tokenRuntimeExports : [],
+    );
   });
 }

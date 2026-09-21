@@ -1,0 +1,10 @@
+@import "@combric/tokens/css";
+
+.article-panel {
+  color: var(--combric-color-text);
+  background: var(--combric-color-surface);
+  border: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+  border-radius: var(--combric-radius);
+  padding: var(--combric-space-4);
+}

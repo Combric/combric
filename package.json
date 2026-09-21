@@ -11,7 +11,7 @@
     "pnpm": ">=11.0.0"
   },
   "scripts": {
-    "build": "pnpm clean && tsc -b tsconfig.build.json --force --pretty false",
+    "build": "pnpm clean && tsc -b tsconfig.build.json --force --pretty false && node scripts/generate-token-css.mjs",
     "clean": "node scripts/clean.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -19,7 +19,8 @@
     "test": "pnpm build && pnpm test:built",
     "test:built": "node --test",
     "typecheck": "tsc -p tsconfig.json --noEmit --pretty false",
-    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm build && pnpm test:built && pnpm validate:packages:built",
+    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm build && pnpm test:built && pnpm validate:packages:built && pnpm validate:package-packs:built",
+    "validate:package-packs:built": "node scripts/validate-package-packs.mjs",
     "validate:packages": "pnpm build && pnpm validate:packages:built",
     "validate:packages:built": "node scripts/validate-packages.mjs"
   },

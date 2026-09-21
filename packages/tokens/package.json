@@ -1,19 +1,24 @@
 {
   "name": "@combric/tokens",
   "version": "0.0.0",
-  "description": "Design-token boundary for Combric",
+  "description": "Typed design tokens and CSS custom properties for Combric",
   "license": "MIT",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/tokens.css"
+  ],
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./css": "./dist/tokens.css"
   },
+  "style": "./dist/tokens.css",
   "engines": {
     "node": ">=24.0.0"
   },
