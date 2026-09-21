@@ -12,9 +12,9 @@ const manifest = JSON.parse(
 );
 const css = await readFile(new URL("dist/index.css", packageUrl), "utf8");
 
-test("React package declares its peer, token, and Tailwind-independent contract", () => {
+test("React package declares its peer, layout, and Tailwind-independent contract", () => {
   assert.equal(manifest.peerDependencies.react, ">=19.0.0 <20");
-  assert.equal(manifest.dependencies["@combric/tokens"], "workspace:*");
+  assert.equal(manifest.dependencies["@combric/layout"], "workspace:*");
   for (const field of [
     "dependencies",
     "peerDependencies",
@@ -30,7 +30,7 @@ test("React package declares its peer, token, and Tailwind-independent contract"
 });
 
 test("React CSS consumes canonical variables and preserves metriq geometry", () => {
-  assert.match(css, /^@import "@combric\/tokens\/css";/);
+  assert.match(css, /^@import "@combric\/layout\/css";/);
   assert.match(css, /border-radius: var\(--combric-radius\)/);
   assert.match(css, /:focus-visible/);
   assert.doesNotMatch(css, /#[\da-f]{3,8}\b/i);
@@ -43,6 +43,11 @@ test("real React consumer renders all primitives through public exports", () => 
   assert.match(markup, /class="combric-card"/);
   assert.match(markup, /class="combric-button"/);
   assert.match(markup, /class="combric-accordion"/);
+  assert.match(markup, /class="combric-container"/);
+  assert.match(markup, /class="combric-stack"/);
+  assert.match(markup, /class="combric-inline"/);
+  assert.match(markup, /class="combric-grid"/);
+  assert.match(markup, /class="combric-cluster"/);
   assert.match(markup, /aria-expanded="true"/);
   assert.doesNotMatch(markup, /tailwind/i);
 });

@@ -12,9 +12,36 @@ public stylesheet once in your application:
 @import "@combric/react/css";
 ```
 
-That stylesheet imports `@combric/tokens/css`, so this is the only required CSS
-entry point for the standard setup. Component styles use `var(--combric-*)`
-semantic properties, including metriq's square `--combric-radius` geometry.
+That stylesheet imports `@combric/layout/css`, which in turn imports the token
+contract, so this is the only required CSS entry point for the standard setup.
+Component and layout styles use `var(--combric-*)` semantic properties,
+including metriq's square `--combric-radius` geometry.
+
+## Layout
+
+```tsx
+import { Card, Container, Grid, Stack } from "@combric/react";
+
+<Container size="wide">
+  <Stack gap="6">
+    <Grid minItemWidth="md" gap="4">
+      <Card>First</Card>
+      <Card>Second</Card>
+    </Grid>
+  </Stack>
+</Container>;
+```
+
+`Container` supports `prose`, `wide`, and `full`. `Stack` provides vertical
+flow. `Inline` is horizontal and non-wrapping, while `Cluster` is horizontal and
+wrapping. All four flow primitives use typed Combric gap keys. `Grid` supports
+either explicit `columns={1 | 2 | 3 | 4}` or intrinsic
+`minItemWidth="sm" | "md" | "lg"`; these modes cannot be combined.
+
+Intrinsic Grid uses native `auto-fit/minmax` responsiveness. There are no
+breakpoint props, viewport hooks, resize listeners, or JavaScript geometry
+calculations. Native `className` and `style` remain available for exceptional
+consumer requirements.
 
 ## Button
 
@@ -83,7 +110,7 @@ content region, and its trigger. A disabled item disables its trigger.
 ## Scope
 
 The public API intentionally has no polymorphic `as`/`asChild` contract, variant
-engine, multiple-open accordion mode, measured animations, component-specific
-token layer, or runtime theme system. Consumer classes extend rather than
-replace required Combric classes. Additional components, docs/playground, and
-generators remain future work.
+engine, responsive object DSL, layout solver, multiple-open accordion mode,
+measured animations, component-specific token layer, or runtime theme system.
+Consumer classes extend rather than replace required Combric classes. Additional
+components, docs/playground, and generators remain future work.

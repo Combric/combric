@@ -52,3 +52,8 @@ the repository build; it is not maintained as a second source of truth.
 
 The package has no React or Tailwind dependency. The optional
 `@combric/tailwind` adapter consumes this contract rather than redefining it.
+
+COMBRIC-0.6 adds the deliberately small `size.layout.item.sm`, `.md`, and `.lg`
+semantic contract. These values provide safe intrinsic Grid minimums for
+framework-independent CSS, React, and Tailwind consumers without introducing a
+breakpoint scale or arbitrary layout-value API.

@@ -1,4 +1,4 @@
-@import "@combric/tokens/css";
+@import "@combric/layout/css";
 
 .combric-button {
   display: inline-flex;

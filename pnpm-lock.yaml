@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@combric/layout':
+        specifier: workspace:*
+        version: link:packages/layout
       '@combric/react':
         specifier: workspace:*
         version: link:packages/react
@@ -60,11 +63,17 @@ importers:
 
   packages/guard: {}
 
-  packages/react:
+  packages/layout:
     dependencies:
       '@combric/tokens':
         specifier: workspace:*
         version: link:../tokens
+
+  packages/react:
+    dependencies:
+      '@combric/layout':
+        specifier: workspace:*
+        version: link:../layout
       react:
         specifier: '>=19.0.0 <20'
         version: 19.3.0

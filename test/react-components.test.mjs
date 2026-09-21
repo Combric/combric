@@ -4,6 +4,7 @@ import test from "node:test";
 import { JSDOM } from "jsdom";
 import { act, createElement, createRef } from "react";
 import { createRoot } from "react-dom/client";
+import { renderToStaticMarkup } from "react-dom/server";
 import {
   Accordion,
   AccordionContent,
@@ -16,6 +17,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Cluster,
+  Container,
+  Grid,
+  Inline,
+  Stack,
 } from "@combric/react";
 
 async function withDom(run) {
@@ -186,4 +192,100 @@ test("controlled Accordion remains authoritative and disabled items do not trans
     trigger.click();
     assert.deepEqual(transitions, ["details"]);
   });
+});
+
+test("layout primitives forward native props, refs, classes, and bounded options", async () => {
+  await withDom(async ({ container, root }) => {
+    const containerRef = createRef();
+    const gridRef = createRef();
+    await act(async () => {
+      root.render(
+        createElement(
+          Container,
+          {
+            className: "consumer-container",
+            id: "page",
+            ref: containerRef,
+            size: "prose",
+          },
+          createElement(
+            Stack,
+            { className: "consumer-stack", gap: "6" },
+            createElement(
+              Inline,
+              { align: "baseline", className: "consumer-inline", gap: "3" },
+              "Inline",
+            ),
+            createElement(
+              Cluster,
+              { align: "end", className: "consumer-cluster", gap: "2" },
+              "Cluster",
+            ),
+            createElement(
+              Grid,
+              {
+                className: "consumer-grid",
+                columns: 3,
+                gap: "8",
+                id: "explicit-grid",
+                ref: gridRef,
+              },
+              "Explicit",
+            ),
+            createElement(Grid, { minItemWidth: "lg" }, "Intrinsic"),
+          ),
+        ),
+      );
+    });
+
+    const page = container.querySelector("#page");
+    assert.equal(page, containerRef.current);
+    assert.equal(page.className, "combric-container consumer-container");
+    assert.equal(page.dataset.size, "prose");
+    assert.equal(
+      page.querySelector(".combric-stack").className,
+      "combric-stack consumer-stack",
+    );
+    assert.equal(page.querySelector(".combric-stack").dataset.gap, "6");
+    assert.equal(
+      page.querySelector(".combric-inline").className,
+      "combric-inline consumer-inline",
+    );
+    assert.equal(
+      page.querySelector(".combric-inline").dataset.align,
+      "baseline",
+    );
+    assert.equal(
+      page.querySelector(".combric-cluster").className,
+      "combric-cluster consumer-cluster",
+    );
+    assert.equal(page.querySelector(".combric-cluster").dataset.align, "end");
+    const grids = page.querySelectorAll(".combric-grid");
+    assert.equal(grids[0], gridRef.current);
+    assert.equal(grids[0].id, "explicit-grid");
+    assert.equal(grids[0].className, "combric-grid consumer-grid");
+    assert.equal(grids[0].dataset.columns, "3");
+    assert.equal(grids[0].dataset.gap, "8");
+    assert.equal(grids[0].dataset.minItemWidth, undefined);
+    assert.equal(grids[1].dataset.minItemWidth, "lg");
+    assert.equal(page.querySelector("[aria-label]"), null);
+  });
+});
+
+test("layout primitives reject unsupported runtime options deterministically", () => {
+  assert.throws(
+    () => renderToStaticMarkup(createElement(Stack, { gap: "5" }, "Invalid")),
+    /Stack gap must be one of/,
+  );
+  assert.throws(
+    () => renderToStaticMarkup(createElement(Grid, { columns: 5 }, "Invalid")),
+    /Grid columns must be one of/,
+  );
+  assert.throws(
+    () =>
+      renderToStaticMarkup(
+        createElement(Grid, { columns: 2, minItemWidth: "sm" }, "Invalid"),
+      ),
+    /cannot be used together/,
+  );
 });

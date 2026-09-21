@@ -5,15 +5,16 @@ Combric is a performance-first UI framework for modern web applications.
 The project is building a production-grade foundation for application UI: a
 native, static CSS system; design tokens; React components; layout primitives;
 application recipes; scaffolding; and design-system enforcement. Combric CSS is
-the default styling system. Tailwind is planned as an optional adapter and is
-not a dependency of the core.
+the default styling system. Tailwind is an optional adapter and is not a
+dependency of the core layout or React packages.
 
 ## Repository status
 
-This repository contains the **COMBRIC-0.2 monorepo foundation**, the
-**COMBRIC-0.3 design-token and CSS foundation**, and the **COMBRIC-0.4 Tailwind
-adapter**. Public component APIs, the CSS component engine, layouts, recipes,
-Guard rules, and benchmark results intentionally belong to later milestones.
+This repository contains the foundations delivered from **COMBRIC-0.2** through
+**COMBRIC-0.6**: monorepo tooling, canonical design tokens, the optional
+Tailwind adapter, React component primitives, and the framework-independent Grid
+& Layout System. Recipes, expanded components, Guard rules, and benchmark
+results intentionally belong to later milestones.
 
 ## Requirements
 
@@ -36,8 +37,9 @@ Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 
 - `packages/core` — renderer-independent runtime boundary
 - `packages/tokens` — canonical typed tokens and generated public CSS variables
+- `packages/layout` — framework-independent CSS Grid and Flexbox primitives
 - `packages/tailwind` — optional Tailwind v4 semantic theme adapter
-- `packages/react` — React renderer boundary
+- `packages/react` — React components and typed layout wrappers
 - `packages/cli` — command-line tooling boundary
 - `packages/guard` — design-system enforcement tooling boundary
 - `apps` — future documentation and playground applications
@@ -47,7 +49,8 @@ Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 
 - `@combric/core` does not depend on React or Tailwind.
 - `@combric/tokens` does not depend on React or Tailwind.
-- `@combric/react` is the initial renderer integration.
+- `@combric/layout` depends only on `@combric/tokens`.
+- `@combric/react` consumes `@combric/layout` and does not depend on Tailwind.
 - CLI and Guard are tooling, not runtime requirements for applications.
 - Tailwind integration is optional and depends only on `@combric/tokens`.
 
@@ -77,6 +80,24 @@ Typed ESM consumers can import `metriq`, `primitiveTokens`, `semanticTokens`,
 the semantic reference map, and their public CSS custom-property names from
 `@combric/tokens`. See [`packages/tokens/README.md`](packages/tokens/README.md)
 for the complete contract.
+
+## Grid and layout
+
+Standard CSS consumers import the public framework-independent entry:
+
+```css
+@import "@combric/layout/css";
+```
+
+The stable `combric-container`, `combric-stack`, `combric-inline`,
+`combric-cluster`, and `combric-grid` classes use canonical gap, content-width,
+and intrinsic item-size variables. Responsive Grid uses native
+`repeat(auto-fit, minmax(...))`; no viewport JavaScript or breakpoint runtime is
+present. See [`packages/layout/README.md`](packages/layout/README.md).
+
+React consumers receive typed `Container`, `Stack`, `Inline`, `Cluster`, and
+`Grid` wrappers from `@combric/react`. Importing `@combric/react/css` includes
+the layout and token CSS contracts.
 
 ## Tailwind adapter
 

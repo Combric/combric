@@ -42,6 +42,9 @@ const themeMappings = [
   ["--spacing-combric-control-lg", "size.control.lg"],
   ["--container-combric-prose", "size.content.prose"],
   ["--container-combric-wide", "size.content.wide"],
+  ["--container-combric-item-sm", "size.layout.item.sm"],
+  ["--container-combric-item-md", "size.layout.item.md"],
+  ["--container-combric-item-lg", "size.layout.item.lg"],
   ["--radius-combric", "radius"],
 ];
 
@@ -79,6 +82,18 @@ const css = [
   "@utility border-combric-strong {",
   "  border-width: var(--combric-border-width-strong);",
   "  border-style: var(--combric-border-style);",
+  "}",
+  "",
+  "@utility grid-combric-auto-sm {",
+  "  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--combric-size-layout-item-sm)), 1fr));",
+  "}",
+  "",
+  "@utility grid-combric-auto-md {",
+  "  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--combric-size-layout-item-md)), 1fr));",
+  "}",
+  "",
+  "@utility grid-combric-auto-lg {",
+  "  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--combric-size-layout-item-lg)), 1fr));",
   "}",
   "",
 ].join("\n");

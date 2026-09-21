@@ -33,6 +33,12 @@ test("adapter CSS maps Tailwind theme variables to canonical Combric variables",
   );
   assert.ok(css.includes("--spacing-combric-4: var(--combric-space-4);"));
   assert.ok(css.includes("--radius-combric: var(--combric-radius);"));
+  assert.ok(
+    css.includes(
+      "--container-combric-item-md: var(--combric-size-layout-item-md);",
+    ),
+  );
+  assert.ok(css.includes("@utility grid-combric-auto-md"));
   assert.doesNotMatch(css, /#[\da-f]{3,8}\b/i);
   assert.doesNotMatch(css, /:\s*-?\d*\.?\d+(?:px|rem|em)\b/);
 });
@@ -89,6 +95,7 @@ test("Tailwind compiles a real Combric consumer through public package imports",
       "padding: var(--combric-space-4)",
       "border-radius: var(--combric-radius)",
       "max-width: var(--combric-size-content-prose)",
+      "grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--combric-size-layout-item-md)), 1fr))",
     ];
 
     for (const declaration of expectedDeclarations) {
