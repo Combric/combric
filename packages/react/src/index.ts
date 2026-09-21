@@ -9,6 +9,36 @@ export {
   type AccordionTriggerProps,
 } from "./accordion.js";
 export {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  type AvatarFallbackProps,
+  type AvatarImageProps,
+  type AvatarProps,
+  type AvatarSize,
+} from "./avatar.js";
+export {
+  Badge,
+  Separator,
+  type BadgeProps,
+  type BadgeVariant,
+  type SeparatorProps,
+} from "./display.js";
+export {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  type BreadcrumbItemProps,
+  type BreadcrumbLinkProps,
+  type BreadcrumbListProps,
+  type BreadcrumbPageProps,
+  type BreadcrumbProps,
+  type BreadcrumbSeparatorProps,
+} from "./breadcrumb.js";
+export {
   Button,
   type ButtonProps,
   type ButtonSize,
@@ -29,6 +59,24 @@ export {
   type CardTitleProps,
 } from "./card.js";
 export {
+  Checkbox,
+  Input,
+  Label,
+  Radio,
+  RadioGroup,
+  Select,
+  Switch,
+  Textarea,
+  type CheckboxProps,
+  type InputProps,
+  type LabelProps,
+  type RadioGroupProps,
+  type RadioProps,
+  type SelectProps,
+  type SwitchProps,
+  type TextareaProps,
+} from "./form-controls.js";
+export {
   Cluster,
   Container,
   Grid,
@@ -45,3 +93,27 @@ export {
   type LayoutGap,
   type StackProps,
 } from "./layout.js";
+export {
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+  PaginationList,
+  PaginationNext,
+  PaginationPrevious,
+  type PaginationItemProps,
+  type PaginationLinkProps,
+  type PaginationListProps,
+  type PaginationNextProps,
+  type PaginationPreviousProps,
+  type PaginationProps,
+} from "./pagination.js";
+export {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type TabsContentProps,
+  type TabsListProps,
+  type TabsProps,
+  type TabsTriggerProps,
+} from "./tabs.js";

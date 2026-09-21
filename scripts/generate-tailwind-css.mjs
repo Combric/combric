@@ -12,6 +12,7 @@ const themeMappings = [
   ["--color-combric-accent-foreground", "color.accent.foreground"],
   ["--color-combric-accent-hover", "color.accent.hover"],
   ["--color-combric-focus", "color.focus"],
+  ["--color-combric-invalid", "color.invalid"],
   ["--font-combric-body", "font.family.body"],
   ["--font-combric-code", "font.family.code"],
   ["--text-combric-small", "font.size.small"],

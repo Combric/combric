@@ -34,6 +34,9 @@ test("adapter CSS maps Tailwind theme variables to canonical Combric variables",
   assert.ok(css.includes("--spacing-combric-4: var(--combric-space-4);"));
   assert.ok(css.includes("--radius-combric: var(--combric-radius);"));
   assert.ok(
+    css.includes("--color-combric-invalid: var(--combric-color-invalid);"),
+  );
+  assert.ok(
     css.includes(
       "--container-combric-item-md: var(--combric-size-layout-item-md);",
     ),
@@ -91,6 +94,7 @@ test("Tailwind compiles a real Combric consumer through public package imports",
       "background-color: var(--combric-color-surface)",
       "color: var(--combric-color-text)",
       "border-color: var(--combric-color-border)",
+      "border-color: var(--combric-color-invalid)",
       "border-width: var(--combric-border-width)",
       "padding: var(--combric-space-4)",
       "border-radius: var(--combric-radius)",
