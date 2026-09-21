@@ -6,6 +6,7 @@ const packages = new Map([
   ["react", "@combric/react"],
   ["cli", "@combric/cli"],
   ["guard", "@combric/guard"],
+  ["tailwind", "@combric/tailwind"],
 ]);
 
 const allowedInternalDependencies = new Map([
@@ -14,6 +15,7 @@ const allowedInternalDependencies = new Map([
   ["@combric/react", new Set(["@combric/core", "@combric/tokens"])],
   ["@combric/cli", new Set(["@combric/core", "@combric/tokens"])],
   ["@combric/guard", new Set(["@combric/core", "@combric/tokens"])],
+  ["@combric/tailwind", new Set(["@combric/tokens"])],
 ]);
 
 const manifests = new Map();
@@ -32,7 +34,15 @@ for (const [directory, expectedName] of packages) {
   if (manifest.type !== "module" || manifest.license !== "MIT") {
     throw new Error(`${expectedName} must be an MIT-licensed ESM package`);
   }
-  if (
+  if (expectedName === "@combric/tailwind") {
+    if (
+      manifest.exports?.["."] !== "./dist/index.css" ||
+      manifest.style !== "./dist/index.css" ||
+      !manifest.sideEffects?.includes("./dist/index.css")
+    ) {
+      throw new Error("@combric/tailwind has an invalid CSS export contract");
+    }
+  } else if (
     manifest.exports?.["."]?.types !== "./dist/index.d.ts" ||
     manifest.exports?.["."]?.import !== "./dist/index.js"
   ) {
@@ -42,8 +52,12 @@ for (const [directory, expectedName] of packages) {
     throw new Error(`${expectedName} must publish only its declared files`);
   }
 
-  await access(new URL("dist/index.js", packageUrl));
-  await access(new URL("dist/index.d.ts", packageUrl));
+  if (expectedName === "@combric/tailwind") {
+    await access(new URL("dist/index.css", packageUrl));
+  } else {
+    await access(new URL("dist/index.js", packageUrl));
+    await access(new URL("dist/index.d.ts", packageUrl));
+  }
 
   if (expectedName === "@combric/tokens") {
     if (manifest.exports?.["./css"] !== "./dist/tokens.css") {
@@ -56,6 +70,17 @@ for (const [directory, expectedName] of packages) {
       throw new Error("@combric/tokens CSS must be marked as a side effect");
     }
     await access(new URL("dist/tokens.css", packageUrl));
+  }
+
+  if (expectedName === "@combric/tailwind") {
+    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:*") {
+      throw new Error("@combric/tailwind must consume @combric/tokens");
+    }
+    if (manifest.peerDependencies?.tailwindcss !== ">=4.3.0 <5") {
+      throw new Error(
+        "@combric/tailwind must declare its Tailwind v4 peer range",
+      );
+    }
   }
 
   manifests.set(expectedName, manifest);

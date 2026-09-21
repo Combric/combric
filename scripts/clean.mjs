@@ -1,7 +1,7 @@
 import { rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-const packageNames = ["core", "tokens", "react", "cli", "guard"];
+const packageNames = ["core", "tokens", "react", "cli", "guard", "tailwind"];
 
 for (const packageName of packageNames) {
   const outputUrl = new URL(
