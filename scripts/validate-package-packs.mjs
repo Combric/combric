@@ -1,0 +1,51 @@
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
+const packageNames = ["core", "tokens", "react", "cli", "guard"];
+const pnpmCli = process.env.npm_execpath;
+
+if (!pnpmCli) {
+  throw new Error("Package dry-run validation must be invoked through pnpm");
+}
+
+for (const packageName of packageNames) {
+  const packageDirectory = fileURLToPath(
+    new URL(`../packages/${packageName}/`, import.meta.url),
+  );
+  const result = spawnSync(
+    process.execPath,
+    [pnpmCli, "pack", "--dry-run", "--json"],
+    {
+      cwd: packageDirectory,
+      encoding: "utf8",
+    },
+  );
+
+  if (result.status !== 0) {
+    throw new Error(
+      `Pack dry-run failed for @combric/${packageName}: ${result.stderr}`,
+    );
+  }
+
+  const pack = JSON.parse(result.stdout);
+  const filePaths = new Set(pack.files.map(({ path }) => path));
+  const requiredFiles = ["dist/index.d.ts", "dist/index.js", "package.json"];
+
+  if (packageName === "tokens") {
+    requiredFiles.push("dist/tokens.css", "README.md");
+  }
+
+  for (const requiredFile of requiredFiles) {
+    if (!filePaths.has(requiredFile)) {
+      throw new Error(
+        `@combric/${packageName} tarball is missing ${requiredFile}`,
+      );
+    }
+  }
+
+  if ([...filePaths].some((path) => path.startsWith("src/"))) {
+    throw new Error(`@combric/${packageName} tarball must not contain src/`);
+  }
+}
+
+console.log(`Validated ${packageNames.length} package dry-runs.`);

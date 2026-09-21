@@ -44,6 +44,20 @@ for (const [directory, expectedName] of packages) {
 
   await access(new URL("dist/index.js", packageUrl));
   await access(new URL("dist/index.d.ts", packageUrl));
+
+  if (expectedName === "@combric/tokens") {
+    if (manifest.exports?.["./css"] !== "./dist/tokens.css") {
+      throw new Error("@combric/tokens must expose its public CSS entry point");
+    }
+    if (manifest.style !== "./dist/tokens.css") {
+      throw new Error("@combric/tokens must advertise its CSS artifact");
+    }
+    if (!manifest.sideEffects?.includes("./dist/tokens.css")) {
+      throw new Error("@combric/tokens CSS must be marked as a side effect");
+    }
+    await access(new URL("dist/tokens.css", packageUrl));
+  }
+
   manifests.set(expectedName, manifest);
 }
 
