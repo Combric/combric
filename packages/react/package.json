@@ -1,24 +1,32 @@
 {
   "name": "@combric/react",
   "version": "0.0.0",
-  "description": "React renderer integration for Combric",
+  "description": "Accessible React component primitives for Combric",
   "license": "MIT",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/index.css"
+  ],
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./css": "./dist/index.css"
   },
+  "style": "./dist/index.css",
   "engines": {
     "node": ">=24.0.0"
   },
   "peerDependencies": {
-    "react": ">=19.0.0"
+    "react": ">=19.0.0 <20"
+  },
+  "dependencies": {
+    "@combric/tokens": "workspace:*"
   },
   "repository": {
     "type": "git",

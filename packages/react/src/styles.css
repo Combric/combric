@@ -1,0 +1,144 @@
+@import "@combric/tokens/css";
+
+.combric-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--combric-space-2);
+  border: var(--combric-border-width) var(--combric-border-style) transparent;
+  border-radius: var(--combric-radius);
+  font-family: var(--combric-font-family-body);
+  font-weight: var(--combric-font-weight-emphasis);
+  line-height: var(--combric-line-height-heading);
+  cursor: pointer;
+}
+
+.combric-button[data-size="sm"] {
+  min-height: var(--combric-size-control-sm);
+  padding: var(--combric-space-1) var(--combric-space-3);
+  font-size: var(--combric-font-size-small);
+}
+
+.combric-button[data-size="md"] {
+  min-height: var(--combric-size-control-md);
+  padding: var(--combric-space-2) var(--combric-space-4);
+  font-size: var(--combric-font-size-body);
+}
+
+.combric-button[data-size="lg"] {
+  min-height: var(--combric-size-control-lg);
+  padding: var(--combric-space-3) var(--combric-space-6);
+  font-size: var(--combric-font-size-heading-sm);
+}
+
+.combric-button[data-variant="primary"] {
+  border-color: var(--combric-color-accent);
+  background: var(--combric-color-accent);
+  color: var(--combric-color-accent-foreground);
+}
+
+.combric-button[data-variant="primary"]:hover:not(:disabled) {
+  border-color: var(--combric-color-accent-hover);
+  background: var(--combric-color-accent-hover);
+}
+
+.combric-button[data-variant="secondary"] {
+  border-color: var(--combric-color-border);
+  background: var(--combric-color-surface);
+  color: var(--combric-color-text);
+}
+
+.combric-button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--combric-color-text);
+}
+
+.combric-button[data-variant="ghost"]:hover:not(:disabled) {
+  background: var(--combric-color-surface);
+}
+
+.combric-button:focus-visible,
+.combric-accordion__trigger:focus-visible {
+  outline: var(--combric-border-width-strong) var(--combric-border-style)
+    var(--combric-color-focus);
+  outline-offset: var(--combric-space-1);
+}
+
+.combric-button:disabled,
+.combric-accordion__trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.combric-card {
+  border: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+  border-radius: var(--combric-radius);
+  background: var(--combric-color-surface);
+  color: var(--combric-color-text);
+}
+
+.combric-card__header,
+.combric-card__content,
+.combric-card__footer {
+  padding: var(--combric-space-6);
+}
+
+.combric-card__header,
+.combric-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--combric-space-2);
+}
+
+.combric-card__title,
+.combric-card__description {
+  margin: 0;
+}
+
+.combric-card__title {
+  font-size: var(--combric-font-size-heading-md);
+  line-height: var(--combric-line-height-heading);
+}
+
+.combric-card__description {
+  color: var(--combric-color-text-muted);
+}
+
+.combric-card__footer {
+  border-top: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+}
+
+.combric-accordion {
+  border: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+  border-radius: var(--combric-radius);
+  background: var(--combric-color-canvas);
+  color: var(--combric-color-text);
+}
+
+.combric-accordion__item + .combric-accordion__item {
+  border-top: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+}
+
+.combric-accordion__trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  border-radius: var(--combric-radius);
+  padding: var(--combric-space-4);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--combric-font-weight-emphasis);
+  text-align: left;
+  cursor: pointer;
+}
+
+.combric-accordion__content {
+  padding: 0 var(--combric-space-4) var(--combric-space-4);
+}
