@@ -3,6 +3,7 @@ import { access, readFile } from "node:fs/promises";
 const packages = new Map([
   ["core", "@combric/core"],
   ["tokens", "@combric/tokens"],
+  ["layout", "@combric/layout"],
   ["react", "@combric/react"],
   ["cli", "@combric/cli"],
   ["guard", "@combric/guard"],
@@ -12,7 +13,8 @@ const packages = new Map([
 const allowedInternalDependencies = new Map([
   ["@combric/core", new Set()],
   ["@combric/tokens", new Set()],
-  ["@combric/react", new Set(["@combric/core", "@combric/tokens"])],
+  ["@combric/layout", new Set(["@combric/tokens"])],
+  ["@combric/react", new Set(["@combric/core", "@combric/layout"])],
   ["@combric/cli", new Set(["@combric/core", "@combric/tokens"])],
   ["@combric/guard", new Set(["@combric/core", "@combric/tokens"])],
   ["@combric/tailwind", new Set(["@combric/tokens"])],
@@ -34,13 +36,16 @@ for (const [directory, expectedName] of packages) {
   if (manifest.type !== "module" || manifest.license !== "MIT") {
     throw new Error(`${expectedName} must be an MIT-licensed ESM package`);
   }
-  if (expectedName === "@combric/tailwind") {
+  if (
+    expectedName === "@combric/layout" ||
+    expectedName === "@combric/tailwind"
+  ) {
     if (
       manifest.exports?.["."] !== "./dist/index.css" ||
       manifest.style !== "./dist/index.css" ||
       !manifest.sideEffects?.includes("./dist/index.css")
     ) {
-      throw new Error("@combric/tailwind has an invalid CSS export contract");
+      throw new Error(`${expectedName} has an invalid CSS export contract`);
     }
   } else if (
     manifest.exports?.["."]?.types !== "./dist/index.d.ts" ||
@@ -52,7 +57,10 @@ for (const [directory, expectedName] of packages) {
     throw new Error(`${expectedName} must publish only its declared files`);
   }
 
-  if (expectedName === "@combric/tailwind") {
+  if (
+    expectedName === "@combric/layout" ||
+    expectedName === "@combric/tailwind"
+  ) {
     await access(new URL("dist/index.css", packageUrl));
   } else {
     await access(new URL("dist/index.js", packageUrl));
@@ -80,8 +88,8 @@ for (const [directory, expectedName] of packages) {
     ) {
       throw new Error("@combric/react has an invalid CSS export contract");
     }
-    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:*") {
-      throw new Error("@combric/react must consume @combric/tokens");
+    if (manifest.dependencies?.["@combric/layout"] !== "workspace:*") {
+      throw new Error("@combric/react must consume @combric/layout");
     }
     if (manifest.peerDependencies?.react !== ">=19.0.0 <20") {
       throw new Error("@combric/react must declare its React 19 peer range");
@@ -100,6 +108,28 @@ for (const [directory, expectedName] of packages) {
       }
     }
     await access(new URL("dist/index.css", packageUrl));
+  }
+
+  if (expectedName === "@combric/layout") {
+    if (manifest.exports?.["./css"] !== "./dist/index.css") {
+      throw new Error("@combric/layout must expose its public CSS entry point");
+    }
+    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:*") {
+      throw new Error("@combric/layout must consume @combric/tokens");
+    }
+    for (const field of [
+      "dependencies",
+      "optionalDependencies",
+      "peerDependencies",
+    ]) {
+      const dependencyNames = Object.keys(manifest[field] ?? {});
+      if (
+        dependencyNames.includes("react") ||
+        dependencyNames.some((name) => name.includes("tailwind"))
+      ) {
+        throw new Error("@combric/layout must remain framework-independent");
+      }
+    }
   }
 
   if (expectedName === "@combric/tailwind") {
@@ -143,7 +173,11 @@ for (const [packageName, manifest] of manifests) {
   graph.set(packageName, dependencies);
 }
 
-for (const packageName of ["@combric/core", "@combric/tokens"]) {
+for (const packageName of [
+  "@combric/core",
+  "@combric/tokens",
+  "@combric/layout",
+]) {
   const manifest = manifests.get(packageName);
   const externalDependencies = dependencyFields.flatMap((field) =>
     Object.keys(manifest[field] ?? {}),

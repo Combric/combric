@@ -46,6 +46,8 @@ Representative utility families include:
 - `font-combric-body`, `font-combric-code`, `text-combric-body`, and
   `text-combric-heading-*`
 - `max-w-combric-prose`, `max-w-combric-wide`
+- `grid-combric-auto-sm`, `grid-combric-auto-md`, and `grid-combric-auto-lg` for
+  canonical intrinsic Grid minimums
 - `rounded-combric`
 
 `rounded-combric` resolves through `--combric-radius`. Under the default
@@ -57,7 +59,9 @@ property. No color, spacing, typography, sizing, or radius literal is duplicated
 inside this package.
 
 Tailwind remains optional. Projects using ordinary CSS can continue importing
-`@combric/tokens/css` directly without installing Tailwind or this adapter.
+`@combric/layout/css` directly without installing Tailwind or this adapter.
+Tailwind's own `grid`, `flex`, `grid-cols-*`, and alignment utilities remain the
+low-level layout surface; Combric does not rename or duplicate them.
 
 Components, alternate themes, runtime theme switching, and framework-specific UI
 are intentionally outside this package.

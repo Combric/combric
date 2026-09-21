@@ -11,7 +11,7 @@
     "pnpm": ">=11.0.0"
   },
   "scripts": {
-    "build": "pnpm clean && tsc -b tsconfig.build.json --force --pretty false && node scripts/generate-token-css.mjs && node scripts/build-react-css.mjs && node scripts/generate-tailwind-css.mjs",
+    "build": "pnpm clean && tsc -b tsconfig.build.json --force --pretty false && node scripts/generate-token-css.mjs && node scripts/build-layout-css.mjs && node scripts/build-react-css.mjs && node scripts/generate-tailwind-css.mjs",
     "clean": "node scripts/clean.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -26,6 +26,7 @@
     "validate:packages:built": "node scripts/validate-packages.mjs"
   },
   "devDependencies": {
+    "@combric/layout": "workspace:*",
     "@combric/react": "workspace:*",
     "@combric/tailwind": "workspace:*",
     "@types/react": "19.3.0",

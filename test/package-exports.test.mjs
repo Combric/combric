@@ -23,6 +23,11 @@ const reactRuntimeExports = [
   "CardFooter",
   "CardHeader",
   "CardTitle",
+  "Cluster",
+  "Container",
+  "Grid",
+  "Inline",
+  "Stack",
 ];
 
 for (const packageName of packageNames) {
@@ -56,6 +61,17 @@ test("@combric/tailwind exposes its public CSS entry point", async () => {
 
   assert.equal(manifest.exports["."], "./dist/index.css");
   await access(new URL(manifest.exports["."], packageUrl));
+});
+
+test("@combric/layout exposes its framework-independent CSS entry point", async () => {
+  const packageUrl = new URL("../packages/layout/", import.meta.url);
+  const manifest = JSON.parse(
+    await readFile(new URL("package.json", packageUrl), "utf8"),
+  );
+
+  assert.equal(manifest.exports["."], "./dist/index.css");
+  assert.equal(manifest.exports["./css"], "./dist/index.css");
+  await access(new URL(manifest.exports["./css"], packageUrl));
 });
 
 test("@combric/react exposes its public CSS entry point", async () => {

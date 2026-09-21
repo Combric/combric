@@ -62,6 +62,9 @@ test("required semantic roles and square geometry are stable", () => {
     "color.focus",
     "font.family.body",
     "space.4",
+    "size.layout.item.sm",
+    "size.layout.item.md",
+    "size.layout.item.lg",
     "radius",
   ];
 

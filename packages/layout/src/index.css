@@ -1,0 +1,148 @@
+@import "@combric/tokens/css";
+
+.combric-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--combric-size-content-wide);
+  margin-inline: auto;
+  padding-inline: var(--combric-space-4);
+}
+
+.combric-container[data-size="prose"] {
+  max-width: var(--combric-size-content-prose);
+}
+
+.combric-container[data-size="full"] {
+  max-width: none;
+}
+
+.combric-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--combric-space-4);
+}
+
+.combric-inline {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--combric-space-4);
+}
+
+.combric-cluster {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--combric-space-4);
+}
+
+.combric-inline[data-align="start"],
+.combric-cluster[data-align="start"] {
+  align-items: flex-start;
+}
+
+.combric-inline[data-align="end"],
+.combric-cluster[data-align="end"] {
+  align-items: flex-end;
+}
+
+.combric-inline[data-align="baseline"],
+.combric-cluster[data-align="baseline"] {
+  align-items: baseline;
+}
+
+.combric-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--combric-size-layout-item-md)), 1fr)
+  );
+  gap: var(--combric-space-4);
+}
+
+.combric-grid[data-min-item-width="sm"] {
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--combric-size-layout-item-sm)), 1fr)
+  );
+}
+
+.combric-grid[data-min-item-width="lg"] {
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--combric-size-layout-item-lg)), 1fr)
+  );
+}
+
+.combric-grid[data-columns="1"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.combric-grid[data-columns="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.combric-grid[data-columns="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.combric-grid[data-columns="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.combric-stack[data-gap="0"],
+.combric-inline[data-gap="0"],
+.combric-cluster[data-gap="0"],
+.combric-grid[data-gap="0"] {
+  gap: var(--combric-space-0);
+}
+
+.combric-stack[data-gap="1"],
+.combric-inline[data-gap="1"],
+.combric-cluster[data-gap="1"],
+.combric-grid[data-gap="1"] {
+  gap: var(--combric-space-1);
+}
+
+.combric-stack[data-gap="2"],
+.combric-inline[data-gap="2"],
+.combric-cluster[data-gap="2"],
+.combric-grid[data-gap="2"] {
+  gap: var(--combric-space-2);
+}
+
+.combric-stack[data-gap="3"],
+.combric-inline[data-gap="3"],
+.combric-cluster[data-gap="3"],
+.combric-grid[data-gap="3"] {
+  gap: var(--combric-space-3);
+}
+
+.combric-stack[data-gap="6"],
+.combric-inline[data-gap="6"],
+.combric-cluster[data-gap="6"],
+.combric-grid[data-gap="6"] {
+  gap: var(--combric-space-6);
+}
+
+.combric-stack[data-gap="8"],
+.combric-inline[data-gap="8"],
+.combric-cluster[data-gap="8"],
+.combric-grid[data-gap="8"] {
+  gap: var(--combric-space-8);
+}
+
+.combric-stack[data-gap="12"],
+.combric-inline[data-gap="12"],
+.combric-cluster[data-gap="12"],
+.combric-grid[data-gap="12"] {
+  gap: var(--combric-space-12);
+}
+
+.combric-stack[data-gap="16"],
+.combric-inline[data-gap="16"],
+.combric-cluster[data-gap="16"],
+.combric-grid[data-gap="16"] {
+  gap: var(--combric-space-16);
+}
