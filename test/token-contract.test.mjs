@@ -57,6 +57,7 @@ test("required semantic roles and square geometry are stable", () => {
     "color.text",
     "color.text.muted",
     "color.border",
+    "color.backdrop",
     "color.accent",
     "color.accent.foreground",
     "color.focus",
@@ -67,6 +68,9 @@ test("required semantic roles and square geometry are stable", () => {
     "size.layout.item.md",
     "size.layout.item.lg",
     "radius",
+    "z.index.overlay",
+    "z.index.modal",
+    "z.index.toast",
   ];
 
   for (const name of requiredSemanticTokens) {
@@ -76,6 +80,14 @@ test("required semantic roles and square geometry are stable", () => {
   assert.equal(semanticTokenReferences.radius, "radius.square");
   assert.equal(semanticTokens.radius, "0");
   assert.equal(semanticCssVariableNames.radius, "--combric-radius");
+  assert.ok(
+    Number(semanticTokens["z.index.overlay"]) >
+      Number(semanticTokens["z.index.modal"]),
+  );
+  assert.ok(
+    Number(semanticTokens["z.index.toast"]) >
+      Number(semanticTokens["z.index.overlay"]),
+  );
 });
 
 test("generated CSS exposes every primitive and semantic token", async () => {

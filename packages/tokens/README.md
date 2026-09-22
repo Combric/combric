@@ -61,3 +61,11 @@ breakpoint scale or arbitrary layout-value API.
 The `color.invalid` semantic token is the shared native-control invalid-state
 contract. It resolves to the deliberately limited `color.red.700` primitive;
 Combric styles invalid state but does not implement validation logic.
+
+COMBRIC-0.8 adds the minimum overlay-specific contract: `color.backdrop` plus
+`z.index.overlay`, `z.index.modal`, and `z.index.toast`. These roles keep
+backdrops and layer ordering canonical instead of scattering arbitrary colors or
+z-index values through component CSS. The order is modal, anchored overlay, then
+toast, so a menu, popover, or tooltip opened from modal content remains visible
+while notifications stay highest. The contract does not define shadows,
+elevation effects, or a generalized layering engine.

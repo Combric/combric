@@ -14,6 +14,7 @@ const css = await readFile(new URL("dist/index.css", packageUrl), "utf8");
 
 test("React package declares its peer, layout, and Tailwind-independent contract", () => {
   assert.equal(manifest.peerDependencies.react, ">=19.0.0 <20");
+  assert.equal(manifest.peerDependencies["react-dom"], ">=19.0.0 <20");
   assert.equal(manifest.dependencies["@combric/layout"], "workspace:*");
   for (const field of [
     "dependencies",
@@ -38,6 +39,13 @@ test("React CSS consumes canonical variables and preserves metriq geometry", () 
   assert.match(css, /\.combric-tabs__trigger/);
   assert.match(css, /\.combric-avatar/);
   assert.match(css, /\.combric-pagination__link/);
+  assert.match(css, /\.combric-dialog__content/);
+  assert.match(css, /\.combric-dropdown-menu__content/);
+  assert.match(css, /\.combric-popover__content/);
+  assert.match(css, /\.combric-tooltip__content/);
+  assert.match(css, /\.combric-toast-viewport/);
+  assert.match(css, /var\(--combric-z-index-modal\)/);
+  assert.match(css, /var\(--combric-color-backdrop\)/);
   assert.doesNotMatch(css, /#[\da-f]{3,8}\b/i);
   assert.doesNotMatch(css, /\b\d+(?:\.\d+)?(?:px|rem)\b/);
   assert.doesNotMatch(css, /tailwind/i);
@@ -64,6 +72,10 @@ test("real React consumer renders all primitives through public exports", () => 
   assert.match(markup, /aria-label="Breadcrumb"/);
   assert.match(markup, /aria-label="Pagination"/);
   assert.match(markup, /aria-expanded="true"/);
+  assert.match(markup, /class="combric-dialog__trigger"/);
+  assert.match(markup, /class="combric-dropdown-menu__trigger"/);
+  assert.match(markup, /class="combric-popover__trigger"/);
+  assert.match(markup, /class="combric-tooltip__trigger"/);
   assert.doesNotMatch(markup, /tailwind/i);
 });
 

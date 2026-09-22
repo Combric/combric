@@ -11,6 +11,7 @@ export type PrimitiveTokenName =
   | "color.neutral.400"
   | "color.neutral.600"
   | "color.neutral.900"
+  | "color.neutral.900.translucent"
   | "color.red.700"
   | "font.family.mono"
   | "font.family.sans"
@@ -46,7 +47,10 @@ export type PrimitiveTokenName =
   | "space.6"
   | "space.8"
   | "space.12"
-  | "space.16";
+  | "space.16"
+  | "z.index.100"
+  | "z.index.200"
+  | "z.index.300";
 
 export type SemanticTokenName =
   | "border.style"
@@ -56,6 +60,7 @@ export type SemanticTokenName =
   | "color.accent.foreground"
   | "color.accent.hover"
   | "color.border"
+  | "color.backdrop"
   | "color.canvas"
   | "color.focus"
   | "color.invalid"
@@ -91,7 +96,10 @@ export type SemanticTokenName =
   | "space.6"
   | "space.8"
   | "space.12"
-  | "space.16";
+  | "space.16"
+  | "z.index.modal"
+  | "z.index.overlay"
+  | "z.index.toast";
 
 export type TokenValues<Name extends string> = Readonly<Record<Name, string>>;
 

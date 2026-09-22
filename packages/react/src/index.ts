@@ -39,6 +39,55 @@ export {
   type BreadcrumbSeparatorProps,
 } from "./breadcrumb.js";
 export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+  type DialogCloseProps,
+  type DialogContentProps,
+  type DialogDescriptionProps,
+  type DialogProps,
+  type DialogTitleProps,
+  type DialogTriggerProps,
+} from "./dialog.js";
+export {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+  type DrawerCloseProps,
+  type DrawerContentProps,
+  type DrawerDescriptionProps,
+  type DrawerProps,
+  type DrawerSide,
+  type DrawerTitleProps,
+  type DrawerTriggerProps,
+} from "./drawer.js";
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  type DropdownMenuAlign,
+  type DropdownMenuContentProps,
+  type DropdownMenuItemProps,
+  type DropdownMenuProps,
+  type DropdownMenuSeparatorProps,
+  type DropdownMenuSide,
+  type DropdownMenuTriggerProps,
+} from "./dropdown-menu.js";
+export {
   Button,
   type ButtonProps,
   type ButtonSize,
@@ -108,6 +157,16 @@ export {
   type PaginationProps,
 } from "./pagination.js";
 export {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  type PopoverAlign,
+  type PopoverContentProps,
+  type PopoverProps,
+  type PopoverSide,
+  type PopoverTriggerProps,
+} from "./popover.js";
+export {
   Tabs,
   TabsContent,
   TabsList,
@@ -117,3 +176,26 @@ export {
   type TabsProps,
   type TabsTriggerProps,
 } from "./tabs.js";
+export {
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastTitle,
+  ToastViewport,
+  type ToastCloseProps,
+  type ToastDescriptionProps,
+  type ToastPriority,
+  type ToastProps,
+  type ToastTitleProps,
+  type ToastViewportProps,
+} from "./toast.js";
+export {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  type TooltipAlign,
+  type TooltipContentProps,
+  type TooltipProps,
+  type TooltipSide,
+  type TooltipTriggerProps,
+} from "./tooltip.js";

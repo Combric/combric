@@ -23,7 +23,8 @@
     "node": ">=24.0.0"
   },
   "peerDependencies": {
-    "react": ">=19.0.0 <20"
+    "react": ">=19.0.0 <20",
+    "react-dom": ">=19.0.0 <20"
   },
   "dependencies": {
     "@combric/layout": "workspace:*"

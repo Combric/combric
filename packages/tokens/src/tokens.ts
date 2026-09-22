@@ -18,6 +18,7 @@ export const primitiveTokens: TokenValues<PrimitiveTokenName> = Object.freeze({
   "color.neutral.400": "#a3a39a",
   "color.neutral.600": "#5c5c55",
   "color.neutral.900": "#181816",
+  "color.neutral.900.translucent": "rgb(24 24 22 / 0.5)",
   "color.red.700": "#b91c1c",
   "font.family.mono":
     "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
@@ -56,6 +57,9 @@ export const primitiveTokens: TokenValues<PrimitiveTokenName> = Object.freeze({
   "space.8": "2rem",
   "space.12": "3rem",
   "space.16": "4rem",
+  "z.index.100": "100",
+  "z.index.200": "200",
+  "z.index.300": "300",
 });
 
 export const semanticTokenReferences: Readonly<
@@ -68,6 +72,7 @@ export const semanticTokenReferences: Readonly<
   "color.accent.foreground": "color.neutral.0",
   "color.accent.hover": "color.blue.700",
   "color.border": "color.neutral.200",
+  "color.backdrop": "color.neutral.900.translucent",
   "color.canvas": "color.neutral.0",
   "color.focus": "color.blue.600",
   "color.invalid": "color.red.700",
@@ -104,6 +109,9 @@ export const semanticTokenReferences: Readonly<
   "space.8": "space.8",
   "space.12": "space.12",
   "space.16": "space.16",
+  "z.index.modal": "z.index.100",
+  "z.index.overlay": "z.index.200",
+  "z.index.toast": "z.index.300",
 });
 
 function resolveSemanticTokens(): TokenValues<SemanticTokenName> {
