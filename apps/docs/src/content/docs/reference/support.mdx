@@ -1,9 +1,32 @@
 ---
 title: Support & Versioning
-description: Current pre-1.0 documentation and versioning policy.
+description: Stable public compatibility and Semantic Versioning policy.
 ---
 
-These docs follow the current repository contract. Combric is pre-release and
-does not yet maintain version-prefixed documentation or migration guides.
-Versioned docs should be introduced only after stable releases and real
-breaking-version history justify them.
+Combric's six public packages use one synchronized version and follow Semantic
+Versioning. The repository currently describes the `1.0.0` release candidate; it
+does not claim that publication has occurred.
+
+## Public compatibility contract
+
+The stable contract includes exported JavaScript and TypeScript APIs, exported
+types, React component props, public package and CSS entry points, documented
+CSS classes and custom properties, CLI commands/options/documented behavior, the
+Guard API, stable `GUARD_*` rule IDs, and Guard JSON schema 1.
+
+Removing or incompatibly changing one of these surfaces requires a major
+version. Compatible additions use a minor version and compatible fixes use a
+patch version. Private helpers, internal source layout, tests, build scripts,
+and undocumented implementation details are not public compatibility surfaces.
+
+## Supported peers and environments
+
+- React and React DOM: `>=19.0.0 <20`.
+- Optional Tailwind CSS adapter: `>=4.3.0 <5`.
+- CLI and Guard: Node.js 24 or newer.
+- CSS: modern browsers with the native features used by the documented component
+  and layout contracts.
+
+Versioned documentation and migration guides will be introduced when real
+stable-version history requires them; no artificial pre-1.0 migration is
+claimed.

@@ -31,6 +31,7 @@ function pnpm(args, cwd, expected = 0) {
 }
 
 try {
+  const version = "1.0.0";
   for (const name of ["tokens", "guard"]) {
     pnpm(
       ["pack", "--pack-destination", temporary],
@@ -43,8 +44,8 @@ try {
     type: "module",
     packageManager: "pnpm@11.19.0",
     dependencies: {
-      "@combric/tokens": "file:./combric-tokens-0.0.0.tgz",
-      "@combric/guard": "file:./combric-guard-0.0.0.tgz",
+      "@combric/tokens": `file:./combric-tokens-${version}.tgz`,
+      "@combric/guard": `file:./combric-guard-${version}.tgz`,
     },
   };
   await writeFile(
@@ -53,7 +54,7 @@ try {
   );
   await writeFile(
     join(temporary, "pnpm-workspace.yaml"),
-    "overrides:\n  '@combric/tokens': file:./combric-tokens-0.0.0.tgz\n",
+    `overrides:\n  '@combric/tokens': file:./combric-tokens-${version}.tgz\n`,
   );
   await writeFile(
     join(temporary, "style.css"),

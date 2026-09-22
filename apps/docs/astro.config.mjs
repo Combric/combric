@@ -71,6 +71,7 @@ export default defineConfig({
             { label: "Packages", link: "/reference/packages/" },
             { label: "Guard", link: "/reference/guard/" },
             { label: "Support & versioning", link: "/reference/support/" },
+            { label: "Release safety", link: "/reference/releasing/" },
             { label: "Source & issues", link: "/reference/source/" },
           ],
         },

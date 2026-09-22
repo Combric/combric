@@ -64,7 +64,7 @@ test("help, version, command help and unknown command have stable exits", () => 
     assert.equal(result.status, 0);
     assert.match(result.stdout, new RegExp(`combric ${command}`));
   }
-  assert.equal(run(process.cwd(), ["--version"]).stdout.trim(), "0.0.0");
+  assert.equal(run(process.cwd(), ["--version"]).stdout.trim(), "1.0.0");
   const unknown = run(process.cwd(), ["add", "button"]);
   assert.equal(unknown.status, 1);
   assert.match(unknown.stderr, /Unknown command/);

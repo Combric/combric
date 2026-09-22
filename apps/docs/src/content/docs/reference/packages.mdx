@@ -3,12 +3,16 @@ title: Packages
 description: Current Combric package boundaries and release status.
 ---
 
-| Package             | Current contract                    | Public npm status                      |
-| ------------------- | ----------------------------------- | -------------------------------------- |
-| `@combric/tokens`   | Typed tokens and CSS variables      | Unreleased                             |
-| `@combric/layout`   | Framework-independent CSS layout    | Unreleased                             |
-| `@combric/react`    | React 19 component catalogue        | Unreleased                             |
-| `@combric/tailwind` | Optional Tailwind v4 adapter        | Unreleased                             |
-| `@combric/core`     | Reserved runtime boundary           | No user behavior                       |
-| `@combric/cli`      | Optional setup and diagnostics      | Unreleased                             |
-| `@combric/guard`    | Optional read-only consumer checker | Implemented in 0.12 branch; unreleased |
+| Package             | Stable contract                     | 1.0 release state                |
+| ------------------- | ----------------------------------- | -------------------------------- |
+| `@combric/tokens`   | Typed tokens and CSS variables      | Release candidate; not published |
+| `@combric/layout`   | Framework-independent CSS layout    | Release candidate; not published |
+| `@combric/react`    | React 19 component catalogue        | Release candidate; not published |
+| `@combric/tailwind` | Optional Tailwind v4 adapter        | Release candidate; not published |
+| `@combric/cli`      | Optional setup and diagnostics      | Release candidate; not published |
+| `@combric/guard`    | Optional read-only consumer checker | Release candidate; not published |
+| `@combric/core`     | Empty private repository boundary   | Excluded from public release     |
+
+The six public packages use synchronized version `1.0.0`. Publication requires a
+separate Product Owner approval; this documentation does not claim npm
+availability.

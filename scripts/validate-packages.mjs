@@ -30,8 +30,18 @@ for (const [directory, expectedName] of packages) {
   if (manifest.name !== expectedName) {
     throw new Error(`${directory} must be named ${expectedName}`);
   }
-  if (manifest.private === true) {
-    throw new Error(`${expectedName} must remain publishable`);
+  if (expectedName === "@combric/core") {
+    if (
+      manifest.private !== true ||
+      manifest.version !== "0.0.0" ||
+      manifest.publishConfig
+    ) {
+      throw new Error(
+        "@combric/core must remain an unpublished reserved boundary",
+      );
+    }
+  } else if (manifest.private === true || manifest.version !== "1.0.0") {
+    throw new Error(`${expectedName} must remain publishable at 1.0.0`);
   }
   if (manifest.type !== "module" || manifest.license !== "MIT") {
     throw new Error(`${expectedName} must be an MIT-licensed ESM package`);
@@ -94,7 +104,7 @@ for (const [directory, expectedName] of packages) {
     if (
       manifest.engines?.node !== ">=24.0.0" ||
       manifest.bin?.["combric-guard"] !== "./dist/bin.js" ||
-      manifest.dependencies?.["@combric/tokens"] !== "workspace:*" ||
+      manifest.dependencies?.["@combric/tokens"] !== "workspace:^" ||
       manifest.dependencies?.["@combric/cli"]
     ) {
       throw new Error(
@@ -113,7 +123,7 @@ for (const [directory, expectedName] of packages) {
     ) {
       throw new Error("@combric/react has an invalid CSS export contract");
     }
-    if (manifest.dependencies?.["@combric/layout"] !== "workspace:*") {
+    if (manifest.dependencies?.["@combric/layout"] !== "workspace:^") {
       throw new Error("@combric/react must consume @combric/layout");
     }
     if (manifest.peerDependencies?.react !== ">=19.0.0 <20") {
@@ -139,7 +149,7 @@ for (const [directory, expectedName] of packages) {
     if (manifest.exports?.["./css"] !== "./dist/index.css") {
       throw new Error("@combric/layout must expose its public CSS entry point");
     }
-    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:*") {
+    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:^") {
       throw new Error("@combric/layout must consume @combric/tokens");
     }
     for (const field of [
@@ -158,7 +168,7 @@ for (const [directory, expectedName] of packages) {
   }
 
   if (expectedName === "@combric/tailwind") {
-    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:*") {
+    if (manifest.dependencies?.["@combric/tokens"] !== "workspace:^") {
       throw new Error("@combric/tailwind must consume @combric/tokens");
     }
     if (manifest.peerDependencies?.tailwindcss !== ">=4.3.0 <5") {

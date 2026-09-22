@@ -19,7 +19,7 @@ test("@combric/tailwind exposes a CSS-only public entry point", async () => {
   assert.equal(manifest.exports["."], "./dist/index.css");
   assert.equal(manifest.style, "./dist/index.css");
   assert.deepEqual(manifest.sideEffects, ["./dist/index.css"]);
-  assert.equal(manifest.dependencies["@combric/tokens"], "workspace:*");
+  assert.equal(manifest.dependencies["@combric/tokens"], "workspace:^");
   assert.equal(manifest.peerDependencies.tailwindcss, ">=4.3.0 <5");
 });
 

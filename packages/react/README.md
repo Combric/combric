@@ -5,7 +5,15 @@ design-token contract. The package does not require Tailwind.
 
 ## Install and CSS setup
 
-Install `@combric/react` together with a supported React 19 release. Import the
+Install `@combric/react` together with a supported React 19 release:
+
+```sh
+npm install @combric/react react react-dom
+```
+
+React and React DOM `>=19.0.0 <20` are required peers. Modern ESM tooling and
+browsers are supported. The public entry points are `@combric/react` for the
+JavaScript and TypeScript API and `@combric/react/css` for styles. Import the
 public stylesheet once in your application:
 
 ```css
@@ -662,3 +670,9 @@ responsive object DSL, layout solver, multiple-open accordion mode, animation
 framework, component-specific token layer, or runtime theme system. Consumer
 classes extend rather than replace required Combric classes. Additional
 components, docs/playground, and generators remain future work.
+
+## Project and license
+
+Source and full documentation:
+[Combric/combric](https://github.com/Combric/combric). Licensed under the
+[MIT License](../../LICENSE).

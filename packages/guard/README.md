@@ -5,8 +5,11 @@ project. It does not run consumer code, rewrite files, install dependencies, use
 the network, or replace application-level accessibility testing. Combric
 packages remain usable without Guard.
 
-The package is not yet published to npm. Once available, install it as a
-development dependency with your package manager, then run:
+This repository is prepared for release, but does not claim that the package has
+been published to npm. After publication, install it with
+`npm install --save-dev @combric/guard`. Node.js 24 or newer is required. The
+public entry points are the package-root `checkProject` API and the
+`combric-guard` executable. Then run:
 
 ```sh
 pnpm exec combric-guard check
@@ -39,3 +42,9 @@ than bypassing it.
 Guard is consumer-side validation. Repository maintainers separately use
 `pnpm validate` and package-contract scripts. Automated accessibility tests are
 separate and cannot establish complete application-level WCAG conformance.
+
+## Project and license
+
+Source and full documentation:
+[Combric/combric](https://github.com/Combric/combric). Licensed under the
+[MIT License](../../LICENSE).

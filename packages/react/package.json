@@ -1,6 +1,6 @@
 {
   "name": "@combric/react",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Accessible React component primitives for Combric",
   "license": "MIT",
   "type": "module",
@@ -27,7 +27,7 @@
     "react-dom": ">=19.0.0 <20"
   },
   "dependencies": {
-    "@combric/layout": "workspace:*"
+    "@combric/layout": "workspace:^"
   },
   "repository": {
     "type": "git",

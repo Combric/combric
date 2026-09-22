@@ -8,15 +8,8 @@ const root = new URL("../", import.meta.url).pathname.replace(
   "$1",
 );
 const temporary = await mkdtemp(join(tmpdir(), "combric-packed-consumer-"));
-const packages = [
-  "core",
-  "tokens",
-  "layout",
-  "react",
-  "cli",
-  "guard",
-  "tailwind",
-];
+const packages = ["tokens", "layout", "react", "tailwind"];
+const version = "1.0.0";
 
 function run(command, arguments_, cwd) {
   const pnpmEntry = process.env.npm_execpath;
@@ -38,20 +31,52 @@ function run(command, arguments_, cwd) {
 }
 
 try {
-  const dependencies = { react: "19.3.0", "react-dom": "19.3.0" };
+  const dependencies = {
+    react: "19.3.0",
+    "react-dom": "19.3.0",
+    tailwindcss: "4.3.3",
+    typescript: "6.0.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+  };
   const overrides = [];
   for (const packageName of packages) {
     const packageDirectory = join(root, "packages", packageName);
     run("pnpm", ["pack", "--pack-destination", temporary], packageDirectory);
     dependencies[`@combric/${packageName}`] =
-      `file:./combric-${packageName}-0.0.0.tgz`;
+      `file:./combric-${packageName}-${version}.tgz`;
     overrides.push(
-      `  '@combric/${packageName}': file:./combric-${packageName}-0.0.0.tgz`,
+      `  '@combric/${packageName}': file:./combric-${packageName}-${version}.tgz`,
     );
   }
   await writeFile(
     join(temporary, "package.json"),
     JSON.stringify({ private: true, type: "module", dependencies }, null, 2),
+  );
+  await writeFile(
+    join(temporary, "consumer.tsx"),
+    `import { Button } from "@combric/react";\nimport { metriq } from "@combric/tokens";\nconst element = <Button>{metriq.name}</Button>;\nvoid element;\n`,
+    "utf8",
+  );
+  await writeFile(
+    join(temporary, "tsconfig.json"),
+    JSON.stringify(
+      {
+        compilerOptions: {
+          strict: true,
+          noEmit: true,
+          jsx: "react-jsx",
+          module: "NodeNext",
+          moduleResolution: "NodeNext",
+          target: "ES2022",
+          skipLibCheck: true,
+        },
+        include: ["consumer.tsx"],
+      },
+      null,
+      2,
+    ),
+    "utf8",
   );
   await writeFile(
     join(temporary, "pnpm-workspace.yaml"),
@@ -78,6 +103,7 @@ for (const specifier of ["@combric/react/css", "@combric/layout/css", "@combric/
   );
   run("pnpm", ["install", "--offline", "--ignore-scripts"], temporary);
   run("node", ["consumer.mjs"], temporary);
+  run("pnpm", ["exec", "tsc", "-p", "tsconfig.json"], temporary);
   const manifest = JSON.parse(
     await readFile(
       join(temporary, "node_modules", "@combric", "react", "package.json"),

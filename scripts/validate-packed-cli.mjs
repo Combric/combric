@@ -32,7 +32,10 @@ function pnpm(args, cwd) {
 
 try {
   pnpm(["pack", "--pack-destination", temporary], packageDirectory);
-  const tarball = "combric-cli-0.0.0.tgz";
+  const sourceManifest = JSON.parse(
+    await readFile(join(packageDirectory, "package.json"), "utf8"),
+  );
+  const tarball = `combric-cli-${sourceManifest.version}.tgz`;
   const manifest = {
     name: "packed-cli-consumer",
     private: true,

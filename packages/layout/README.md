@@ -4,6 +4,10 @@ Framework-independent CSS layout primitives for Combric. The package uses native
 Grid and Flexbox, imports the canonical `@combric/tokens/css` contract, and has
 no React or Tailwind dependency.
 
+Install with `npm install @combric/layout`. The public CSS entries are
+`@combric/layout` and `@combric/layout/css`; both resolve to the same
+stylesheet. It targets modern browsers and has no JavaScript runtime.
+
 ## Setup
 
 ```css
@@ -67,3 +71,9 @@ Layout classes do not change source order, add ARIA, intercept input, or manage
 focus. Consumers retain responsibility for choosing semantic HTML elements.
 Masonry, placement solvers, drag-and-drop, runtime measurement, CSS ordering
 APIs, and adaptive JavaScript are intentionally outside this package.
+
+## Project and license
+
+Source and full documentation:
+[Combric/combric](https://github.com/Combric/combric). Licensed under the
+[MIT License](../../LICENSE).

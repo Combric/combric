@@ -1,6 +1,6 @@
 {
   "name": "@combric/layout",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Framework-independent CSS layout primitives for Combric",
   "license": "MIT",
   "type": "module",
@@ -17,7 +17,7 @@
   },
   "style": "./dist/index.css",
   "dependencies": {
-    "@combric/tokens": "workspace:*"
+    "@combric/tokens": "workspace:^"
   },
   "engines": {
     "node": ">=24.0.0"

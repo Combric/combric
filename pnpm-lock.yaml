@@ -123,7 +123,7 @@ importers:
   packages/guard:
     dependencies:
       '@combric/tokens':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../tokens
     devDependencies:
       '@types/node':
@@ -133,13 +133,13 @@ importers:
   packages/layout:
     dependencies:
       '@combric/tokens':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../tokens
 
   packages/react:
     dependencies:
       '@combric/layout':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../layout
       react:
         specifier: '>=19.0.0 <20'
@@ -151,7 +151,7 @@ importers:
   packages/tailwind:
     dependencies:
       '@combric/tokens':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../tokens
       tailwindcss:
         specifier: '>=4.3.0 <5'
