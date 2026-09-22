@@ -52,6 +52,9 @@ for (const packageName of packageNames) {
   if (packageName === "cli") {
     requiredFiles.push("dist/bin.js", "README.md");
   }
+  if (packageName === "guard") {
+    requiredFiles.push("dist/bin.js", "dist/check.d.ts", "README.md");
+  }
 
   for (const requiredFile of requiredFiles) {
     if (!filePaths.has(requiredFile)) {
@@ -65,12 +68,14 @@ for (const packageName of packageNames) {
     throw new Error(`@combric/${packageName} tarball must not contain src/`);
   }
   if (
-    packageName === "cli" &&
+    (packageName === "cli" || packageName === "guard") &&
     [...filePaths].some(
       (path) => path.startsWith("test/") || path.startsWith("fixtures/"),
     )
   ) {
-    throw new Error("@combric/cli tarball must not contain tests or fixtures");
+    throw new Error(
+      `@combric/${packageName} tarball must not contain tests or fixtures`,
+    );
   }
 }
 

@@ -1,0 +1,76 @@
+---
+title: Combric Guard
+description: Read-only consumer-side package, CSS, and token integration checks.
+---
+
+Combric Guard is an **optional** static checker for an existing consumer
+project. The package is implemented in the COMBRIC-0.12 feature branch but is
+**not published** to the public npm registry. Until release, use a local
+workspace or packed tarball for evaluation. Combric components work without
+Guard.
+
+After a separately approved package publication, install `@combric/guard` as a
+development dependency with your package manager and run:
+
+```sh
+pnpm exec combric-guard check
+pnpm exec combric-guard check --json
+pnpm exec combric-guard check --project ./my-app
+```
+
+The bare `combric-guard` command is the same as `check`. `--help` and
+`--version` do not require a project.
+
+## Output and CI
+
+Human output lists each diagnostic as
+`[severity] RULE_ID: path:line:column: message`. JSON output is a single
+schema-version-1 object with `projectRoot: "."`, summary counts (`errors`,
+`warnings`, `checkedFiles`, `checkedContracts`), and a deterministic diagnostics
+array. File paths are project-relative. Each diagnostic has a stable `ruleId`,
+`severity` (`pass`, `warning`, or `error`), `message`, and, where applicable,
+`file`, `line`, and `column`.
+
+- Exit **0**: completed with no error-level violations; warnings are allowed.
+- Exit **1**: completed and found at least one error-level rule violation.
+- Exit **2**: could not complete, including unreadable/missing project, unsafe
+  configured path, malformed `package.json`, or a bounded-scan limit.
+
+For CI, run `pnpm exec combric-guard check --json` and preserve its exit code.
+Do not interpret a warning-only result as failure.
+
+## Checks
+
+Guard reads `package.json`, optional `combric.config.json` schema 1, and bounded
+local CSS files. Zero-config projects are checked using declared Combric
+packages. A configured project additionally checks its selected mode and CSS
+entry.
+
+| Rule ID                                                                  | Contract                                                                                      |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `GUARD_NO_COMBRIC`                                                       | Warning when no Combric package is declared.                                                  |
+| `GUARD_CONFIG_SCHEMA`, `GUARD_CONFIG_UNKNOWN`, `GUARD_MANAGER_CONFLICT`  | Static config shape, unknown fields, and manager consistency.                                 |
+| `GUARD_PACKAGE_MISSING`, `GUARD_REACT_VERSION`, `GUARD_TAILWIND_VERSION` | Required package declarations and supported React 19/Tailwind 4.3–4.x integration.            |
+| `GUARD_REACT_VERSION_UNKNOWN`, `GUARD_TAILWIND_VERSION_UNKNOWN`          | Warning when an opaque version declaration cannot be checked statically.                      |
+| `GUARD_CSS_IMPORT`, `GUARD_CSS_ENTRY`, `GUARD_TAILWIND_IMPORT`           | Public CSS entries, required imports, and Tailwind import order in one CSS entry.             |
+| `GUARD_TOKEN_UNKNOWN`                                                    | Unknown `var(--combric-...)` references, checked against names exported by `@combric/tokens`. |
+| `GUARD_SYMLINK_SKIPPED`                                                  | Warning that a consumer symlink was not followed.                                             |
+
+Pass diagnostics such as `GUARD_PACKAGES`, `GUARD_CONFIG`, `GUARD_CSS_READY`,
+and `GUARD_TOKENS` indicate checked contracts, not additional policy. Guard does
+**not** ban ordinary CSS literals such as `#ffffff` or `1rem`, lint JSX/TSX,
+inspect generated/dependency directories, or enforce a generic design style.
+
+## Security and scope
+
+Guard is read-only and offline. It does not import/evaluate consumer JavaScript
+or TypeScript, execute scripts, install packages, follow symlinks, modify files,
+or offer `--fix`. Its CSS scan skips common generated directories and has
+file-size, entry-count, and depth bounds. An unsafe or oversized input fails
+operationally rather than being executed.
+
+Guard is **consumer-side** validation. Repository maintainers separately run
+`pnpm validate` and package-boundary/packed-artifact checks. Guard is also not
+an accessibility audit. The [accessibility guide](/accessibility/) explains the
+automated component regression matrix and the remaining application-level
+responsibilities.

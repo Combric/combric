@@ -1,2 +1,7 @@
-// Guard rules belong to COMBRIC-0.9.
-export {};
+export { checkProject, GuardOperationalError } from "./check.js";
+export type {
+  GuardDiagnostic,
+  GuardResult,
+  GuardSeverity,
+  GuardSummary,
+} from "./check.js";

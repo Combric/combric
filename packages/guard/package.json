@@ -1,13 +1,17 @@
 {
   "name": "@combric/guard",
   "version": "0.0.0",
-  "description": "Design-system enforcement tooling boundary for Combric",
+  "description": "Read-only consumer-side integration checks for Combric",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
+  "bin": {
+    "combric-guard": "./dist/bin.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -16,6 +20,12 @@
   },
   "engines": {
     "node": ">=24.0.0"
+  },
+  "dependencies": {
+    "@combric/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.6"
   },
   "repository": {
     "type": "git",

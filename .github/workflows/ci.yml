@@ -109,5 +109,5 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Verify packed CLI on Windows
-        run: pnpm test:cli:packed
+      - name: Verify packed tooling on Windows
+        run: pnpm test:cli:packed && pnpm test:guard:packed

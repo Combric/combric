@@ -147,7 +147,9 @@ for (const packageName of packageNames) {
         ? tokenRuntimeExports
         : packageName === "react"
           ? reactRuntimeExports
-          : [],
+          : packageName === "guard"
+            ? ["GuardOperationalError", "checkProject"]
+            : [],
     );
   });
 }
