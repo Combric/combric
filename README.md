@@ -11,11 +11,11 @@ dependency of the core layout or React packages.
 ## Repository status
 
 This repository contains the foundations delivered from **COMBRIC-0.2** through
-**COMBRIC-0.8**: monorepo tooling, canonical design tokens, the optional
+**COMBRIC-0.9**: monorepo tooling, canonical design tokens, the optional
 Tailwind adapter, React component primitives, the framework-independent Grid &
-Layout System, the native-first Core Component Library, and accessible advanced
-overlay components. Recipes, Guard rules, and benchmark results intentionally
-belong to later milestones.
+Layout System, the native-first component catalogue, accessible overlays, forms,
+feedback, disclosure, and semantic data display. Recipes, Guard rules, and
+benchmark results intentionally belong to later milestones.
 
 ## Requirements
 

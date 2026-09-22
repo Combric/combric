@@ -44,6 +44,14 @@ test("React CSS consumes canonical variables and preserves metriq geometry", () 
   assert.match(css, /\.combric-popover__content/);
   assert.match(css, /\.combric-tooltip__content/);
   assert.match(css, /\.combric-toast-viewport/);
+  assert.match(css, /\.combric-field/);
+  assert.match(css, /\.combric-slider::-webkit-slider-thumb/);
+  assert.match(css, /\.combric-slider::-moz-range-thumb/);
+  assert.match(css, /\.combric-toggle-group/);
+  assert.match(css, /\.combric-progress/);
+  assert.match(css, /\.combric-collapsible/);
+  assert.match(css, /\.combric-table-container/);
+  assert.match(css, /var\(--combric-motion-duration-fast\)/);
   assert.match(css, /var\(--combric-z-index-modal\)/);
   assert.match(css, /var\(--combric-color-backdrop\)/);
   assert.doesNotMatch(css, /#[\da-f]{3,8}\b/i);
@@ -76,6 +84,18 @@ test("real React consumer renders all primitives through public exports", () => 
   assert.match(markup, /class="combric-dropdown-menu__trigger"/);
   assert.match(markup, /class="combric-popover__trigger"/);
   assert.match(markup, /class="combric-tooltip__trigger"/);
+  assert.match(markup, /class="combric-field"/);
+  assert.match(markup, /type="range"/);
+  assert.match(markup, /class="combric-toggle"/);
+  assert.match(markup, /class="combric-toggle-group"/);
+  assert.match(markup, /class="combric-alert"/);
+  assert.match(markup, /class="combric-progress"/);
+  assert.match(markup, /class="combric-spinner"/);
+  assert.match(markup, /class="combric-skeleton"/);
+  assert.match(markup, /class="combric-empty-state"/);
+  assert.match(markup, /class="combric-collapsible"/);
+  assert.match(markup, /class="combric-table"/);
+  assert.match(markup, /class="combric-description-list"/);
   assert.doesNotMatch(markup, /tailwind/i);
 });
 
