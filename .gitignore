@@ -2,6 +2,9 @@ node_modules/
 dist/
 coverage/
 .cache/
+.astro/
+test-results/
+playwright-report/
 *.tsbuildinfo
 .DS_Store
 .env

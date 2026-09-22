@@ -1,0 +1,36 @@
+---
+title: Installation
+description: Intended package installation paths and current pre-release status.
+---
+
+> The packages below are unreleased. Do not interpret these commands as a claim
+> that the packages currently exist on the public npm registry.
+
+## React components
+
+```sh
+npm install @combric/react react react-dom
+```
+
+React and React DOM `>=19.0.0 <20` are peer dependencies.
+
+## Tokens only
+
+```sh
+npm install @combric/tokens
+```
+
+## Framework-independent layout
+
+```sh
+npm install @combric/layout
+```
+
+## Optional Tailwind adapter
+
+```sh
+npm install @combric/tailwind tailwindcss
+```
+
+Tailwind CSS must satisfy `>=4.3.0 <5`. Combric does not require the CLI,
+Tailwind, or source-copy installation.

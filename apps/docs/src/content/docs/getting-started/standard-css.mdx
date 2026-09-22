@@ -1,0 +1,20 @@
+---
+title: Standard CSS
+description: Use Combric tokens and layout without Tailwind.
+---
+
+Standard CSS is a first-class Combric path.
+
+```css
+@import "@combric/tokens/css";
+
+.panel {
+  color: var(--combric-color-text);
+  background: var(--combric-color-surface);
+  padding: var(--combric-space-4);
+  border-radius: var(--combric-radius);
+}
+```
+
+For layout classes, import `@combric/layout/css`. For React components, a single
+`@combric/react/css` import includes layout and tokens.

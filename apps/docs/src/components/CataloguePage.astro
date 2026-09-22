@@ -1,0 +1,48 @@
+---
+import { catalogue, sourceUrl } from "../data/catalogue";
+import { examples } from "../examples/catalogue-examples";
+import { ExampleRenderer } from "../examples/ExampleRenderer";
+import { CopyButton } from "./CopyButton";
+
+interface Props { slug: string }
+const { slug } = Astro.props;
+const item = catalogue.find((candidate) => candidate.slug === slug);
+if (!item) throw new Error(`Unknown catalogue slug: ${slug}`);
+const example = examples[slug];
+if (!example) throw new Error(`Missing example for catalogue slug: ${slug}`);
+---
+
+<p class="combric-docs-status"><strong>Unreleased:</strong> this API is implemented and package-verified in the repository, but the package is not yet available from the public npm registry.</p>
+
+<p>{item.summary}</p>
+
+<h2>Package</h2>
+
+<p><code>{item.package}</code> with <code>@import "@combric/react/css";</code>. The standard CSS path does not require Tailwind.</p>
+
+<h2>Example</h2>
+
+<div class="combric-docs-example"><ExampleRenderer slug={slug} client:visible /></div>
+
+<CopyButton text={example.source} client:load />
+<pre class="combric-docs-source"><code>{example.source}</code></pre>
+
+<h2>Public API</h2>
+
+<p>Public exports:</p>
+<ul>{item.publicExports.map((name) => <li><code>{name}</code></li>)}</ul>
+<ul>{item.api.map((contract) => <li>{contract}</li>)}</ul>
+
+{item.aliases && <><h2>Aliases</h2><ul>{Object.entries(item.aliases).map(([alias, canonical]) => <li><code>{alias}</code> is an exact naming alias of <code>{canonical}</code>.</li>)}</ul></>}
+
+<h2>Accessibility</h2>
+
+<p>{item.accessibility}</p>
+
+{item.keyboard && <><h2>Keyboard</h2><p>{item.keyboard}</p></>}
+
+<h2>CSS and customization</h2>
+
+<p>Combric classes and canonical <code>--combric-*</code> variables provide the default Metriq presentation. Consumer <code>className</code> extends the required class; it does not replace the component contract.</p>
+
+<p><a href={sourceUrl(item.source)}>View source on GitHub</a></p>

@@ -1,0 +1,34 @@
+---
+title: Accessibility
+description: Framework accessibility contracts and consumer responsibilities.
+---
+
+Combric starts from native elements and adds behavior only where the platform
+does not supply the required composite pattern.
+
+## Framework contracts
+
+- Native inputs, buttons, links, tables, progress, fieldsets, labels, and select
+  controls retain platform semantics.
+- Focus-visible styling uses the canonical focus token.
+- Controlled values remain authoritative; uncontrolled variants own only their
+  initial local state.
+- Field descriptions and mounted messages compose `aria-describedby` without
+  dangling IDs.
+- Modal overlays isolate background content, cycle focus, close on Escape, and
+  restore trigger focus.
+- Menus, tabs, toggle groups, and disclosure controls document their keyboard
+  behavior on their component pages.
+- Live-region behavior is explicit rather than automatically attached to all
+  feedback.
+- Spinner and Skeleton animation stops when reduced motion is requested.
+
+## Consumer responsibilities
+
+Consumers remain responsible for meaningful names, labels, heading order,
+validation logic, announcement timing, link destinations, table content, color
+combinations, and application-level focus after navigation.
+
+Automated DOM assertions, Playwright behavior, and axe scans catch only part of
+the accessibility surface. They do not establish WCAG certification or
+conformance.

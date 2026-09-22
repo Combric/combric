@@ -39,3 +39,46 @@ jobs:
 
       - name: Run quality gates
         run: pnpm validate
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build framework packages
+        run: pnpm build
+
+      - name: Validate docs contracts
+        run: pnpm docs:check && pnpm docs:validate
+
+      - name: Build static docs
+        run: pnpm docs:build && pnpm docs:validate
+
+      - name: Validate packed consumer
+        run: pnpm test:consumer:packed
+
+      - name: Install Chromium
+        run:
+          pnpm --filter @combric/docs exec playwright install --with-deps
+          chromium
+
+      - name: Run docs browser and accessibility tests
+        run: pnpm docs:test
