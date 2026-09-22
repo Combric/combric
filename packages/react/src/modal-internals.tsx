@@ -4,8 +4,10 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useId,
   useRef,
+  useState,
   type ButtonHTMLAttributes,
   type HTMLAttributes,
   type PointerEvent,
@@ -29,9 +31,13 @@ import {
 
 interface ModalContextValue {
   contentId: string;
+  descriptionPresent: boolean;
   descriptionId: string;
   open: boolean;
+  setDescriptionPresent: (present: boolean) => void;
   setOpen: (open: boolean) => void;
+  setTitlePresent: (present: boolean) => void;
+  titlePresent: boolean;
   titleId: string;
   triggerRef: React.MutableRefObject<HTMLButtonElement | null>;
 }
@@ -67,6 +73,8 @@ export function ModalRootBase({
     open: openProp,
   });
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const [descriptionPresent, setDescriptionPresent] = useState(false);
+  const [titlePresent, setTitlePresent] = useState(false);
   const baseId = `${componentName.toLowerCase()}-${useId().replaceAll(":", "")}`;
 
   useFocusRestoration(open, triggerRef);
@@ -75,9 +83,13 @@ export function ModalRootBase({
     <ModalContext.Provider
       value={{
         contentId: `${baseId}-content`,
+        descriptionPresent,
         descriptionId: `${baseId}-description`,
         open,
+        setDescriptionPresent,
         setOpen,
+        setTitlePresent,
+        titlePresent,
         titleId: `${baseId}-title`,
         triggerRef,
       }}
@@ -187,11 +199,15 @@ export function ModalSurfaceBase({
         ref={mergeRefs(contentRef, ref)}
         id={context.contentId}
         role="dialog"
-        aria-describedby={ariaDescribedBy ?? context.descriptionId}
+        aria-describedby={
+          ariaDescribedBy ??
+          (context.descriptionPresent ? context.descriptionId : undefined)
+        }
         aria-label={ariaLabel}
         aria-labelledby={
           ariaLabel === undefined
-            ? (ariaLabelledBy ?? context.titleId)
+            ? (ariaLabelledBy ??
+              (context.titlePresent ? context.titleId : undefined))
             : ariaLabelledBy
         }
         aria-modal="true"
@@ -221,6 +237,10 @@ export function ModalTitleBase({
   ...props
 }: ModalTitleBaseProps): ReactElement {
   const context = useModalContext(componentName);
+  useEffect(() => {
+    context.setTitlePresent(true);
+    return () => context.setTitlePresent(false);
+  }, [context.setTitlePresent]);
   return (
     <h2
       {...props}
@@ -248,6 +268,10 @@ export function ModalDescriptionBase({
   ...props
 }: ModalDescriptionBaseProps): ReactElement {
   const context = useModalContext(componentName);
+  useEffect(() => {
+    context.setDescriptionPresent(true);
+    return () => context.setDescriptionPresent(false);
+  }, [context.setDescriptionPresent]);
   return (
     <p
       {...props}

@@ -244,6 +244,30 @@ test("controlled Dialog remains authoritative and Drawer reuses modal semantics"
   });
 });
 
+test("Dialog only emits automatic label relationships for mounted descriptors", async () => {
+  await withDom(async ({ root, window }) => {
+    await act(async () => {
+      root.render(
+        createElement(
+          Dialog,
+          { defaultOpen: true },
+          createElement(DialogTrigger, null, "Open"),
+          createElement(
+            DialogContent,
+            { "aria-label": "Explicit dialog name" },
+            createElement(DialogClose, null, "Close"),
+          ),
+        ),
+      );
+    });
+    await settle();
+    const dialog = window.document.querySelector('[role="dialog"]');
+    assert.equal(dialog.getAttribute("aria-label"), "Explicit dialog name");
+    assert.equal(dialog.hasAttribute("aria-labelledby"), false);
+    assert.equal(dialog.hasAttribute("aria-describedby"), false);
+  });
+});
+
 test("Dropdown Menu supports keyboard focus, disabled items, activation, and restoration", async () => {
   await withDom(async ({ container, root, window }) => {
     const selections = [];
