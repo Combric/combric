@@ -1,6 +1,6 @@
 {
   "name": "@combric/tailwind",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Official Tailwind CSS adapter for Combric design tokens",
   "license": "MIT",
   "type": "module",
@@ -16,7 +16,7 @@
   },
   "style": "./dist/index.css",
   "dependencies": {
-    "@combric/tokens": "workspace:*"
+    "@combric/tokens": "workspace:^"
   },
   "peerDependencies": {
     "tailwindcss": ">=4.3.0 <5"

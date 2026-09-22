@@ -15,8 +15,14 @@ provide a legacy JavaScript preset or plugin, and it does not bundle Tailwind.
 
 ## Setup
 
-Install or link `@combric/tailwind` and Tailwind CSS in the consumer workspace,
-then use this order in the application's primary stylesheet:
+Install `@combric/tailwind` and Tailwind CSS in the consumer workspace:
+
+```sh
+npm install @combric/tailwind tailwindcss
+```
+
+The sole public entry point is the CSS import `@combric/tailwind`. Use this
+order in the application's primary stylesheet:
 
 ```css
 @import "tailwindcss";
@@ -69,3 +75,9 @@ low-level layout surface; Combric does not rename or duplicate them.
 
 Components, alternate themes, runtime theme switching, and framework-specific UI
 are intentionally outside this package.
+
+## Project and license
+
+Source and full documentation:
+[Combric/combric](https://github.com/Combric/combric). Licensed under the
+[MIT License](../../LICENSE).

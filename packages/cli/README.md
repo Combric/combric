@@ -2,8 +2,12 @@
 
 The optional `combric` command configures an **existing** package project and
 reports its detected state. Applications can install and use Combric packages
-without it. The package is implemented in this repository but remains unreleased
-on public npm.
+without it. This repository is prepared for release, but does not claim that the
+package has been published to npm.
+
+After publication, install it with `npm install --save-dev @combric/cli`.
+Node.js 24 or newer is required. The public entry points are the `combric`
+executable and the package-root TypeScript/ESM declarations.
 
 ## Commands
 
@@ -51,13 +55,13 @@ persistent changes. `--dry-run --json` emits the plan for automation. An init
 without `--yes` or `--dry-run` stops without prompting. Repeating a completed
 init makes no changes.
 
-Combric packages are not yet published. If a selected package is missing from an
-external project, package-manager installation will fail until publication or a
-local tarball/workspace is supplied. The CLI reports that failure and does not
-write Combric CSS or config afterward. Local project fixtures and packed
-tarballs verify this flow without public npm availability. On Windows, run setup
-through the chosen package manager (for example, `pnpm exec combric`) so its
-JavaScript entry is available for safe process spawning.
+Before publication, if a selected package is missing from an external project,
+package-manager installation will fail until publication or a local
+tarball/workspace is supplied. The CLI reports that failure and does not write
+Combric CSS or config afterward. Local project fixtures and packed tarballs
+verify this flow without public npm availability. On Windows, run setup through
+the chosen package manager (for example, `pnpm exec combric`) so its JavaScript
+entry is available for safe process spawning.
 
 ## Project config
 
@@ -86,3 +90,9 @@ Existing conflicting Combric imports are not overwritten.
 
 The CLI uses no telemetry, update check, component copying, or runtime
 dependency in framework packages.
+
+## Project and license
+
+Source and full documentation:
+[Combric/combric](https://github.com/Combric/combric). Licensed under the
+[MIT License](../../LICENSE).

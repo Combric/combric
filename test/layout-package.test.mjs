@@ -13,7 +13,7 @@ const css = await readFile(new URL("dist/index.css", packageUrl), "utf8");
 test("layout package is a public framework-independent CSS boundary", () => {
   assert.equal(manifest.exports["."], "./dist/index.css");
   assert.equal(manifest.exports["./css"], "./dist/index.css");
-  assert.equal(manifest.dependencies["@combric/tokens"], "workspace:*");
+  assert.equal(manifest.dependencies["@combric/tokens"], "workspace:^");
   const dependencies = [
     ...Object.keys(manifest.dependencies ?? {}),
     ...Object.keys(manifest.peerDependencies ?? {}),

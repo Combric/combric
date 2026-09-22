@@ -31,7 +31,10 @@ try {
     );
     if (packed.status !== 0)
       throw new Error(`Pack failed for ${name}: ${packed.stderr}`);
-    const filename = `combric-${name}-0.0.0.tgz`;
+    const manifest = JSON.parse(
+      await readFile(join(cwd, "package.json"), "utf8"),
+    );
+    const filename = `combric-${name}-${manifest.version}.tgz`;
     const bytes = (await stat(join(temporary, filename))).size;
     const dry = spawnSync(
       process.execPath,
@@ -56,7 +59,18 @@ try {
     });
   }
   process.stdout.write(
-    `${JSON.stringify({ schemaVersion: 1, report }, null, 2)}\n`,
+    `${JSON.stringify(
+      {
+        schemaVersion: 1,
+        scope: "repository-package-baseline",
+        publicReleasePackages: names
+          .filter((name) => name !== "core")
+          .map((name) => `@combric/${name}`),
+        report,
+      },
+      null,
+      2,
+    )}\n`,
   );
 } finally {
   await rm(temporary, { recursive: true, force: true });

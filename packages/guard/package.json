@@ -1,6 +1,6 @@
 {
   "name": "@combric/guard",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Read-only consumer-side integration checks for Combric",
   "license": "MIT",
   "type": "module",
@@ -22,7 +22,7 @@
     "node": ">=24.0.0"
   },
   "dependencies": {
-    "@combric/tokens": "workspace:*"
+    "@combric/tokens": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "24.13.6"

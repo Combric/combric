@@ -15,7 +15,7 @@ const css = await readFile(new URL("dist/index.css", packageUrl), "utf8");
 test("React package declares its peer, layout, and Tailwind-independent contract", () => {
   assert.equal(manifest.peerDependencies.react, ">=19.0.0 <20");
   assert.equal(manifest.peerDependencies["react-dom"], ">=19.0.0 <20");
-  assert.equal(manifest.dependencies["@combric/layout"], "workspace:*");
+  assert.equal(manifest.dependencies["@combric/layout"], "workspace:^");
   for (const field of [
     "dependencies",
     "peerDependencies",

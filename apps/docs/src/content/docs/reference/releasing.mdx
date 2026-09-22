@@ -1,0 +1,43 @@
+---
+title: Release Safety
+description: Manual prerequisites and publication gates for Combric 1.0.
+---
+
+Repository validation can make Combric release-candidate ready; it cannot prove
+or grant external npm authority. Publication requires a separate explicit
+Product Owner approval after the release-preparation pull request is merged.
+
+## Manual prerequisites
+
+Before dispatching `.github/workflows/release.yml`, verify all of the following:
+
+- the publisher controls the npm `@combric` scope and all six package names;
+- the npm organization/account grants the required publication permissions;
+- each package has an npm Trusted Publisher for GitHub organization `Combric`,
+  repository `combric`, and workflow filename `release.yml`;
+- the optional Trusted Publisher environment is exactly `npm-release`, matching
+  the protected GitHub environment used by the publish job;
+- direct `npm publish` is allowed for those Trusted Publisher connections;
+- the repository is public so npm provenance can be generated for public
+  packages;
+- the approved release commit is the exact current `main` commit;
+- `@combric/*@1.0.0` is still absent from npm and `v1.0.0` is still absent from
+  Git and GitHub Releases.
+
+Do not configure or store a long-lived npm write token. The workflow uses
+GitHub-hosted runners, OIDC (`id-token: write` only in the publish job), public
+access, and npm provenance.
+
+## Workflow behavior
+
+The manual workflow requires the exact 40-character release commit and the
+literal confirmation `PUBLISH APPROVED`. Its preparation job runs the complete
+quality, documentation, browser/accessibility, artifact, packed-consumer, and
+npm-availability checks before producing hashed tarballs. Publication consumes
+those exact tarballs in dependency order and stops on the first failure without
+attempting rollback or unpublish. The repository tag and GitHub Release are
+created only after every npm package can be verified at `1.0.0`.
+
+Because npm multi-package publication is not transactional, workflow logs are
+the authoritative record of any packages published before an unexpected
+mid-sequence failure.
