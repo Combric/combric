@@ -434,6 +434,209 @@ status semantics; `assertive` uses alert semantics. Timers are cleaned up on
 close and unmount. Toasts never move focus. There is intentionally no global
 store, imperative service, swipe system, or application notification backend.
 
+## Field composition
+
+```tsx
+import {
+  Field,
+  FieldDescription,
+  FieldMessage,
+  Input,
+  Label,
+} from "@combric/react";
+
+<Field invalid>
+  <Label>Email</Label>
+  <Input name="email" />
+  <FieldDescription>Use your work address.</FieldDescription>
+  <FieldMessage>Enter a valid email address.</FieldMessage>
+</Field>;
+```
+
+`Field` supplies stable control, label, description, and message IDs to its
+Combric descendants. `invalid` is consumer-owned validation state: it gives the
+control `aria-invalid` and associates a mounted message through
+`aria-describedby`; Combric does not validate or manage values. Mounted
+description and message relationships are composed with consumer-provided
+`aria-describedby` tokens. Unmounted content leaves no dangling reference.
+`FieldMessage` is ordinary text by default, not an automatic live region.
+
+`Fieldset` and `FieldLegend` style native `<fieldset>` and `<legend>` elements,
+including native disabled propagation. `InputGroup` is a visual composition
+container for an existing control plus prefixes, suffixes, or independently
+focusable actions; decorative content should use `aria-hidden="true"` and the
+group does not replace the control's accessible label.
+
+## Slider
+
+```tsx
+import { Field, Label, Slider } from "@combric/react";
+
+<Field>
+  <Label>Volume</Label>
+  <Slider name="volume" min={0} max={100} defaultValue={50} />
+</Field>;
+```
+
+Slider is a native horizontal `<input type="range">`. It preserves browser form
+participation, validation, keyboard behavior, controlled and uncontrolled value
+props, and disabled behavior. The stylesheet covers the WebKit and Gecko range
+track/thumb pseudo-elements available to standard CSS, but exact native
+rendering remains browser-dependent. Multi-thumb ranges, marks, vertical
+orientation, and tooltips are outside this contract.
+
+## Toggle and ToggleGroup
+
+```tsx
+import { Toggle, ToggleGroup, ToggleGroupItem } from "@combric/react";
+
+<Toggle defaultPressed onPressedChange={(pressed) => savePin(pressed)}>
+  Pin
+</Toggle>
+
+<ToggleGroup type="single" defaultValue="list" aria-label="View">
+  <ToggleGroupItem value="list">List</ToggleGroupItem>
+  <ToggleGroupItem value="grid">Grid</ToggleGroupItem>
+</ToggleGroup>;
+```
+
+Toggle is a native button with `aria-pressed`; it defaults to `type="button"`
+and supports `pressed`, `defaultPressed`, and `onPressedChange`. It represents a
+pressed tool or view state. Checkbox represents a form choice and Switch
+represents an immediate on/off setting, so neither is interchangeable with
+Toggle.
+
+ToggleGroup supports `type="single"` with string state and `type="multiple"`
+with string-array state. Both modes support controlled `value`, uncontrolled
+`defaultValue`, `onValueChange`, disabled groups/items, and horizontal or
+vertical orientation. Arrow keys move focus according to orientation; Home and
+End move to boundaries; disabled items are skipped. Focus movement does not
+select an item. ToggleGroup is a pressable tool-state group, not a replacement
+for RadioGroup when a mutually exclusive native form value is required.
+
+## Feedback and async state
+
+```tsx
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Progress,
+  Skeleton,
+  Spinner,
+} from "@combric/react";
+
+<Alert tone="error">
+  <AlertTitle>Import failed</AlertTitle>
+  <AlertDescription>Check the source file and try again.</AlertDescription>
+</Alert>
+<Progress aria-label="Import progress" value={60} max={100} />
+<Spinner aria-label="Refreshing projects" />
+<Skeleton aria-hidden="true" />;
+```
+
+Alert is static section content by default. `live="polite"` creates status
+semantics and `live="assertive"` creates alert semantics only when a consumer
+explicitly needs announcement. The deliberately small visual tone set is
+`neutral | error`, using canonical colors.
+
+Progress is native `<progress>`: provide `value` for determinate completion and
+omit it for indeterminate progress. Spinner is a compact indeterminate busy
+indicator, decorative by default; an explicit `aria-label` gives it status
+semantics without injecting untranslated text. Progress communicates measurable
+completion, while Spinner communicates activity without a completion value.
+Skeleton is a visual placeholder, hidden from assistive technology by default,
+and never claims progress semantics. Spinner and Skeleton animations stop under
+`prefers-reduced-motion: reduce`.
+
+## EmptyState
+
+```tsx
+import {
+  Button,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateDescription,
+  EmptyStateMedia,
+  EmptyStateTitle,
+} from "@combric/react";
+
+<EmptyState>
+  <EmptyStateMedia aria-hidden="true">+</EmptyStateMedia>
+  <EmptyStateTitle level={3}>No projects</EmptyStateTitle>
+  <EmptyStateDescription>Create a project to begin.</EmptyStateDescription>
+  <EmptyStateActions>
+    <Button>Create project</Button>
+  </EmptyStateActions>
+</EmptyState>;
+```
+
+EmptyState structures consumer-owned media, title, description, and actions. The
+title level is selectable from `2` through `6` so consumers preserve their
+document outline. It owns no fetching, retry, routing, or application state.
+
+## Collapsible
+
+```tsx
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@combric/react";
+
+<Collapsible defaultOpen>
+  <CollapsibleTrigger>Technical details</CollapsibleTrigger>
+  <CollapsibleContent>Package-first component catalogue.</CollapsibleContent>
+</Collapsible>;
+```
+
+Collapsible supports controlled `open`, uncontrolled `defaultOpen`,
+`onOpenChange`, and disabled state. Its native button trigger supplies stable
+`aria-expanded` and `aria-controls` relationships to the labelled content
+region. Consumer click handlers run first and may prevent the state change.
+
+## Table and DescriptionList
+
+```tsx
+import {
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@combric/react";
+
+<TableContainer aria-label="Project inventory">
+  <Table>
+    <TableCaption>Current projects</TableCaption>
+    <TableHeader><TableRow><TableHead>Project</TableHead></TableRow></TableHeader>
+    <TableBody><TableRow><TableCell>Catalogue</TableCell></TableRow></TableBody>
+  </Table>
+</TableContainer>
+
+<DescriptionList>
+  <DescriptionTerm>Runtime</DescriptionTerm>
+  <DescriptionDetails>React 19</DescriptionDetails>
+</DescriptionList>;
+```
+
+The Table family renders native table elements; `TableHead` defaults to
+`scope="col"`. `TableContainer` provides a keyboard-focusable horizontal
+overflow boundary while preserving the table, so give the container an
+accessible label that identifies the scrollable content. Table is not a Data
+Grid: it owns no sorting, filtering, selection, pagination, editing, resizing,
+fetching, or virtualization. DescriptionList, DescriptionTerm, and
+DescriptionDetails are direct `<dl>`, `<dt>`, and `<dd>` wrappers.
+
+Native Select remains Combric's 1.0 selection contract. The catalogue does not
+include a custom listbox Select, Combobox, or selection popup framework.
+
 ## Overlay architecture and browser contract
 
 Portal hosts are created only in effects, so importing or server-rendering the

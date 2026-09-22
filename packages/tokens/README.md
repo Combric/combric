@@ -69,3 +69,9 @@ z-index values through component CSS. The order is modal, anchored overlay, then
 toast, so a menu, popover, or tooltip opened from modal content remains visible
 while notifications stay highest. The contract does not define shadows,
 elevation effects, or a generalized layering engine.
+
+COMBRIC-0.9 adds `motion.duration.fast` and `motion.duration.slow`. They provide
+the two canonical durations used by the Spinner and Skeleton CSS animations.
+They do not introduce an animation framework; consumers that prefer reduced
+motion receive static component styling through the React stylesheet's media
+query.

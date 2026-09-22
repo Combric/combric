@@ -16,16 +16,29 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import {
+  useFieldControlProps,
+  useOptionalFieldContext,
+} from "./field-internals.js";
 
 export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   ref?: Ref<HTMLLabelElement>;
 }
 
-export function Label({ className, ref, ...props }: LabelProps): ReactElement {
+export function Label({
+  className,
+  htmlFor,
+  id,
+  ref,
+  ...props
+}: LabelProps): ReactElement {
+  const field = useOptionalFieldContext();
   return (
     <label
       {...props}
       ref={ref}
+      id={id ?? field?.labelId}
+      htmlFor={htmlFor ?? field?.controlId}
       className={classNames("combric-label", className)}
     />
   );
@@ -35,10 +48,23 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   ref?: Ref<HTMLInputElement>;
 }
 
-export function Input({ className, ref, ...props }: InputProps): ReactElement {
+export function Input({
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
+  className,
+  id,
+  ref,
+  ...props
+}: InputProps): ReactElement {
+  const fieldProps = useFieldControlProps({
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+    id,
+  });
   return (
     <input
       {...props}
+      {...fieldProps}
       ref={ref}
       className={classNames("combric-input", className)}
     />
@@ -50,13 +76,22 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
 }
 
 export function Textarea({
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
   className,
+  id,
   ref,
   ...props
 }: TextareaProps): ReactElement {
+  const fieldProps = useFieldControlProps({
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+    id,
+  });
   return (
     <textarea
       {...props}
+      {...fieldProps}
       ref={ref}
       className={classNames("combric-textarea", className)}
     />
@@ -71,13 +106,22 @@ export interface CheckboxProps extends Omit<
 }
 
 export function Checkbox({
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
   className,
+  id,
   ref,
   ...props
 }: CheckboxProps): ReactElement {
+  const fieldProps = useFieldControlProps({
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+    id,
+  });
   return (
     <input
       {...props}
+      {...fieldProps}
       ref={ref}
       type="checkbox"
       className={classNames("combric-checkbox", className)}
@@ -212,13 +256,22 @@ export interface SwitchProps extends Omit<
 }
 
 export function Switch({
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
   className,
+  id,
   ref,
   ...props
 }: SwitchProps): ReactElement {
+  const fieldProps = useFieldControlProps({
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+    id,
+  });
   return (
     <input
       {...props}
+      {...fieldProps}
       ref={ref}
       type="checkbox"
       role="switch"
@@ -232,15 +285,55 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export function Select({
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
   className,
+  id,
   ref,
   ...props
 }: SelectProps): ReactElement {
+  const fieldProps = useFieldControlProps({
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+    id,
+  });
   return (
     <select
       {...props}
+      {...fieldProps}
       ref={ref}
       className={classNames("combric-select", className)}
+    />
+  );
+}
+
+export interface SliderProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> {
+  ref?: Ref<HTMLInputElement>;
+}
+
+export function Slider({
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
+  className,
+  id,
+  ref,
+  ...props
+}: SliderProps): ReactElement {
+  const fieldProps = useFieldControlProps({
+    "aria-describedby": ariaDescribedBy,
+    "aria-invalid": ariaInvalid,
+    id,
+  });
+  return (
+    <input
+      {...props}
+      {...fieldProps}
+      ref={ref}
+      type="range"
+      className={classNames("combric-slider", className)}
     />
   );
 }
