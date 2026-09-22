@@ -1,0 +1,136 @@
+@import "@combric/react/css";
+
+:root {
+  --sl-color-accent-low: #deded8;
+  --sl-color-accent: #1d4ed8;
+  --sl-color-accent-high: #181816;
+  --sl-font: var(--combric-font-family-body);
+  --sl-font-mono: var(--combric-font-family-code);
+}
+
+html {
+  color-scheme: light;
+}
+
+starlight-theme-select {
+  display: none;
+}
+
+.combric-docs-status {
+  border-inline-start: var(--combric-border-width-strong) solid
+    var(--combric-color-invalid);
+  padding: var(--combric-space-3) var(--combric-space-4);
+  background: var(--combric-color-surface);
+}
+
+.combric-docs-example,
+.combric-docs-token-table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.combric-docs-example {
+  border: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+  padding: var(--combric-space-4);
+  background: var(--combric-color-canvas);
+  color: var(--combric-color-text);
+}
+
+.combric-docs-source {
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.combric-docs-token-table {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+}
+
+.combric-docs-token-table th,
+.combric-docs-token-table td {
+  border-bottom: var(--combric-border-width) solid var(--combric-color-border);
+  padding: var(--combric-space-2) var(--combric-space-3);
+  text-align: left;
+  vertical-align: top;
+}
+
+.combric-docs-swatch {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: var(--combric-border-width) solid var(--combric-color-border);
+  vertical-align: middle;
+}
+
+code {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 50rem) {
+  .combric-docs-example {
+    padding: var(--combric-space-3);
+  }
+}
+
+.combric-playground {
+  display: grid;
+  gap: var(--combric-space-6);
+  min-width: 0;
+}
+
+.combric-playground > * {
+  min-width: 0;
+}
+
+.combric-playground__controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--combric-space-3);
+  align-items: end;
+}
+
+.combric-playground__controls label {
+  display: grid;
+  gap: var(--combric-space-1);
+}
+
+.combric-playground__controls fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--combric-space-3);
+  min-width: 0;
+}
+
+.combric-playground__stage {
+  overflow: auto;
+  border: var(--combric-border-width) solid var(--combric-color-border);
+  padding: var(--combric-space-3);
+  background: var(--combric-color-surface);
+}
+
+.combric-playground__stage iframe {
+  display: block;
+  min-height: 22rem;
+  max-width: none;
+  border: var(--combric-border-width) solid var(--combric-color-border);
+  margin-inline: auto;
+  background: var(--combric-color-canvas);
+}
+
+.combric-playground pre {
+  overflow: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 50rem) {
+  .combric-playground__controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .combric-playground__controls input,
+  .combric-playground__controls select {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# Sitemap is emitted when COMBRIC_DOCS_SITE_URL is configured.

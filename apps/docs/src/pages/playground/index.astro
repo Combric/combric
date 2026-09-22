@@ -1,0 +1,8 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { Playground } from "../../playground/Playground";
+---
+<StarlightPage frontmatter={{ title: "Playground", description: "Controlled real-component preview and code generator.", tableOfContents: false }}>
+  <p>Explore approved props and states from the real public component package. This Playground never evaluates user code, installs dependencies, edits tokens, or persists projects.</p>
+  <Playground client:load />
+</StarlightPage>

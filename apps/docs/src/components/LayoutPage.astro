@@ -1,0 +1,29 @@
+---
+import { layouts, sourceUrl } from "../data/catalogue";
+import { layoutExamples } from "../examples/layout-examples";
+import { LayoutExampleRenderer } from "../examples/LayoutExampleRenderer";
+import { CopyButton } from "./CopyButton";
+
+interface Props { slug: string }
+const { slug } = Astro.props;
+const item = layouts.find((candidate) => candidate.slug === slug);
+if (!item) throw new Error(`Unknown layout slug: ${slug}`);
+const example = layoutExamples[slug];
+if (!example) throw new Error(`Missing layout example: ${slug}`);
+---
+
+<p>{item.summary}</p>
+<p>The framework-independent CSS contract is available from <code>@combric/layout/css</code>; the React wrapper is exported by <code>@combric/react</code>.</p>
+
+<h2>Example</h2>
+<div class="combric-docs-example"><LayoutExampleRenderer slug={slug} client:visible /></div>
+<CopyButton text={example.source} client:load />
+<pre class="combric-docs-source"><code>{example.source}</code></pre>
+
+<h2>API</h2>
+<ul>{item.api.map((contract) => <li>{contract}</li>)}</ul>
+
+<h2>Accessibility</h2>
+<p>Layout changes presentation only. Choose semantic elements and preserve meaningful source order; Combric does not add ARIA, reorder content, or measure the viewport.</p>
+
+<p><a href={sourceUrl(item.source)}>View React wrapper source on GitHub</a></p>

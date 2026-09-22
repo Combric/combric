@@ -1,0 +1,30 @@
+---
+title: React
+description: Use Combric React 19 components with standard CSS.
+---
+
+Import the public stylesheet once:
+
+```css
+@import "@combric/react/css";
+```
+
+Then import only public component exports:
+
+```tsx
+import { Button, Card, CardContent, Stack } from "@combric/react";
+
+export function ProjectActions() {
+  return (
+    <Card>
+      <CardContent>
+        <Stack gap="3">
+          <Button>Save project</Button>
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+No Tailwind dependency, provider, or mandatory runtime theme is required.

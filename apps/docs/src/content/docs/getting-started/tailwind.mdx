@@ -1,0 +1,23 @@
+---
+title: Tailwind
+description: Optional Tailwind v4 semantic adapter setup.
+---
+
+Tailwind is an optional adapter, not Combric's default installation
+architecture.
+
+```css
+@import "tailwindcss";
+@import "@combric/tailwind";
+```
+
+The adapter maps Tailwind theme variables to canonical `--combric-*` semantic
+properties. It does not duplicate token values or create a second theme source.
+
+```html
+<article
+  class="border-combric border-combric-border bg-combric-surface p-combric-4 text-combric-foreground rounded-combric"
+>
+  Combric content
+</article>
+```

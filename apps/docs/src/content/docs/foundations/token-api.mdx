@@ -1,0 +1,27 @@
+---
+title: Token API
+description: Public structured token metadata and CSS contracts.
+---
+
+`@combric/tokens` publicly exports immutable metadata:
+
+```ts
+import {
+  metriq,
+  primitiveCssVariableNames,
+  primitiveTokens,
+  semanticCssVariableNames,
+  semanticTokenReferences,
+  semanticTokens,
+} from "@combric/tokens";
+```
+
+The generated CSS entry is:
+
+```css
+@import "@combric/tokens/css";
+```
+
+The TypeScript objects are canonical structured data. Generated CSS expresses
+the same relationship as namespaced custom properties. Consumers should use
+semantic roles for UI and reserve primitives for lower-level composition.

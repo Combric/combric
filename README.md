@@ -11,10 +11,11 @@ dependency of the core layout or React packages.
 ## Repository status
 
 This repository contains the foundations delivered from **COMBRIC-0.2** through
-**COMBRIC-0.9**: monorepo tooling, canonical design tokens, the optional
+**COMBRIC-0.10**: monorepo tooling, canonical design tokens, the optional
 Tailwind adapter, React component primitives, the framework-independent Grid &
 Layout System, the native-first component catalogue, accessible overlays, forms,
-feedback, disclosure, and semantic data display. Recipes, Guard rules, and
+feedback, disclosure, semantic data display, static documentation, Foundations
+browsers, and a controlled component Playground. Recipes, Guard rules, and
 benchmark results intentionally belong to later milestones.
 
 ## Requirements
@@ -33,6 +34,8 @@ pnpm validate
 
 Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 `pnpm typecheck`, `pnpm build`, `pnpm test`, and `pnpm validate:packages`.
+Documentation additionally uses `pnpm docs:check`, `pnpm docs:build`,
+`pnpm docs:validate`, `pnpm docs:test`, and `pnpm test:consumer:packed`.
 
 ## Workspace map
 
@@ -43,7 +46,10 @@ Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 - `packages/react` — React components and typed layout wrappers
 - `packages/cli` — command-line tooling boundary
 - `packages/guard` — design-system enforcement tooling boundary
-- `apps` — future documentation and playground applications
+- `apps/docs` — private static documentation, Foundations, catalogue, and
+  Playground application
+- `apps/playground` — compatibility pointer to the integrated `/playground/`
+  route
 - `benchmarks` — future reproducible benchmark/reference applications
 
 ## Architectural constraints

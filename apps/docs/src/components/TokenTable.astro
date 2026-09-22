@@ -1,0 +1,31 @@
+---
+import {
+  primitiveCssVariableNames,
+  primitiveTokens,
+  semanticCssVariableNames,
+  semanticTokenReferences,
+  semanticTokens,
+} from "@combric/tokens";
+
+interface Props {
+  prefix: string | readonly string[];
+  includeSemantic?: boolean;
+}
+
+const { prefix, includeSemantic = true } = Astro.props;
+const prefixes = typeof prefix === "string" ? [prefix] : prefix;
+const tableLabel = `Token table for ${prefixes.join(", ")}`;
+const matches = (name: string) => prefixes.some((candidate) => name.startsWith(candidate));
+const primitives = Object.entries(primitiveTokens).filter(([name]) => matches(name));
+const semantics = Object.entries(semanticTokens).filter(([name]) => matches(name));
+---
+
+<div class="combric-docs-token-table-wrap" tabindex="0" role="region" aria-label={tableLabel}>
+  <table class="combric-docs-token-table">
+    <thead><tr><th>Kind</th><th>Token</th><th>Value / reference</th><th>CSS variable</th></tr></thead>
+    <tbody>
+      {primitives.map(([name, value]) => <tr><td>Primitive</td><td><code>{name}</code></td><td><code>{value}</code></td><td><code>{primitiveCssVariableNames[name as keyof typeof primitiveCssVariableNames]}</code></td></tr>)}
+      {includeSemantic && semantics.map(([name, value]) => <tr><td>Semantic</td><td><code>{name}</code></td><td><code>{semanticTokenReferences[name as keyof typeof semanticTokenReferences]}</code> → <code>{value}</code></td><td><code>{semanticCssVariableNames[name as keyof typeof semanticCssVariableNames]}</code></td></tr>)}
+    </tbody>
+  </table>
+</div>

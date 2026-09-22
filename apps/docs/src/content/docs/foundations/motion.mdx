@@ -1,0 +1,12 @@
+---
+title: Motion
+description: Bounded durations and reduced-motion behavior.
+---
+
+import TokenTable from "../../../components/TokenTable.astro";
+
+Combric defines only fast and slow durations for current feedback animations.
+This is not an animation framework. Spinner and Skeleton animations stop when
+`prefers-reduced-motion: reduce` is active.
+
+<TokenTable prefix="motion." />

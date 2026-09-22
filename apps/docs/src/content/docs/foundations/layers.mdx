@@ -1,0 +1,12 @@
+---
+title: Layers
+description: Canonical modal, overlay, and toast layer ordering.
+---
+
+import TokenTable from "../../../components/TokenTable.astro";
+
+Modal content establishes the first layer, anchored overlays opened from it
+remain above it, and notifications remain highest. These values do not create a
+general elevation engine.
+
+<TokenTable prefix="z.index." />

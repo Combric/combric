@@ -1,9 +1,10 @@
 # Applications
 
-This directory reserves the workspace boundary for Combric-owned applications.
+This directory owns Combric-maintained applications and application boundaries.
 
-- `docs` will host the documentation application.
-- `playground` will host the interactive playground.
+- `docs` is the private static documentation workspace. It includes Foundations,
+  layout and component documentation, and the controlled `/playground/` route.
+- `playground` is a compatibility pointer documenting that the Playground is
+  integrated into `docs`; it is intentionally not a separate package.
 
-Neither application is implemented in COMBRIC-0.2. A directory becomes a pnpm
-workspace only when it has a real application and its own `package.json`.
+Only a real application with its own `package.json` becomes a pnpm workspace.
