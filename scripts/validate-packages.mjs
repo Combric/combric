@@ -80,6 +80,16 @@ for (const [directory, expectedName] of packages) {
     await access(new URL("dist/tokens.css", packageUrl));
   }
 
+  if (expectedName === "@combric/cli") {
+    if (
+      manifest.engines?.node !== ">=24.0.0" ||
+      manifest.bin?.combric !== "./dist/bin.js"
+    ) {
+      throw new Error("@combric/cli must expose the Node 24 combric bin");
+    }
+    await access(new URL("dist/bin.js", packageUrl));
+  }
+
   if (expectedName === "@combric/react") {
     if (
       manifest.exports?.["./css"] !== "./dist/index.css" ||

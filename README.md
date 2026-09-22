@@ -11,12 +11,13 @@ dependency of the core layout or React packages.
 ## Repository status
 
 This repository contains the foundations delivered from **COMBRIC-0.2** through
-**COMBRIC-0.10**: monorepo tooling, canonical design tokens, the optional
+**COMBRIC-0.11**: monorepo tooling, canonical design tokens, the optional
 Tailwind adapter, React component primitives, the framework-independent Grid &
 Layout System, the native-first component catalogue, accessible overlays, forms,
 feedback, disclosure, semantic data display, static documentation, Foundations
-browsers, and a controlled component Playground. Recipes, Guard rules, and
-benchmark results intentionally belong to later milestones.
+browsers, a controlled component Playground, and an optional CLI for existing
+project setup and diagnostics. Recipes, Guard rules, and benchmark results
+intentionally belong to later milestones.
 
 ## Requirements
 
@@ -35,7 +36,8 @@ pnpm validate
 Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 `pnpm typecheck`, `pnpm build`, `pnpm test`, and `pnpm validate:packages`.
 Documentation additionally uses `pnpm docs:check`, `pnpm docs:build`,
-`pnpm docs:validate`, `pnpm docs:test`, and `pnpm test:consumer:packed`.
+`pnpm docs:validate`, `pnpm docs:test`, and `pnpm test:consumer:packed`. The
+executable package is also checked with `pnpm test:cli:packed`.
 
 ## Workspace map
 
@@ -44,7 +46,7 @@ Documentation additionally uses `pnpm docs:check`, `pnpm docs:build`,
 - `packages/layout` — framework-independent CSS Grid and Flexbox primitives
 - `packages/tailwind` — optional Tailwind v4 semantic theme adapter
 - `packages/react` — React components and typed layout wrappers
-- `packages/cli` — command-line tooling boundary
+- `packages/cli` — optional executable project setup and diagnostics
 - `packages/guard` — design-system enforcement tooling boundary
 - `apps/docs` — private static documentation, Foundations, catalogue, and
   Playground application
