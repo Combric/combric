@@ -281,11 +281,181 @@ activation, supplies `aria-disabled`, and removes the link from tab order.
 Previous/Next use accessible text and labels without an icon dependency.
 Pagination owns no page count, cursor, fetch, query, or router state.
 
+## Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@combric/react";
+
+<Dialog defaultOpen={false} onOpenChange={(open) => console.log(open)}>
+  <DialogTrigger>Open dialog</DialogTrigger>
+  <DialogContent>
+    <DialogTitle>Confirm change</DialogTitle>
+    <DialogDescription>This action updates the project.</DialogDescription>
+    <DialogClose>Cancel</DialogClose>
+  </DialogContent>
+</Dialog>;
+```
+
+Dialog supports controlled `open` and uncontrolled `defaultOpen`. Content is
+portaled to `document.body` by default; `container` selects an explicit portal
+parent. It uses modal dialog semantics, isolates background siblings, moves
+focus into the content, cycles Tab and Shift+Tab, closes on Escape or backdrop
+pointer interaction, and restores focus to the trigger. Consumer handlers run
+first and may prevent trigger, close, or backdrop behavior. Include
+`DialogTitle` for the accessible name and `DialogDescription` for the default
+description relationship, or supply explicit ARIA naming props to content.
+
+## Drawer / Sheet
+
+```tsx
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@combric/react";
+
+<Drawer>
+  <DrawerTrigger>Filters</DrawerTrigger>
+  <DrawerContent side="right">
+    <DrawerTitle>Filters</DrawerTitle>
+    <DrawerDescription>Limit the visible results.</DrawerDescription>
+    <DrawerClose>Done</DrawerClose>
+  </DrawerContent>
+</Drawer>;
+```
+
+Drawer reuses Dialog's modal, portal, focus, dismissal, isolation, and
+controlled-state mechanics. Its deliberately small visual contract supports only
+`left` and `right`. `Sheet`, `SheetTrigger`, `SheetContent`, `SheetTitle`,
+`SheetDescription`, and `SheetClose` are exact naming aliases, not a second
+implementation. There is no animation framework or nested-modal orchestrator.
+
+## Dropdown Menu
+
+```tsx
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@combric/react";
+
+<DropdownMenu>
+  <DropdownMenuTrigger>Actions</DropdownMenuTrigger>
+  <DropdownMenuContent side="bottom" align="start">
+    <DropdownMenuItem onSelect={() => edit()}>Edit</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem disabled>Archive</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>;
+```
+
+Dropdown Menu implements the ARIA menu/menuitem contract. ArrowDown and ArrowUp
+wrap through enabled items; Home and End move to the boundaries; Enter/Space
+activate; Escape restores focus; Tab closes from the trigger position. Selection
+closes unless the consumer prevents the event. Pointer interaction outside
+dismisses without stealing the new focus owner. Content is portaled and
+positioned relative to the trigger with `top`, `right`, `bottom`, or `left` side
+and `start`, `center`, or `end` alignment. Collision handling flips and clamps
+to the viewport. Submenus, checkbox/radio items, menubars, and typeahead are
+intentionally absent.
+
+## Popover
+
+```tsx
+import { Popover, PopoverContent, PopoverTrigger } from "@combric/react";
+
+<Popover>
+  <PopoverTrigger>Details</PopoverTrigger>
+  <PopoverContent side="bottom" align="start">
+    Non-modal details
+  </PopoverContent>
+</Popover>;
+```
+
+Popover follows the same controlled/uncontrolled and anchored-positioning
+contracts, but remains non-modal: it does not isolate the background, move
+focus, or trap focus. Escape closes and restores trigger focus. Pointer
+interaction outside closes without overriding the consumer's new focus.
+
+## Tooltip
+
+```tsx
+import { Tooltip, TooltipContent, TooltipTrigger } from "@combric/react";
+
+<Tooltip>
+  <TooltipTrigger>Help</TooltipTrigger>
+  <TooltipContent>Keyboard shortcut: Ctrl+K</TooltipContent>
+</Tooltip>;
+```
+
+Tooltip opens for pointer hover or keyboard focus, connects content through
+`aria-describedby`, closes on leave/blur/Escape, and never moves focus. Content
+uses `role="tooltip"`, is portaled and positioned, and must remain
+non-interactive. Display is immediate; a provider and delay system are omitted
+until a concrete cross-tooltip timing requirement exists.
+
+## Toast
+
+```tsx
+import {
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastTitle,
+  ToastViewport,
+} from "@combric/react";
+
+<ToastViewport aria-label="Notifications">
+  <Toast duration={5000}>
+    <ToastTitle>Saved</ToastTitle>
+    <ToastDescription>Your changes are available.</ToastDescription>
+    <ToastClose>Dismiss</ToastClose>
+  </Toast>
+</ToastViewport>;
+```
+
+The viewport is a portaled notification region and supports multiple
+compositional Toast children. Each Toast supports controlled `open`,
+uncontrolled `defaultOpen`, deterministic `onOpenChange`, optional `duration`
+(`0` disables timeout), and an accessible close button. `priority="polite"` uses
+status semantics; `assertive` uses alert semantics. Timers are cleaned up on
+close and unmount. Toasts never move focus. There is intentionally no global
+store, imperative service, swipe system, or application notification backend.
+
+## Overlay architecture and browser contract
+
+Portal hosts are created only in effects, so importing or server-rendering the
+package does not access browser globals during module evaluation or unsafe
+render paths. Stable React IDs provide trigger/content and accessible-name
+relationships. A narrow internal active-layer stack ensures Escape and outside
+interaction affect only the top active overlay. It is not exported as a general
+overlay engine.
+
+Anchored content uses fixed viewport coordinates, canonical spacing for its
+offset, and deterministic side flipping and viewport clamping on open, scroll,
+and resize. Unit tests verify the DOM and coordinate contract with mocked
+rectangles; they do not claim pixel geometry, clipping, stacking contexts, or
+visual animation in a real browser. Custom portal containers that establish a
+transformed containing block remain subject to normal browser fixed-position
+rules.
+
 ## Scope
 
 The public API intentionally has no polymorphic `as`/`asChild` contract, variant
-engine, form framework, router integration, portal or positioning subsystem,
-responsive object DSL, layout solver, multiple-open accordion mode, measured
-animations, component-specific token layer, or runtime theme system. Consumer
+engine, form framework, router integration, public generalized overlay engine,
+responsive object DSL, layout solver, multiple-open accordion mode, animation
+framework, component-specific token layer, or runtime theme system. Consumer
 classes extend rather than replace required Combric classes. Additional
 components, docs/playground, and generators remain future work.

@@ -37,6 +37,15 @@ test("adapter CSS maps Tailwind theme variables to canonical Combric variables",
     css.includes("--color-combric-invalid: var(--combric-color-invalid);"),
   );
   assert.ok(
+    css.includes("--color-combric-backdrop: var(--combric-color-backdrop);"),
+  );
+  assert.ok(css.includes("@utility z-combric-overlay"));
+  assert.ok(css.includes("z-index: var(--combric-z-index-overlay);"));
+  assert.ok(css.includes("@utility z-combric-modal"));
+  assert.ok(css.includes("z-index: var(--combric-z-index-modal);"));
+  assert.ok(css.includes("@utility z-combric-toast"));
+  assert.ok(css.includes("z-index: var(--combric-z-index-toast);"));
+  assert.ok(
     css.includes(
       "--container-combric-item-md: var(--combric-size-layout-item-md);",
     ),
@@ -95,11 +104,13 @@ test("Tailwind compiles a real Combric consumer through public package imports",
       "color: var(--combric-color-text)",
       "border-color: var(--combric-color-border)",
       "border-color: var(--combric-color-invalid)",
+      "background-color: var(--combric-color-backdrop)",
       "border-width: var(--combric-border-width)",
       "padding: var(--combric-space-4)",
       "border-radius: var(--combric-radius)",
       "max-width: var(--combric-size-content-prose)",
       "grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--combric-size-layout-item-md)), 1fr))",
+      "z-index: var(--combric-z-index-modal)",
     ];
 
     for (const declaration of expectedDeclarations) {

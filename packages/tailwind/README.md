@@ -39,6 +39,8 @@ Use the semantic utilities in application markup:
 Representative utility families include:
 
 - `bg-combric-canvas`, `bg-combric-surface`
+- `bg-combric-backdrop` and `z-combric-overlay`, `z-combric-modal`,
+  `z-combric-toast` from the canonical overlay-layer contract
 - `text-combric-invalid` and related color utilities derived from the shared
   invalid-state token
 - `text-combric-foreground`, `text-combric-muted-foreground`
