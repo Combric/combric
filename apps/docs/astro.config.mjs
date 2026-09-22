@@ -69,6 +69,7 @@ export default defineConfig({
           label: "Reference",
           items: [
             { label: "Packages", link: "/reference/packages/" },
+            { label: "Guard", link: "/reference/guard/" },
             { label: "Support & versioning", link: "/reference/support/" },
             { label: "Source & issues", link: "/reference/source/" },
           ],

@@ -32,3 +32,16 @@ combinations, and application-level focus after navigation.
 Automated DOM assertions, Playwright behavior, and axe scans catch only part of
 the accessibility surface. They do not establish WCAG certification or
 conformance.
+
+## Automated regression matrix
+
+The documentation browser suite exercises the real catalogue examples for
+Accordion, Checkbox, RadioGroup, Switch, Slider, Select, Tabs, Dialog,
+Drawer/Sheet, DropdownMenu, Popover, Tooltip, Toast, Toggle, and ToggleGroup. It
+combines axe scans with component-specific keyboard, focus, state, naming, and
+dismissal assertions where applicable. Modal focus trapping and restoration also
+have focused component tests. This is regression coverage, not a complete audit
+of a consumer application or a WCAG conformance claim.
+
+[Combric Guard](/reference/guard/) checks static package, CSS, and token
+integration. It does not evaluate runtime accessibility behavior.

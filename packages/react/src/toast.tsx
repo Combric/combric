@@ -50,7 +50,7 @@ export function ToastViewport({
       {...props}
       ref={ref}
       aria-label={ariaLabel}
-      role="region"
+      role="list"
       className={classNames("combric-toast-viewport", className)}
     />,
     host,

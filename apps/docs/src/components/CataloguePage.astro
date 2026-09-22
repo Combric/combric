@@ -22,10 +22,12 @@ if (!example) throw new Error(`Missing example for catalogue slug: ${slug}`);
 
 <h2>Example</h2>
 
-<div class="combric-docs-example"><ExampleRenderer slug={slug} client:visible /></div>
+<div class="combric-docs-example">
+  {slug === "toast" ? <ExampleRenderer slug={slug} client:load /> : <ExampleRenderer slug={slug} client:visible />}
+</div>
 
 <CopyButton text={example.source} client:load />
-<pre class="combric-docs-source"><code>{example.source}</code></pre>
+<pre class="combric-docs-source" tabindex="0"><code>{example.source}</code></pre>
 
 <h2>Public API</h2>
 

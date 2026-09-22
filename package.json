@@ -26,7 +26,9 @@
     "docs:validate": "node scripts/validate-docs.mjs",
     "test:consumer:packed": "node scripts/validate-packed-consumer.mjs",
     "test:cli:packed": "node scripts/validate-packed-cli.mjs",
-    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm build && pnpm test:built && pnpm validate:packages:built && pnpm validate:package-packs:built && pnpm test:cli:packed",
+    "test:guard:packed": "node scripts/validate-packed-guard.mjs",
+    "report:package-size": "node scripts/report-package-size.mjs",
+    "validate": "pnpm format:check && pnpm lint && pnpm build && pnpm typecheck && pnpm test:built && pnpm validate:packages:built && pnpm validate:package-packs:built && pnpm test:cli:packed && pnpm test:guard:packed && pnpm report:package-size",
     "validate:package-packs:built": "node scripts/validate-package-packs.mjs",
     "validate:packages": "pnpm build && pnpm validate:packages:built",
     "validate:packages:built": "node scripts/validate-packages.mjs"

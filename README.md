@@ -16,8 +16,11 @@ Tailwind adapter, React component primitives, the framework-independent Grid &
 Layout System, the native-first component catalogue, accessible overlays, forms,
 feedback, disclosure, semantic data display, static documentation, Foundations
 browsers, a controlled component Playground, and an optional CLI for existing
-project setup and diagnostics. Recipes, Guard rules, and benchmark results
-intentionally belong to later milestones.
+project setup and diagnostics. Recipes and benchmark results intentionally
+belong to later milestones.
+
+COMBRIC-0.12 Guard and quality hardening are in progress on a feature branch and
+remain subject to Product Owner review; they are not a stable release.
 
 ## Requirements
 
@@ -37,7 +40,9 @@ Individual quality gates are available as `pnpm format:check`, `pnpm lint`,
 `pnpm typecheck`, `pnpm build`, `pnpm test`, and `pnpm validate:packages`.
 Documentation additionally uses `pnpm docs:check`, `pnpm docs:build`,
 `pnpm docs:validate`, `pnpm docs:test`, and `pnpm test:consumer:packed`. The
-executable package is also checked with `pnpm test:cli:packed`.
+executable tooling is also checked with `pnpm test:cli:packed` and
+`pnpm test:guard:packed`; `pnpm report:package-size` compares current tarballs
+with the pre-1.0 baseline without imposing arbitrary byte limits.
 
 ## Workspace map
 
@@ -47,7 +52,8 @@ executable package is also checked with `pnpm test:cli:packed`.
 - `packages/tailwind` — optional Tailwind v4 semantic theme adapter
 - `packages/react` — React components and typed layout wrappers
 - `packages/cli` — optional executable project setup and diagnostics
-- `packages/guard` — design-system enforcement tooling boundary
+- `packages/guard` — optional read-only consumer integration checker (0.12
+  branch)
 - `apps/docs` — private static documentation, Foundations, catalogue, and
   Playground application
 - `apps/playground` — compatibility pointer to the integrated `/playground/`

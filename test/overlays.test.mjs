@@ -567,7 +567,7 @@ test("Toast portals a live region, closes accessibly, and cleans up its timer", 
       );
     });
     await settle();
-    const viewport = window.document.querySelector('[role="region"]');
+    const viewport = window.document.querySelector('[role="list"]');
     assert.equal(viewport.getAttribute("aria-label"), "Notifications");
     assert.ok(viewport.closest("[data-combric-portal]"));
     assert.ok(viewport.querySelector('[role="status"]'));

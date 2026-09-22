@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "packages": {
+    "core": { "tarballBytes": 1368, "fileCount": 6 },
+    "tokens": { "tarballBytes": 7189, "fileCount": 16 },
+    "layout": { "tarballBytes": 2759, "fileCount": 4 },
+    "react": { "tarballBytes": 53014, "fileCount": 112 },
+    "cli": { "tarballBytes": 21531, "fileCount": 43 },
+    "guard": { "tarballBytes": 12943, "fileCount": 19 },
+    "tailwind": { "tarballBytes": 2941, "fileCount": 4 }
+  }
+}

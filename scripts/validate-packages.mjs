@@ -90,6 +90,21 @@ for (const [directory, expectedName] of packages) {
     await access(new URL("dist/bin.js", packageUrl));
   }
 
+  if (expectedName === "@combric/guard") {
+    if (
+      manifest.engines?.node !== ">=24.0.0" ||
+      manifest.bin?.["combric-guard"] !== "./dist/bin.js" ||
+      manifest.dependencies?.["@combric/tokens"] !== "workspace:*" ||
+      manifest.dependencies?.["@combric/cli"]
+    ) {
+      throw new Error(
+        "@combric/guard must expose its independent Node 24 binary and canonical token dependency",
+      );
+    }
+    await access(new URL("dist/bin.js", packageUrl));
+    await access(new URL("dist/check.d.ts", packageUrl));
+  }
+
   if (expectedName === "@combric/react") {
     if (
       manifest.exports?.["./css"] !== "./dist/index.css" ||
