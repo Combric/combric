@@ -1,5 +1,12 @@
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import {
+  mkdtemp,
+  readFile,
+  readdir,
+  realpath,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -74,8 +81,11 @@ try {
   const info = JSON.parse(
     pnpm(["exec", "combric", "info", "--json"], temporary),
   );
-  if (info.projectRoot !== temporary || info.packageManager !== "pnpm")
-    throw new Error("Packed info failed");
+  const expectedRoot = await realpath(temporary);
+  if (info.projectRoot !== expectedRoot || info.packageManager !== "pnpm")
+    throw new Error(
+      `Packed info failed: ${JSON.stringify({ actualRoot: info.projectRoot, expectedRoot, packageManager: info.packageManager, packageManagerEvidence: info.packageManagerEvidence })}`,
+    );
   const doctor = JSON.parse(
     pnpm(["exec", "combric", "doctor", "--json"], temporary),
   );
