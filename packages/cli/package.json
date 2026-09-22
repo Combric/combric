@@ -1,13 +1,17 @@
 {
   "name": "@combric/cli",
   "version": "0.0.0",
-  "description": "Command-line tooling boundary for Combric",
+  "description": "Optional project setup and diagnostics for Combric",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
+  "bin": {
+    "combric": "./dist/bin.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -16,6 +20,9 @@
   },
   "engines": {
     "node": ">=24.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.6"
   },
   "repository": {
     "type": "git",

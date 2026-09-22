@@ -3,6 +3,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
+    "types": ["node"],
     "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "noEmit": true
   },

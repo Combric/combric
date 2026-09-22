@@ -82,3 +82,32 @@ jobs:
 
       - name: Run docs browser and accessibility tests
         run: pnpm docs:test
+
+  cli-windows:
+    name: CLI Windows
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Verify packed CLI on Windows
+        run: pnpm test:cli:packed

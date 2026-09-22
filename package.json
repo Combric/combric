@@ -25,7 +25,8 @@
     "docs:test": "pnpm --filter @combric/docs test:e2e",
     "docs:validate": "node scripts/validate-docs.mjs",
     "test:consumer:packed": "node scripts/validate-packed-consumer.mjs",
-    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm build && pnpm test:built && pnpm validate:packages:built && pnpm validate:package-packs:built",
+    "test:cli:packed": "node scripts/validate-packed-cli.mjs",
+    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm build && pnpm test:built && pnpm validate:packages:built && pnpm validate:package-packs:built && pnpm test:cli:packed",
     "validate:package-packs:built": "node scripts/validate-package-packs.mjs",
     "validate:packages": "pnpm build && pnpm validate:packages:built",
     "validate:packages:built": "node scripts/validate-packages.mjs"
@@ -36,6 +37,7 @@
     "@combric/tailwind": "workspace:*",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/node": "24.13.6",
     "@eslint/js": "10.0.1",
     "@tailwindcss/cli": "4.3.3",
     "eslint": "10.11.0",

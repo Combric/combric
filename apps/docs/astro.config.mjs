@@ -28,6 +28,10 @@ export default defineConfig({
             { label: "Standard CSS", link: "/getting-started/standard-css/" },
             { label: "React", link: "/getting-started/react/" },
             { label: "Tailwind", link: "/getting-started/tailwind/" },
+            {
+              label: "CLI & Developer Experience",
+              link: "/getting-started/cli/",
+            },
           ],
         },
         {
