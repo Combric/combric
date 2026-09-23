@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { spawnSync } from "node:child_process";
+import { rm } from "node:fs/promises";
 import { loadReleaseContract } from "../scripts/lib/release-contract.mjs";
 import {
   assertBootstrapContract,
@@ -46,4 +48,29 @@ test("bootstrap rejects incomplete or reordered artifacts", () => {
   );
   const reordered = { ...report, packages: [...report.packages].reverse() };
   assert.throws(() => assertBootstrapContract(contract, reordered), /order/);
+});
+
+test("bootstrap preparation invokes the canonical verifier without parent pnpm context", async () => {
+  const output = `release-bootstrap-test-${process.pid}`;
+  const result = spawnSync(
+    process.execPath,
+    ["scripts/bootstrap-release.mjs", "--prepare", output],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        CI: "true",
+        npm_execpath: process.platform === "win32" ? "pnpm.cmd" : "pnpm",
+      },
+    },
+  );
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Verified 6 release artifacts/);
+  assert.ok(
+    result.stdout.includes(
+      "@combric/tokens -> @combric/layout -> @combric/react",
+    ),
+  );
+  await rm(output, { recursive: true, force: true });
 });

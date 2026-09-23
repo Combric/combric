@@ -19,7 +19,6 @@ import {
 } from "./lib/release-contract.mjs";
 
 const pnpmCli = process.env.npm_execpath;
-if (!pnpmCli) throw new Error("Run release artifact verification through pnpm");
 const outputFlag = process.argv.indexOf("--output");
 const requestedOutput =
   outputFlag >= 0 ? process.argv[outputFlag + 1] : undefined;
@@ -48,12 +47,26 @@ const secretPatterns = [
 ];
 
 function run(command, args, cwd) {
-  const executable = command === "pnpm" ? process.execPath : command;
-  const commandArgs = command === "pnpm" ? [pnpmCli, ...args] : args;
+  const executable =
+    command === "pnpm"
+      ? pnpmCli
+        ? /\.(?:c|m)?js$/i.test(pnpmCli)
+          ? process.execPath
+          : pnpmCli
+        : process.platform === "win32"
+          ? "pnpm.cmd"
+          : "pnpm"
+      : command;
+  const commandArgs =
+    command === "pnpm" && pnpmCli && /\.(?:c|m)?js$/i.test(pnpmCli)
+      ? [pnpmCli, ...args]
+      : args;
   const result = spawnSync(executable, commandArgs, {
     cwd,
     encoding: "utf8",
     timeout: 120_000,
+    shell:
+      process.platform === "win32" && executable.toLowerCase().endsWith(".cmd"),
   });
   if (result.status !== 0)
     throw new Error(
