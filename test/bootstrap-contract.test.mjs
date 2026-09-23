@@ -68,6 +68,8 @@ test("bootstrap preparation invokes the canonical verifier without parent pnpm c
       env: {
         ...process.env,
         CI: "true",
+        NODE_ENV: "test",
+        COMBRIC_TEST_PUBLISHER: "1",
         npm_execpath: process.platform === "win32" ? "pnpm.cmd" : "pnpm",
       },
     },
