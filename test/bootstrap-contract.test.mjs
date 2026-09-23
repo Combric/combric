@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { resolveNpmInvocation } from "../scripts/lib/npm-process.mjs";
+import { bootstrapPublishArguments } from "../scripts/lib/bootstrap-publish.mjs";
 import { rm } from "node:fs/promises";
 import { loadReleaseContract } from "../scripts/lib/release-contract.mjs";
 import {
@@ -100,6 +101,24 @@ test("npm authentication resolver supports a JavaScript npm entrypoint", () => {
   assert.equal(invocation.executable, process.execPath);
   assert.deepEqual(invocation.prefix, ["C:/pnpm/npm.cjs"]);
   assert.equal(invocation.shell, false);
+});
+
+test("local bootstrap explicitly disables provenance without changing release CI", () => {
+  assert.deepEqual(
+    bootstrapPublishArguments(
+      "release-artifacts/combric-tokens-1.0.0.tgz",
+      "latest",
+    ),
+    [
+      "publish",
+      "release-artifacts/combric-tokens-1.0.0.tgz",
+      "--access",
+      "public",
+      "--provenance=false",
+      "--tag",
+      "latest",
+    ],
+  );
 });
 
 test("publish lifecycle independently rebuilds artifacts at a simulated boundary", async () => {

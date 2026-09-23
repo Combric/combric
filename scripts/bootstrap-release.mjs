@@ -12,6 +12,7 @@ import {
   BOOTSTRAP_APPROVAL,
 } from "./lib/bootstrap-contract.mjs";
 import { runNpm } from "./lib/npm-process.mjs";
+import { bootstrapPublishArguments } from "./lib/bootstrap-publish.mjs";
 
 const args = process.argv.slice(2);
 const publish = args[0] === "--publish";
@@ -114,14 +115,10 @@ for (const artifact of report.packages) {
   const result = testPublisher
     ? { status: 0 }
     : runNpm(
-        [
-          "publish",
+        bootstrapPublishArguments(
           join(directory, artifact.filename),
-          "--access",
-          "public",
-          "--tag",
           contract.distTag,
-        ],
+        ),
         { cwd: repositoryRoot },
       );
   if (result.status !== 0)
