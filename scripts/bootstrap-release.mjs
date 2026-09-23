@@ -13,6 +13,11 @@ import {
 } from "./lib/bootstrap-contract.mjs";
 import { runNpm } from "./lib/npm-process.mjs";
 import { bootstrapPublishArguments } from "./lib/bootstrap-publish.mjs";
+import {
+  reconcilePackage,
+  RELEASE_STATES,
+  waitForVisible,
+} from "./lib/release-reconciliation.mjs";
 
 const args = process.argv.slice(2);
 const publish = args[0] === "--publish";
@@ -68,23 +73,42 @@ if (!existsSync(join(directory, "release-report.json"))) {
 const report = JSON.parse(
   await readFile(join(directory, "release-report.json"), "utf8"),
 );
-const order = assertBootstrapContract(contract, report);
+assertBootstrapContract(contract, report);
 await verifyArtifactHashes(directory, report);
 
-for (const name of order) {
-  const response = await fetch(
-    `https://registry.npmjs.org/${encodeURIComponent(name)}`,
-    { headers: { accept: "application/json" } },
-  );
-  if (response.ok && (await response.json()).versions?.[contract.version])
-    throw new Error(
-      `${name}@${contract.version} already exists; publish nothing`,
-    );
-  if (!response.ok && response.status !== 404)
-    throw new Error(`npm registry returned ${response.status} for ${name}`);
+const reconciled = testPublisher
+  ? report.packages.map((artifact) => ({
+      state: RELEASE_STATES.PENDING,
+      artifact,
+    }))
+  : [];
+if (!testPublisher) {
+  for (const artifact of report.packages) {
+    const result = await reconcilePackage({
+      artifact: { ...artifact, path: join(directory, artifact.filename) },
+      contract,
+    });
+    if (result.state === RELEASE_STATES.CONFLICT)
+      throw new Error(`${artifact.name} registry conflict: ${result.reason}`);
+    reconciled.push(result);
+  }
 }
+const pending = reconciled.filter(
+  ({ state }) => state === RELEASE_STATES.PENDING,
+);
+const verified = reconciled.filter(
+  ({ state }) => state === RELEASE_STATES.VERIFIED_PUBLISHED,
+);
+if (verified.length)
+  console.log(
+    `VERIFIED_PUBLISHED / SKIP: ${verified.map(({ artifact }) => `${artifact.name}@${contract.version}`).join(", ")}`,
+  );
+if (pending.length)
+  console.log(
+    `PENDING: ${pending.map(({ artifact }) => `${artifact.name}@${contract.version}`).join(", ")}`,
+  );
 console.log(
-  `Bootstrap preflight passed. Publication order: ${order.join(" -> ")}`,
+  `Bootstrap preflight passed. Publication order: ${pending.map(({ artifact }) => artifact.name).join(" -> ") || "none"}`,
 );
 if (!publish) {
   console.log("No registry mutation performed.");
@@ -101,17 +125,7 @@ if (whoami.status !== 0)
     "Authenticated npm CLI session is required; no publication was attempted",
   );
 const published = [];
-async function verifyPublished(name) {
-  const response = await fetch(
-    `https://registry.npmjs.org/${encodeURIComponent(name)}`,
-    { headers: { accept: "application/json" } },
-  );
-  if (!response.ok || !(await response.json()).versions?.[contract.version])
-    throw new Error(
-      `${name}@${contract.version} is not visible after publication`,
-    );
-}
-for (const artifact of report.packages) {
+for (const { artifact } of pending) {
   const result = testPublisher
     ? { status: 0 }
     : runNpm(
@@ -126,7 +140,31 @@ for (const artifact of report.packages) {
       `Stopped after ${published.length} package(s): ${published.join(", ") || "none"}`,
     );
   published.push(artifact.name);
-  if (!testPublisher) await verifyPublished(artifact.name);
+  if (!testPublisher) {
+    const visible = await waitForVisible({
+      check: async () => {
+        try {
+          return (
+            (
+              await reconcilePackage({
+                artifact: {
+                  ...artifact,
+                  path: join(directory, artifact.filename),
+                },
+                contract,
+              })
+            ).state === RELEASE_STATES.VERIFIED_PUBLISHED
+          );
+        } catch {
+          return false;
+        }
+      },
+    });
+    if (!visible)
+      throw new Error(
+        `${artifact.name}@${contract.version} publication accepted but registry visibility was not confirmed; no republish attempted`,
+      );
+  }
   console.log(`Published and verified ${artifact.name}@${contract.version}.`);
 }
 if (publish) await rm(directory, { recursive: true, force: true });
