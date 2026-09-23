@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import {
   repositoryRoot,
   loadReleaseContract,
@@ -16,6 +16,7 @@ const args = process.argv.slice(2);
 const publish = args[0] === "--publish";
 const prepare = args[0] === "--prepare" || args.length === 0;
 const approval = args[1];
+const approvedSha = args[2] ?? process.env.COMBRIC_RELEASE_SHA;
 const output =
   args[publish || prepare ? 1 : 0] ?? "release-bootstrap-artifacts";
 if (publish && approval !== BOOTSTRAP_APPROVAL)
@@ -26,17 +27,30 @@ if (!publish && !prepare)
   throw new Error('Use --prepare or --publish "PUBLISH APPROVED"');
 
 const { contract } = await loadReleaseContract();
-const directory = join(repositoryRoot, output);
+const testPublisher =
+  process.env.NODE_ENV === "test" && process.env.COMBRIC_TEST_PUBLISHER === "1";
+const publishDirectory = publish
+  ? await mkdtemp(join(repositoryRoot, ".cache", "combric-bootstrap-"))
+  : join(repositoryRoot, output);
+const directory = publishDirectory;
+const verificationOutput = publish
+  ? relative(repositoryRoot, directory)
+  : output;
+if (publish) {
+  const head = spawnSync("git", ["rev-parse", "HEAD"], {
+    cwd: repositoryRoot,
+    encoding: "utf8",
+  });
+  if (head.status !== 0 || head.stdout.trim() !== approvedSha)
+    throw new Error("Publication requires COMBRIC_RELEASE_SHA to match HEAD");
+}
 if (!existsSync(join(directory, "release-report.json"))) {
-  if (publish)
-    throw new Error(
-      "Missing verified artifacts; run pnpm release:bootstrap --prepare first",
-    );
+  if (publish) await mkdir(directory, { recursive: true });
   await mkdir(directory, { recursive: true });
   if (
     spawnSync(
       process.execPath,
-      ["scripts/verify-release-artifacts.mjs", "--output", output],
+      ["scripts/verify-release-artifacts.mjs", "--output", verificationOutput],
       {
         cwd: repositoryRoot,
         stdio: "inherit",
@@ -75,11 +89,13 @@ if (!publish) {
   process.exit(0);
 }
 
-const whoami = spawnSync(
-  process.platform === "win32" ? "npm.cmd" : "npm",
-  ["whoami", "--registry", "https://registry.npmjs.org"],
-  { cwd: repositoryRoot, stdio: "inherit" },
-);
+const whoami = testPublisher
+  ? { status: 0 }
+  : spawnSync(
+      process.platform === "win32" ? "npm.cmd" : "npm",
+      ["whoami", "--registry", "https://registry.npmjs.org"],
+      { cwd: repositoryRoot, stdio: "inherit" },
+    );
 if (whoami.status !== 0)
   throw new Error(
     "Authenticated npm CLI session is required; no publication was attempted",
@@ -96,24 +112,26 @@ async function verifyPublished(name) {
     );
 }
 for (const artifact of report.packages) {
-  const result = spawnSync(
-    process.platform === "win32" ? "npm.cmd" : "npm",
-    [
-      "publish",
-      join(directory, artifact.filename),
-      "--access",
-      "public",
-      "--tag",
-      contract.distTag,
-    ],
-    { cwd: repositoryRoot, stdio: "inherit" },
-  );
+  const result = testPublisher
+    ? { status: 0 }
+    : spawnSync(
+        process.platform === "win32" ? "npm.cmd" : "npm",
+        [
+          "publish",
+          join(directory, artifact.filename),
+          "--access",
+          "public",
+          "--tag",
+          contract.distTag,
+        ],
+        { cwd: repositoryRoot, stdio: "inherit" },
+      );
   if (result.status !== 0)
     throw new Error(
       `Stopped after ${published.length} package(s): ${published.join(", ") || "none"}`,
     );
   published.push(artifact.name);
-  await verifyPublished(artifact.name);
+  if (!testPublisher) await verifyPublished(artifact.name);
   console.log(`Published and verified ${artifact.name}@${contract.version}.`);
 }
-await rm(directory, { recursive: true, force: true });
+if (publish) await rm(directory, { recursive: true, force: true });
