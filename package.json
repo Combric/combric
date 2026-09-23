@@ -31,6 +31,7 @@
     "release:artifacts": "node scripts/verify-release-artifacts.mjs",
     "release:candidate": "pnpm release:artifacts && pnpm test:consumer:packed && pnpm test:cli:packed && pnpm test:guard:packed",
     "release:check-registry": "node scripts/check-npm-availability.mjs",
+    "release:bootstrap": "node scripts/bootstrap-release.mjs",
     "validate": "pnpm format:check && pnpm lint && pnpm build && pnpm typecheck && pnpm test:built && pnpm validate:packages:built && pnpm validate:package-packs:built && pnpm release:candidate && pnpm report:package-size",
     "validate:package-packs:built": "node scripts/validate-package-packs.mjs",
     "validate:packages": "pnpm build && pnpm validate:packages:built",
