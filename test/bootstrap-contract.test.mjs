@@ -74,3 +74,31 @@ test("bootstrap preparation invokes the canonical verifier without parent pnpm c
   );
   await rm(output, { recursive: true, force: true });
 });
+
+test("publish lifecycle independently rebuilds artifacts at a simulated boundary", async () => {
+  const approvedSha = spawnSync("git", ["rev-parse", "HEAD"], {
+    encoding: "utf8",
+  }).stdout.trim();
+  const result = spawnSync(
+    process.execPath,
+    [
+      "scripts/bootstrap-release.mjs",
+      "--publish",
+      "PUBLISH APPROVED",
+      approvedSha,
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        NODE_ENV: "test",
+        COMBRIC_TEST_PUBLISHER: "1",
+        COMBRIC_RELEASE_SHA: approvedSha,
+      },
+    },
+  );
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Verified 6 release artifacts/);
+  assert.match(result.stdout, /Published and verified/);
+});
