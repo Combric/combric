@@ -73,7 +73,7 @@ if (!existsSync(join(directory, "release-report.json"))) {
 const report = JSON.parse(
   await readFile(join(directory, "release-report.json"), "utf8"),
 );
-const order = assertBootstrapContract(contract, report);
+assertBootstrapContract(contract, report);
 await verifyArtifactHashes(directory, report);
 
 const reconciled = testPublisher
