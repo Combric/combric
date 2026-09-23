@@ -11,6 +11,7 @@ import {
   verifyArtifactHashes,
   BOOTSTRAP_APPROVAL,
 } from "./lib/bootstrap-contract.mjs";
+import { runNpm } from "./lib/npm-process.mjs";
 
 const args = process.argv.slice(2);
 const publish = args[0] === "--publish";
@@ -91,11 +92,9 @@ if (!publish) {
 
 const whoami = testPublisher
   ? { status: 0 }
-  : spawnSync(
-      process.platform === "win32" ? "npm.cmd" : "npm",
-      ["whoami", "--registry", "https://registry.npmjs.org"],
-      { cwd: repositoryRoot, stdio: "inherit" },
-    );
+  : runNpm(["whoami", "--registry", "https://registry.npmjs.org"], {
+      cwd: repositoryRoot,
+    });
 if (whoami.status !== 0)
   throw new Error(
     "Authenticated npm CLI session is required; no publication was attempted",
@@ -114,8 +113,7 @@ async function verifyPublished(name) {
 for (const artifact of report.packages) {
   const result = testPublisher
     ? { status: 0 }
-    : spawnSync(
-        process.platform === "win32" ? "npm.cmd" : "npm",
+    : runNpm(
         [
           "publish",
           join(directory, artifact.filename),
@@ -124,7 +122,7 @@ for (const artifact of report.packages) {
           "--tag",
           contract.distTag,
         ],
-        { cwd: repositoryRoot, stdio: "inherit" },
+        { cwd: repositoryRoot },
       );
   if (result.status !== 0)
     throw new Error(

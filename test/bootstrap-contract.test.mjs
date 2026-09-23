@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
+import { resolveNpmInvocation } from "../scripts/lib/npm-process.mjs";
 import { rm } from "node:fs/promises";
 import { loadReleaseContract } from "../scripts/lib/release-contract.mjs";
 import {
@@ -73,6 +74,28 @@ test("bootstrap preparation invokes the canonical verifier without parent pnpm c
     ),
   );
   await rm(output, { recursive: true, force: true });
+});
+
+test("npm authentication uses a Windows-safe bundled npm CLI invocation", () => {
+  const invocation = resolveNpmInvocation({
+    platform: "win32",
+    nodePath: process.execPath,
+    npmCliPath: undefined,
+  });
+  assert.equal(invocation.executable, process.execPath);
+  assert.equal(invocation.shell, false);
+  assert.match(invocation.prefix[0], /npm-cli\.js$/i);
+});
+
+test("npm authentication resolver supports a JavaScript npm entrypoint", () => {
+  const invocation = resolveNpmInvocation({
+    platform: "win32",
+    nodePath: process.execPath,
+    npmCliPath: "C:/pnpm/npm.cjs",
+  });
+  assert.equal(invocation.executable, process.execPath);
+  assert.deepEqual(invocation.prefix, ["C:/pnpm/npm.cjs"]);
+  assert.equal(invocation.shell, false);
 });
 
 test("publish lifecycle independently rebuilds artifacts at a simulated boundary", async () => {
