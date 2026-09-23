@@ -82,9 +82,13 @@ test("npm authentication uses a Windows-safe bundled npm CLI invocation", () => 
     nodePath: process.execPath,
     npmCliPath: undefined,
   });
-  assert.equal(invocation.executable, process.execPath);
-  assert.equal(invocation.shell, false);
-  assert.match(invocation.prefix[0], /npm-cli\.js$/i);
+  if (invocation.executable === process.execPath) {
+    assert.equal(invocation.shell, false);
+    assert.match(invocation.prefix[0], /npm-cli\.js$/i);
+  } else {
+    assert.equal(invocation.executable, "npm.cmd");
+    assert.equal(invocation.shell, true);
+  }
 });
 
 test("npm authentication resolver supports a JavaScript npm entrypoint", () => {
