@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process";
 export function resolveNpmInvocation({
   platform = process.platform,
   nodePath = process.execPath,
-  npmCliPath = process.env.npm_execpath,
+  npmCliPath,
 } = {}) {
   if (npmCliPath && /\.(?:c|m)?js$/i.test(npmCliPath))
     return { executable: nodePath, prefix: [npmCliPath], shell: false };
