@@ -10,7 +10,13 @@ export function resolveNpmInvocation({
   if (npmCliPath && /\.(?:c|m)?js$/i.test(npmCliPath))
     return { executable: nodePath, prefix: [npmCliPath], shell: false };
   if (platform === "win32") {
-    const bundled = join(dirname(nodePath), "node_modules", "npm", "bin", "npm-cli.js");
+    const bundled = join(
+      dirname(nodePath),
+      "node_modules",
+      "npm",
+      "bin",
+      "npm-cli.js",
+    );
     if (existsSync(bundled))
       return { executable: nodePath, prefix: [bundled], shell: false };
     return { executable: "npm.cmd", prefix: [], shell: true };
