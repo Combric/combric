@@ -125,6 +125,7 @@ if (whoami.status !== 0)
     "Authenticated npm CLI session is required; no publication was attempted",
   );
 const published = [];
+const accepted = [];
 for (const { artifact } of pending) {
   const result = testPublisher
     ? { status: 0 }
@@ -160,11 +161,18 @@ for (const { artifact } of pending) {
         }
       },
     });
-    if (!visible)
-      throw new Error(
-        `${artifact.name}@${contract.version} publication accepted but registry visibility was not confirmed; no republish attempted`,
+    if (!visible) {
+      accepted.push(artifact.name);
+      console.error(
+        `PUBLISH_ACCEPTED / VERIFICATION_PENDING: ${artifact.name}@${contract.version}; no republish attempted`,
       );
+      continue;
+    }
   }
   console.log(`Published and verified ${artifact.name}@${contract.version}.`);
 }
+if (accepted.length)
+  throw new Error(
+    `Publication accepted but registry verification remains pending: ${accepted.join(", ")}; no republish attempted`,
+  );
 if (publish) await rm(directory, { recursive: true, force: true });
