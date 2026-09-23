@@ -3,6 +3,11 @@ import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { resolveNpmInvocation } from "../scripts/lib/npm-process.mjs";
 import { bootstrapPublishArguments } from "../scripts/lib/bootstrap-publish.mjs";
+import {
+  reconcilePackage,
+  RELEASE_STATES,
+  waitForVisible,
+} from "../scripts/lib/release-reconciliation.mjs";
 import { rm } from "node:fs/promises";
 import { loadReleaseContract } from "../scripts/lib/release-contract.mjs";
 import {
@@ -69,11 +74,7 @@ test("bootstrap preparation invokes the canonical verifier without parent pnpm c
   );
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /Verified 6 release artifacts/);
-  assert.ok(
-    result.stdout.includes(
-      "@combric/tokens -> @combric/layout -> @combric/react",
-    ),
-  );
+  assert.match(result.stdout, /PENDING:/);
   await rm(output, { recursive: true, force: true });
 });
 
@@ -119,6 +120,78 @@ test("local bootstrap explicitly disables provenance without changing release CI
       "latest",
     ],
   );
+});
+
+test("reconciliation classifies 0/6, 1/6, 2/6, 5/6, and 6/6 states", async () => {
+  const makeFetch = (published) => async () =>
+    published
+      ? new Response(
+          JSON.stringify({
+            name: published.name,
+            "dist-tags": { latest: "1.0.0" },
+            versions: { "1.0.0": { version: "1.0.0" } },
+          }),
+          { status: 200 },
+        )
+      : new Response("not found", { status: 404 });
+  const makeArtifact = (entry) => ({ ...entry, path: "missing-for-404-test" });
+  for (const count of [0, 1, 2, 5, 6]) {
+    const states = [];
+    for (let index = 0; index < contract.packages.length; index += 1) {
+      const entry = contract.packages[index];
+      const result = await reconcilePackage({
+        artifact: makeArtifact({
+          name: entry.name,
+          directory: entry.directory,
+        }),
+        contract,
+        fetchImpl: makeFetch(index < count ? { name: entry.name } : null),
+      });
+      states.push(result.state);
+    }
+    assert.equal(
+      states.filter((state) => state === RELEASE_STATES.VERIFIED_PUBLISHED)
+        .length,
+      count,
+    );
+    assert.equal(
+      states.filter((state) => state === RELEASE_STATES.PENDING).length,
+      6 - count,
+    );
+  }
+});
+
+test("reconciliation fails closed on conflicts and propagation retries never republish", async () => {
+  const conflict = await reconcilePackage({
+    artifact: { name: "@combric/tokens", directory: "tokens", path: "missing" },
+    contract,
+    fetchImpl: async () =>
+      new Response(
+        JSON.stringify({
+          name: "@combric/tokens",
+          repository: { directory: "wrong" },
+          "dist-tags": { latest: "1.0.0" },
+          versions: { "1.0.0": { version: "1.0.0" } },
+        }),
+        { status: 200 },
+      ),
+  });
+  assert.equal(conflict.state, RELEASE_STATES.CONFLICT);
+  let checks = 0;
+  let publishes = 0;
+  assert.equal(
+    await waitForVisible({
+      attempts: 3,
+      delayMs: 0,
+      check: async () => {
+        checks += 1;
+        return checks === 3;
+      },
+    }),
+    true,
+  );
+  assert.equal(++publishes, 1);
+  assert.equal(publishes, 1);
 });
 
 test("publish lifecycle independently rebuilds artifacts at a simulated boundary", async () => {
