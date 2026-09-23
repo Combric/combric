@@ -35,9 +35,16 @@ if (!existsSync(join(directory, "release-report.json"))) {
   await mkdir(directory, { recursive: true });
   if (
     spawnSync(
-      process.platform === "win32" ? "pnpm.cmd" : "pnpm",
-      ["release:artifacts", "--output", output],
-      { cwd: repositoryRoot, stdio: "inherit" },
+      process.execPath,
+      ["scripts/verify-release-artifacts.mjs", "--output", output],
+      {
+        cwd: repositoryRoot,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          npm_execpath: process.env.npm_execpath ?? "pnpm.cmd",
+        },
+      },
     ).status !== 0
   )
     throw new Error("Release artifact verification failed");
