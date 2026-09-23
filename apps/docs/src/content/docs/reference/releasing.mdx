@@ -7,9 +7,18 @@ Repository validation can make Combric release-candidate ready; it cannot prove
 or grant external npm authority. Publication requires a separate explicit
 Product Owner approval after the release-preparation pull request is merged.
 
+The six packages are new to npm. Because npm requires a package to exist before
+its Trusted Publisher can be configured, the one-time initial publication path
+is documented in `release/FIRST-PUBLISH-BOOTSTRAP.md`. It is the only supported
+manual bootstrap and remains **PUBLISH NOT APPROVED** until explicitly
+authorized.
+
 ## Manual prerequisites
 
 Before dispatching `.github/workflows/release.yml`, verify all of the following:
+
+After the one-time bootstrap, complete Trusted Publisher setup for all six
+packages before using this workflow.
 
 - the publisher controls the npm `@combric` scope and all six package names;
 - the npm organization/account grants the required publication permissions;

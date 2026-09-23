@@ -44,3 +44,7 @@ separate Product Owner approval and protected npm environment approval. Never
 publish from a pull request or ordinary `main` push.
 
 Pull requests must pass the repository CI before merge.
+
+The one-time initial 1.0.0 bootstrap is documented in
+`release/FIRST-PUBLISH-BOOTSTRAP.md`. It remains **PUBLISH NOT APPROVED** until
+the Product Owner explicitly authorizes the exact command described there.
