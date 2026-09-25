@@ -4,43 +4,27 @@
   "tag": "v1.1.0",
   "distTag": "latest",
   "packages": [
-    {
-      "directory": "tokens",
-      "name": "@combric/tokens",
-      "dependencies": []
-    },
+    { "directory": "tokens", "name": "@combric/tokens", "dependencies": [] },
     {
       "directory": "layout",
       "name": "@combric/layout",
-      "dependencies": [
-        "@combric/tokens"
-      ]
+      "dependencies": ["@combric/tokens"]
     },
     {
       "directory": "react",
       "name": "@combric/react",
-      "dependencies": [
-        "@combric/layout"
-      ]
+      "dependencies": ["@combric/layout"]
     },
     {
       "directory": "tailwind",
       "name": "@combric/tailwind",
-      "dependencies": [
-        "@combric/tokens"
-      ]
+      "dependencies": ["@combric/tokens"]
     },
-    {
-      "directory": "cli",
-      "name": "@combric/cli",
-      "dependencies": []
-    },
+    { "directory": "cli", "name": "@combric/cli", "dependencies": [] },
     {
       "directory": "guard",
       "name": "@combric/guard",
-      "dependencies": [
-        "@combric/tokens"
-      ]
+      "dependencies": ["@combric/tokens"]
     }
   ]
 }
