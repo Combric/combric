@@ -5,6 +5,21 @@ export type PrimitiveTokenName =
   | "border.width.thin"
   | "color.blue.600"
   | "color.blue.700"
+  | "color.palette.accent"
+  | "color.palette.accent.hover"
+  | "color.palette.backdrop"
+  | "color.palette.border"
+  | "color.palette.canvas"
+  | "color.palette.dark.accent"
+  | "color.palette.dark.accent.hover"
+  | "color.palette.dark.backdrop"
+  | "color.palette.dark.border"
+  | "color.palette.dark.canvas"
+  | "color.palette.dark.invalid"
+  | "color.palette.dark.invalid.hover"
+  | "color.palette.dark.muted"
+  | "color.palette.dark.surface.elevated"
+  | "color.palette.graphite"
   | "color.neutral.0"
   | "color.neutral.50"
   | "color.neutral.200"
@@ -13,6 +28,10 @@ export type PrimitiveTokenName =
   | "color.neutral.900"
   | "color.neutral.900.translucent"
   | "color.red.700"
+  | "color.palette.invalid.hover"
+  | "color.palette.muted"
+  | "color.palette.primary"
+  | "color.palette.surface"
   | "font.family.mono"
   | "font.family.sans"
   | "font.size.2xl"
@@ -32,7 +51,11 @@ export type PrimitiveTokenName =
   | "line.height.tight"
   | "motion.duration.fast"
   | "motion.duration.slow"
+  | "radius.full"
+  | "radius.lg"
+  | "radius.md"
   | "radius.square"
+  | "radius.sm"
   | "size.content.prose"
   | "size.content.wide"
   | "size.control.lg"
@@ -66,7 +89,14 @@ export type SemanticTokenName =
   | "color.canvas"
   | "color.focus"
   | "color.invalid"
+  | "color.invalid.foreground"
+  | "color.invalid.hover"
+  | "color.link"
+  | "color.primary"
+  | "color.primary.foreground"
+  | "color.primary.hover"
   | "color.surface"
+  | "color.surface.elevated"
   | "color.text"
   | "color.text.muted"
   | "font.family.body"
@@ -84,6 +114,14 @@ export type SemanticTokenName =
   | "motion.duration.fast"
   | "motion.duration.slow"
   | "radius"
+  | "radius.button"
+  | "radius.card"
+  | "radius.checkbox"
+  | "radius.circle"
+  | "radius.control"
+  | "radius.overlay"
+  | "radius.pill"
+  | "radius.surface"
   | "size.content.prose"
   | "size.content.wide"
   | "size.control.lg"
@@ -107,11 +145,25 @@ export type SemanticTokenName =
 
 export type TokenValues<Name extends string> = Readonly<Record<Name, string>>;
 
+export type ThemeName = "dark" | "light";
+
+export type SemanticTokenReferences = Readonly<
+  Record<SemanticTokenName, PrimitiveTokenName>
+>;
+
+export interface ThemeTokenContract {
+  readonly semanticReferences: SemanticTokenReferences;
+  readonly semantic: TokenValues<SemanticTokenName>;
+}
+
 export interface MetriqTokenContract {
   readonly name: "metriq";
   readonly primitives: TokenValues<PrimitiveTokenName>;
-  readonly semanticReferences: Readonly<
-    Record<SemanticTokenName, PrimitiveTokenName>
-  >;
+  /** The light-theme aliases retained for compatibility with the 1.0 contract. */
+  readonly semanticReferences: SemanticTokenReferences;
   readonly semantic: TokenValues<SemanticTokenName>;
+}
+
+export interface ThemeAwareMetriqTokenContract extends MetriqTokenContract {
+  readonly themes: Readonly<Record<ThemeName, ThemeTokenContract>>;
 }

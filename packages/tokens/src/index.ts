@@ -1,4 +1,8 @@
 export {
+  darkSemanticTokenReferences,
+  darkSemanticTokens,
+  lightSemanticTokenReferences,
+  lightSemanticTokens,
   metriq,
   primitiveCssVariableNames,
   primitiveTokens,
@@ -10,6 +14,10 @@ export {
 export type {
   MetriqTokenContract,
   PrimitiveTokenName,
+  SemanticTokenReferences,
   SemanticTokenName,
+  ThemeAwareMetriqTokenContract,
+  ThemeName,
+  ThemeTokenContract,
   TokenValues,
 } from "./types.js";

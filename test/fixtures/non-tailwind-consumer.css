@@ -8,3 +8,13 @@
   border-radius: var(--combric-radius);
   padding: var(--combric-space-4);
 }
+
+.consumer-theme {
+  --combric-color-primary: #183a55;
+  --combric-radius-button: 0;
+  --combric-radius-card: 0;
+}
+
+[data-theme="dark"] .consumer-theme {
+  --combric-color-accent: #ff9c62;
+}

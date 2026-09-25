@@ -1,10 +1,10 @@
 import { writeFile } from "node:fs/promises";
 
 import {
+  metriq,
   primitiveCssVariableNames,
   primitiveTokens,
   semanticCssVariableNames,
-  semanticTokenReferences,
 } from "../packages/tokens/dist/index.js";
 
 function entriesInStableOrder(record) {
@@ -29,13 +29,15 @@ function assertTokenContract() {
     }
   }
 
-  for (const [semanticName, primitiveName] of Object.entries(
-    semanticTokenReferences,
-  )) {
-    if (!(primitiveName in primitiveTokens)) {
-      throw new Error(
-        `Semantic token ${semanticName} references missing primitive ${primitiveName}`,
-      );
+  for (const [themeName, theme] of Object.entries(metriq.themes)) {
+    for (const [semanticName, primitiveName] of Object.entries(
+      theme.semanticReferences,
+    )) {
+      if (!(primitiveName in primitiveTokens)) {
+        throw new Error(
+          `Theme ${themeName} semantic token ${semanticName} references missing primitive ${primitiveName}`,
+        );
+      }
     }
   }
 
@@ -54,19 +56,23 @@ for (const [tokenName, value] of entriesInStableOrder(primitiveTokens)) {
   declarations.push(`  ${primitiveCssVariableNames[tokenName]}: ${value};`);
 }
 
-for (const [semanticName, primitiveName] of entriesInStableOrder(
-  semanticTokenReferences,
-)) {
-  declarations.push(
-    `  ${semanticCssVariableNames[semanticName]}: var(${primitiveCssVariableNames[primitiveName]});`,
+function semanticDeclarations(theme) {
+  return entriesInStableOrder(theme.semanticReferences).map(
+    ([semanticName, primitiveName]) =>
+      `  ${semanticCssVariableNames[semanticName]}: var(${primitiveCssVariableNames[primitiveName]});`,
   );
 }
 
 const css = [
   "/* Generated from @combric/tokens typed definitions. Do not edit. */",
-  "/* metriq is the default Combric design language. */",
+  '/* Metriq Light is the default; Dark is selected with [data-theme="dark"]. */',
   ":root {",
   ...declarations,
+  ...semanticDeclarations(metriq.themes.light),
+  "}",
+  "",
+  '[data-theme="dark"] {',
+  ...semanticDeclarations(metriq.themes.dark),
   "}",
   "",
 ].join("\n");

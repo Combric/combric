@@ -4,6 +4,10 @@ import test from "node:test";
 
 const packageNames = ["core", "tokens", "react", "cli", "guard"];
 const tokenRuntimeExports = [
+  "darkSemanticTokenReferences",
+  "darkSemanticTokens",
+  "lightSemanticTokenReferences",
+  "lightSemanticTokens",
   "metriq",
   "primitiveCssVariableNames",
   "primitiveTokens",

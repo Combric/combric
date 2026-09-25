@@ -139,8 +139,10 @@ export {
   type CardFooterProps,
   type CardHeaderProps,
   type CardProps,
+  type CardTone,
   type CardTitleProps,
 } from "./card.js";
+export type { RadiusPreset } from "./radius.js";
 export {
   Checkbox,
   Input,

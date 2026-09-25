@@ -31,8 +31,22 @@ test("adapter CSS maps Tailwind theme variables to canonical Combric variables",
   assert.ok(
     css.includes("--color-combric-surface: var(--combric-color-surface);"),
   );
+  assert.ok(
+    css.includes("--color-combric-primary: var(--combric-color-primary);"),
+  );
+  assert.ok(
+    css.includes(
+      "--color-combric-surface-elevated: var(--combric-color-surface-elevated);",
+    ),
+  );
   assert.ok(css.includes("--spacing-combric-4: var(--combric-space-4);"));
   assert.ok(css.includes("--radius-combric: var(--combric-radius);"));
+  assert.ok(
+    css.includes("--radius-combric-button: var(--combric-radius-button);"),
+  );
+  assert.ok(
+    css.includes("--radius-combric-overlay: var(--combric-radius-overlay);"),
+  );
   assert.ok(
     css.includes("--color-combric-invalid: var(--combric-color-invalid);"),
   );
@@ -108,6 +122,7 @@ test("Tailwind compiles a real Combric consumer through public package imports",
       "border-width: var(--combric-border-width)",
       "padding: var(--combric-space-4)",
       "border-radius: var(--combric-radius)",
+      "border-radius: var(--combric-radius-button)",
       "max-width: var(--combric-size-content-prose)",
       "grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--combric-size-layout-item-md)), 1fr))",
       "z-index: var(--combric-z-index-modal)",
@@ -118,6 +133,7 @@ test("Tailwind compiles a real Combric consumer through public package imports",
     }
 
     assert.ok(css.includes("--combric-primitive-radius-square: 0"));
+    assert.ok(css.includes("--combric-primitive-radius-md: 0.25rem"));
     assert.ok(
       css.includes("--combric-radius: var(--combric-primitive-radius-square)"),
     );
