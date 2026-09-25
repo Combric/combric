@@ -18,8 +18,8 @@ Combric Framework remediation release.
 - Synchronized the native Slider filled track with its current value and range
   while preserving native input semantics, keyboard behavior, form reset, and
   controlled/uncontrolled support.
-- Corrected Toast list and live-region semantics for accessible status and
-  alert announcements.
+- Corrected Toast list and live-region semantics for accessible status and alert
+  announcements.
 
 Published packages:
 
