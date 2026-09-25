@@ -16,6 +16,11 @@ import {
 } from "../scripts/lib/bootstrap-contract.mjs";
 
 const { contract } = await loadReleaseContract();
+const bootstrapContract = {
+  ...contract,
+  version: "1.0.0",
+  tag: "v1.0.0",
+};
 const report = {
   version: "1.0.0",
   distTag: "latest",
@@ -29,14 +34,14 @@ const report = {
 
 test("bootstrap contract fixes version, package set, and order", () => {
   assert.deepEqual(
-    assertBootstrapContract(contract, report),
-    contract.packages.map(({ name }) => name),
+    assertBootstrapContract(bootstrapContract, report),
+    bootstrapContract.packages.map(({ name }) => name),
   );
   assert.equal(BOOTSTRAP_APPROVAL, "PUBLISH APPROVED");
 });
 
 test("bootstrap rejects core or unexpected packages", () => {
-  const changed = structuredClone(contract);
+  const changed = structuredClone(bootstrapContract);
   changed.packages[0] = { ...changed.packages[0], name: "@combric/core" };
   assert.throws(
     () => assertBootstrapContract(changed, report),
@@ -47,37 +52,46 @@ test("bootstrap rejects core or unexpected packages", () => {
 test("bootstrap rejects incomplete or reordered artifacts", () => {
   assert.throws(
     () =>
-      assertBootstrapContract(contract, {
+      assertBootstrapContract(bootstrapContract, {
         ...report,
         packages: report.packages.slice(0, -1),
       }),
     /incomplete/,
   );
   const reordered = { ...report, packages: [...report.packages].reverse() };
-  assert.throws(() => assertBootstrapContract(contract, reordered), /order/);
+  assert.throws(
+    () => assertBootstrapContract(bootstrapContract, reordered),
+    /order/,
+  );
 });
 
-test("bootstrap preparation invokes the canonical verifier without parent pnpm context", async () => {
+test("bootstrap preparation rejects the later 1.1.0 release target", async () => {
+  assert.equal(contract.version, "1.1.0");
   const output = `release-bootstrap-test-${process.pid}`;
-  const result = spawnSync(
-    process.execPath,
-    ["scripts/bootstrap-release.mjs", "--prepare", output],
-    {
-      cwd: process.cwd(),
-      encoding: "utf8",
-      env: {
-        ...process.env,
-        CI: "true",
-        NODE_ENV: "test",
-        COMBRIC_TEST_PUBLISHER: "1",
-        npm_execpath: process.platform === "win32" ? "pnpm.cmd" : "pnpm",
+  try {
+    const result = spawnSync(
+      process.execPath,
+      ["scripts/bootstrap-release.mjs", "--prepare", output],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          CI: "true",
+          NODE_ENV: "test",
+          COMBRIC_TEST_PUBLISHER: "1",
+          npm_execpath: process.platform === "win32" ? "pnpm.cmd" : "pnpm",
+        },
       },
-    },
-  );
-  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
-  assert.match(result.stdout, /Verified 6 release artifacts/);
-  assert.match(result.stdout, /PENDING:/);
-  await rm(output, { recursive: true, force: true });
+    );
+    assert.notEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
+    assert.match(
+      `${result.stdout}\n${result.stderr}`,
+      /Bootstrap is restricted to 1\.0\.0\/latest/,
+    );
+  } finally {
+    await rm(output, { recursive: true, force: true });
+  }
 });
 
 test("npm authentication uses a Windows-safe bundled npm CLI invocation", () => {
@@ -130,8 +144,8 @@ test("reconciliation classifies 0/6, 1/6, 2/6, 5/6, and 6/6 states", async () =>
       ? new Response(
           JSON.stringify({
             name: published.name,
-            "dist-tags": { latest: "1.0.0" },
-            versions: { "1.0.0": { version: "1.0.0" } },
+            "dist-tags": { latest: contract.version },
+            versions: { [contract.version]: { version: contract.version } },
           }),
           { status: 200 },
         )
@@ -172,8 +186,8 @@ test("reconciliation fails closed on conflicts and propagation retries never rep
         JSON.stringify({
           name: "@combric/tokens",
           repository: { directory: "wrong" },
-          "dist-tags": { latest: "1.0.0" },
-          versions: { "1.0.0": { version: "1.0.0" } },
+          "dist-tags": { latest: contract.version },
+          versions: { [contract.version]: { version: contract.version } },
         }),
         { status: 200 },
       ),
@@ -196,30 +210,10 @@ test("reconciliation fails closed on conflicts and propagation retries never rep
   assert.equal(publishes, 1);
 });
 
-test("publish lifecycle independently rebuilds artifacts at a simulated boundary", async () => {
-  const approvedSha = spawnSync("git", ["rev-parse", "HEAD"], {
-    encoding: "utf8",
-  }).stdout.trim();
-  const result = spawnSync(
-    process.execPath,
-    [
-      "scripts/bootstrap-release.mjs",
-      "--publish",
-      "PUBLISH APPROVED",
-      approvedSha,
-    ],
-    {
-      cwd: process.cwd(),
-      encoding: "utf8",
-      env: {
-        ...process.env,
-        NODE_ENV: "test",
-        COMBRIC_TEST_PUBLISHER: "1",
-        COMBRIC_RELEASE_SHA: approvedSha,
-      },
-    },
+test("first-publish bootstrap rejects the current 1.1.0 release contract", () => {
+  assert.equal(contract.version, "1.1.0");
+  assert.throws(
+    () => assertBootstrapContract(contract, report),
+    /Bootstrap is restricted to 1\.0\.0\/latest/,
   );
-  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
-  assert.match(result.stdout, /Verified 6 release artifacts/);
-  assert.match(result.stdout, /Published and verified/);
 });
