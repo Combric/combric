@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
   loadReleaseContract,
@@ -7,6 +8,25 @@ import {
 } from "../scripts/lib/release-contract.mjs";
 
 const { contract, manifests } = await loadReleaseContract();
+const releaseWorkflow = await readFile(
+  new URL("../.github/workflows/release.yml", import.meta.url),
+  "utf8",
+);
+
+test("release finalizer configures Git identity before creating its tag", () => {
+  const tagCommand = 'git tag -a "$RELEASE_TAG"';
+  const tagIndex = releaseWorkflow.indexOf(tagCommand);
+  assert.notEqual(tagIndex, -1);
+
+  for (const identityCommand of [
+    'git config user.name "github-actions[bot]"',
+    'git config user.email "41898282+github-actions[bot]@users.noreply.github.com"',
+  ]) {
+    const identityIndex = releaseWorkflow.indexOf(identityCommand);
+    assert.notEqual(identityIndex, -1);
+    assert.ok(identityIndex < tagIndex);
+  }
+});
 
 test("release contract matches the six publishable packages", () => {
   assert.equal(contract.version, "1.1.0");
