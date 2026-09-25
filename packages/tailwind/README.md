@@ -45,6 +45,8 @@ Use the semantic utilities in application markup:
 Representative utility families include:
 
 - `bg-combric-canvas`, `bg-combric-surface`
+- `bg-combric-primary`, `text-combric-link`, and elevated/invalid semantic
+  colors
 - `bg-combric-backdrop` and `z-combric-overlay`, `z-combric-modal`,
   `z-combric-toast` from the canonical overlay-layer contract
 - `text-combric-invalid` and related color utilities derived from the shared
@@ -58,11 +60,16 @@ Representative utility families include:
 - `max-w-combric-prose`, `max-w-combric-wide`
 - `grid-combric-auto-sm`, `grid-combric-auto-md`, and `grid-combric-auto-lg` for
   canonical intrinsic Grid minimums
-- `rounded-combric`
+- `rounded-combric`, `rounded-combric-button`, `rounded-combric-card`,
+  `rounded-combric-control`, and the other semantic geometry utilities
 
 `rounded-combric` resolves through `--combric-radius`. Under the default
-`metriq` contract that value resolves to `0`, preserving square geometry without
-disabling unrelated Tailwind radius utilities.
+`metriq` contract that legacy-compatible alias remains `0`. Component-specific
+utilities such as `rounded-combric-button` and `rounded-combric-card` resolve to
+their canonical `0.25rem` defaults. Override the shared semantic CSS variables
+to customize either theme or geometry; Tailwind introduces no independent
+palette or radius values. `[data-theme="dark"]` selects the same dark mapping
+used by Native CSS consumers.
 
 Every adapter theme value points to an existing public `--combric-*` custom
 property. No color, spacing, typography, sizing, or radius literal is duplicated

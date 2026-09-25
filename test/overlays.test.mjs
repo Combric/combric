@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import axeCore from "axe-core";
 import { JSDOM } from "jsdom";
 import { act, createElement, createRef } from "react";
 import { createRoot } from "react-dom/client";
@@ -38,7 +39,7 @@ import {
 async function withDom(run) {
   const dom = new JSDOM(
     '<button id="outside">Outside</button><div id="root"></div><div id="portal-target"></div>',
-    { url: "https://consumer.example/" },
+    { runScripts: "outside-only", url: "https://consumer.example/" },
   );
   const previous = {
     document: globalThis.document,
@@ -570,8 +571,17 @@ test("Toast portals a live region, closes accessibly, and cleans up its timer", 
     const viewport = window.document.querySelector('[role="list"]');
     assert.equal(viewport.getAttribute("aria-label"), "Notifications");
     assert.ok(viewport.closest("[data-combric-portal]"));
-    assert.ok(viewport.querySelector('[role="status"]'));
-    assert.ok(viewport.querySelector('[role="alert"]'));
+    const toastItems = [...viewport.children];
+    assert.equal(toastItems.length, 2);
+    assert.ok(toastItems.every((item) => item.tagName === "LI"));
+    assert.ok(toastItems.every((item) => item.getAttribute("role") === null));
+    const politeRegion = viewport.querySelector('[role="status"]');
+    const assertiveRegion = viewport.querySelector('[role="alert"]');
+    assert.ok(politeRegion);
+    assert.ok(assertiveRegion);
+    assert.equal(politeRegion.getAttribute("aria-live"), null);
+    assert.equal(assertiveRegion.getAttribute("aria-live"), null);
+    assert.equal(politeRegion.getAttribute("aria-atomic"), "true");
     assert.equal(window.document.activeElement === outside, true);
 
     await act(
@@ -609,6 +619,42 @@ test("Toast portals a live region, closes accessibly, and cleans up its timer", 
       async () => new Promise((resolve) => window.setTimeout(resolve, 20)),
     );
     assert.deepEqual(cleanupChanges, []);
+  });
+});
+
+test("Toast list and live-region semantics pass axe without role suppression", async () => {
+  await withDom(async ({ root, window }) => {
+    await act(async () => {
+      root.render(
+        createElement(
+          ToastViewport,
+          null,
+          createElement(Toast, { duration: 0 }, "Saved"),
+          createElement(
+            Toast,
+            { duration: 0, priority: "assertive" },
+            "Connection lost",
+            createElement(ToastClose, null, "Dismiss"),
+          ),
+        ),
+      );
+    });
+    await settle();
+
+    const viewport = window.document.querySelector("ol");
+    assert.equal(viewport.getAttribute("role"), "list");
+    assert.ok([...viewport.children].every((item) => item.tagName === "LI"));
+    assert.ok(viewport.querySelector('[role="status"]'));
+    assert.ok(viewport.querySelector('[role="alert"]'));
+    assert.equal(viewport.querySelector("li[role]"), null);
+
+    window.eval(axeCore.source);
+    const results = await window.axe.run(viewport);
+    assert.equal(
+      results.violations.length,
+      0,
+      JSON.stringify(results.violations, null, 2),
+    );
   });
 });
 

@@ -21,6 +21,7 @@ import {
   Container,
   Grid,
   Inline,
+  Slider,
   Stack,
 } from "@combric/react";
 
@@ -47,7 +48,7 @@ async function withDom(run) {
   const container = dom.window.document.querySelector("#root");
   const root = createRoot(container);
   try {
-    await run({ container, root });
+    await run({ container, root, window: dom.window });
   } finally {
     await act(async () => root.unmount());
     Object.assign(globalThis, previous);
@@ -83,6 +84,7 @@ test("Button preserves native semantics, variants, classes, disabled behavior, a
               clicks += 1;
             },
             ref,
+            radius: "none",
             size: "lg",
             variant: "ghost",
           },
@@ -96,6 +98,7 @@ test("Button preserves native semantics, variants, classes, disabled behavior, a
     assert.equal(button.disabled, true);
     assert.equal(button.dataset.variant, "ghost");
     assert.equal(button.dataset.size, "lg");
+    assert.equal(button.dataset.radius, "none");
     assert.equal(button.className, "combric-button consumer-button");
     assert.equal(ref.current, button);
     button.click();
@@ -109,7 +112,7 @@ test("Card composes semantic elements and extends consumer classes", async () =>
       root.render(
         createElement(
           Card,
-          { className: "consumer-card" },
+          { className: "consumer-card", radius: "full", tone: "elevated" },
           createElement(
             CardHeader,
             null,
@@ -130,6 +133,142 @@ test("Card composes semantic elements and extends consumer classes", async () =>
       container.firstElementChild.className,
       "combric-card consumer-card",
     );
+    assert.equal(container.firstElementChild.dataset.radius, "full");
+    assert.equal(container.firstElementChild.dataset.tone, "elevated");
+  });
+});
+
+test("Slider preserves native range behavior and synchronizes filled range", async () => {
+  await withDom(async ({ container, root, window }) => {
+    const ref = createRef();
+    const inputValues = [];
+    await act(async () => {
+      root.render(
+        createElement(
+          "form",
+          { id: "slider-form" },
+          createElement(Slider, {
+            "aria-label": "Volume",
+            defaultValue: 20,
+            id: "volume",
+            max: 50,
+            min: 10,
+            name: "volume",
+            onInput: (event) => inputValues.push(event.currentTarget.value),
+            ref,
+            step: 5,
+            style: { "--consumer-slider-note": "preserved" },
+          }),
+        ),
+      );
+    });
+
+    const slider = container.querySelector('input[type="range"]');
+    const form = container.querySelector("form");
+    assert.equal(ref.current, slider);
+    assert.equal(slider.min, "10");
+    assert.equal(slider.max, "50");
+    assert.equal(slider.step, "5");
+    assert.equal(slider.value, "20");
+    assert.equal(slider.getAttribute("aria-label"), "Volume");
+    assert.equal(slider.style.getPropertyValue("--combric-slider-fill"), "25%");
+    assert.equal(
+      slider.style.getPropertyValue("--consumer-slider-note"),
+      "preserved",
+    );
+    assert.equal(new window.FormData(form).get("volume"), "20");
+
+    Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    ).set.call(slider, "35");
+    await act(async () => {
+      slider.dispatchEvent(new window.Event("input", { bubbles: true }));
+    });
+    assert.deepEqual(inputValues, ["35"]);
+    assert.equal(
+      slider.style.getPropertyValue("--combric-slider-fill"),
+      "62.5%",
+    );
+
+    Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value",
+    ).set.call(slider, "30");
+    await act(async () => {
+      slider.dispatchEvent(new window.Event("input", { bubbles: true }));
+    });
+    assert.deepEqual(inputValues, ["35", "30"]);
+    assert.equal(slider.style.getPropertyValue("--combric-slider-fill"), "50%");
+
+    await act(async () => form.reset());
+    await act(
+      async () => new Promise((resolve) => window.setTimeout(resolve, 5)),
+    );
+    assert.equal(slider.value, "20");
+    assert.equal(slider.style.getPropertyValue("--combric-slider-fill"), "25%");
+
+    await act(async () => {
+      root.render(
+        createElement(Slider, {
+          "aria-label": "Controlled level",
+          disabled: true,
+          max: 50,
+          min: 10,
+          value: 40,
+        }),
+      );
+    });
+    const controlledSlider = container.querySelector('input[type="range"]');
+    assert.equal(controlledSlider.disabled, true);
+    assert.equal(
+      controlledSlider.style.getPropertyValue("--combric-slider-fill"),
+      "75%",
+    );
+
+    await act(async () => {
+      root.render(
+        createElement(Slider, {
+          "aria-label": "Controlled level",
+          max: 50,
+          min: 10,
+          value: 30,
+        }),
+      );
+    });
+    assert.equal(
+      controlledSlider.style.getPropertyValue("--combric-slider-fill"),
+      "50%",
+    );
+  });
+});
+
+test("Slider preserves React 19 callback-ref cleanup semantics", async () => {
+  await withDom(async ({ root }) => {
+    const events = [];
+    const firstRef = (node) => {
+      if (node !== null) {
+        events.push("first attach");
+        return () => events.push("first cleanup");
+      }
+      events.push("first detach");
+    };
+    const secondRef = (node) => {
+      events.push(node === null ? "second detach" : "second attach");
+    };
+
+    await act(async () => {
+      root.render(createElement(Slider, { ref: firstRef, value: 20 }));
+    });
+    await act(async () => {
+      root.render(createElement(Slider, { ref: secondRef, value: 30 }));
+    });
+
+    assert.deepEqual(events, [
+      "first attach",
+      "first cleanup",
+      "second attach",
+    ]);
   });
 });
 

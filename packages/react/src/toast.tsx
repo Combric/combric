@@ -61,7 +61,7 @@ export type ToastPriority = "assertive" | "polite";
 
 export interface ToastProps extends Omit<
   LiHTMLAttributes<HTMLLIElement>,
-  "aria-live" | "role"
+  "aria-atomic" | "aria-live" | "role"
 > {
   defaultOpen?: boolean;
   duration?: number;
@@ -79,6 +79,7 @@ export function Toast({
   open: openProp,
   priority = "polite",
   ref,
+  children,
   ...props
 }: ToastProps): ReactElement | null {
   const [open, setOpen] = useControllableOpen({
@@ -105,13 +106,21 @@ export function Toast({
       <li
         {...props}
         ref={ref}
-        role={priority === "assertive" ? "alert" : "status"}
-        aria-live={priority}
-        aria-atomic="true"
+        role={undefined}
+        aria-live={undefined}
+        aria-atomic={undefined}
         className={classNames("combric-toast", className)}
         data-priority={priority}
         data-state="open"
-      />
+      >
+        <div
+          className="combric-toast__announcer"
+          role={priority === "assertive" ? "alert" : "status"}
+          aria-atomic="true"
+        >
+          {children}
+        </div>
+      </li>
     </ToastContext.Provider>
   );
 }

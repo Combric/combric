@@ -22,8 +22,10 @@ public stylesheet once in your application:
 
 That stylesheet imports `@combric/layout/css`, which in turn imports the token
 contract, so this is the only required CSS entry point for the standard setup.
-Component and layout styles use `var(--combric-*)` semantic properties,
-including metriq's square `--combric-radius` geometry.
+Component and layout styles use public `var(--combric-*)` semantic properties.
+Set `data-theme="dark"` on an ancestor to select the dark token mapping; theme
+selection and persistence remain application-owned. Geometry is component
+appropriate by default and can be customized through semantic variables.
 
 ## Layout
 
@@ -62,8 +64,12 @@ import { Button } from "@combric/react";
 ```
 
 `Button` renders a native `<button>` with a default `type="button"`. Variants
-are `primary`, `secondary`, and `ghost`; sizes are `sm`, `md`, and `lg`. Native
-button props, React 19 `ref`, and consumer `className` are supported.
+are `primary`, `secondary`, `ghost`, `accent`, and `danger`; sizes are `sm`,
+`md`, and `lg`. The default radius is `0.25rem`. A bounded `radius` prop accepts
+`none | sm | md | lg | full`; global defaults remain customizable through
+`--combric-radius-button`. Native button props, React 19 `ref`, and consumer
+`className` are supported. The technical accent is an explicit variant rather
+than the default primary color.
 
 ## Card
 
@@ -88,8 +94,10 @@ import {
 ```
 
 The card API is compositional and uses semantic section, heading, paragraph, and
-footer elements. Each component accepts its native props, `ref`, and an
-additional `className`.
+footer elements. `tone` accepts `surface | muted | elevated`; the default radius
+is `0.25rem`, with the same bounded `radius` vocabulary as Button. Consumers can
+customize the global Card geometry using `--combric-radius-card`. Each component
+accepts its native props, `ref`, and an additional `className`.
 
 ## Accordion
 
@@ -199,8 +207,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@combric/react";
 
 Avatar sizes are `sm`, `md`, and `lg`. The required image `alt` text preserves
 native image semantics; load/error events deterministically switch the fallback.
-The default metriq geometry is square. There is no loader, remote-data API,
-presence system, or circular default.
+Its circular geometry follows avatar semantics. There is no loader, remote-data
+API, or presence system.
 
 ## Tabs
 
@@ -439,8 +447,11 @@ compositional Toast children. Each Toast supports controlled `open`,
 uncontrolled `defaultOpen`, deterministic `onOpenChange`, optional `duration`
 (`0` disables timeout), and an accessible close button. `priority="polite"` uses
 status semantics; `assertive` uses alert semantics. Timers are cleaned up on
-close and unmount. Toasts never move focus. There is intentionally no global
-store, imperative service, swipe system, or application notification backend.
+close and unmount. Each live region is nested inside its list item, so list
+semantics remain valid; status/alert roles provide their implicit live priority
+without a second `aria-live` declaration. Toasts never move focus. There is
+intentionally no global store, imperative service, swipe system, or application
+notification backend.
 
 ## Field composition
 
@@ -487,11 +498,13 @@ import { Field, Label, Slider } from "@combric/react";
 ```
 
 Slider is a native horizontal `<input type="range">`. It preserves browser form
-participation, validation, keyboard behavior, controlled and uncontrolled value
-props, and disabled behavior. The stylesheet covers the WebKit and Gecko range
-track/thumb pseudo-elements available to standard CSS, but exact native
-rendering remains browser-dependent. Multi-thumb ranges, marks, vertical
-orientation, and tooltips are outside this contract.
+participation, reset, validation, keyboard behavior, controlled and uncontrolled
+value props, and disabled behavior. Its filled track is synchronized to the
+actual native value across non-zero `min`, `max`, and `step`;
+`--combric-slider-fill` is an internal computed property, while track, thumb,
+and colors use public semantic tokens. WebKit and Gecko range pseudo-elements
+are styled; exact native rendering remains browser-dependent. Multi-thumb
+ranges, marks, vertical orientation, and tooltips are outside this contract.
 
 ## Toggle and ToggleGroup
 
@@ -667,9 +680,10 @@ rules.
 The public API intentionally has no polymorphic `as`/`asChild` contract, variant
 engine, form framework, router integration, public generalized overlay engine,
 responsive object DSL, layout solver, multiple-open accordion mode, animation
-framework, component-specific token layer, or runtime theme system. Consumer
-classes extend rather than replace required Combric classes. Additional
-components, docs/playground, and generators remain future work.
+framework, component-specific token layer beyond canonical semantic roles, or
+theme provider/persistence system. Consumer classes extend rather than replace
+required Combric classes. Additional components, docs/playground, and generators
+remain future work.
 
 ## Project and license
 

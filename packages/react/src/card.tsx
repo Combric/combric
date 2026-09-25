@@ -1,17 +1,30 @@
 import type { HTMLAttributes, ReactElement, Ref } from "react";
 
 import { classNames } from "./class-names.js";
+import type { RadiusPreset } from "./radius.js";
+
+export type CardTone = "surface" | "muted" | "elevated";
 
 export interface CardProps extends HTMLAttributes<HTMLElement> {
+  radius?: RadiusPreset;
   ref?: Ref<HTMLElement>;
+  tone?: CardTone;
 }
 
-export function Card({ className, ref, ...props }: CardProps): ReactElement {
+export function Card({
+  className,
+  radius,
+  ref,
+  tone = "surface",
+  ...props
+}: CardProps): ReactElement {
   return (
     <section
       {...props}
       ref={ref}
       className={classNames("combric-card", className)}
+      data-radius={radius}
+      data-tone={tone}
     />
   );
 }

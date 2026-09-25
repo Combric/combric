@@ -30,9 +30,11 @@ test("React package declares its peer, layout, and Tailwind-independent contract
   }
 });
 
-test("React CSS consumes canonical variables and preserves metriq geometry", () => {
+test("React CSS consumes canonical variables and component geometry roles", () => {
   assert.match(css, /^@import "@combric\/layout\/css";/);
-  assert.match(css, /border-radius: var\(--combric-radius\)/);
+  assert.match(css, /border-radius: var\(--combric-radius-button\)/);
+  assert.match(css, /border-radius: var\(--combric-radius-card\)/);
+  assert.match(css, /border-radius: var\(--combric-radius-overlay\)/);
   assert.match(css, /:focus-visible/);
   assert.match(css, /var\(--combric-color-invalid\)/);
   assert.match(css, /\.combric-input/);

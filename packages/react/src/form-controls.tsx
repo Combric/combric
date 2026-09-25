@@ -2,11 +2,14 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
+  useEffect,
   useId,
   useRef,
   useState,
   type FieldsetHTMLAttributes,
+  type CSSProperties,
   type InputHTMLAttributes,
   type LabelHTMLAttributes,
   type ReactElement,
@@ -318,8 +321,16 @@ export function Slider({
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
   className,
+  defaultValue,
   id,
+  max = 100,
+  min = 0,
+  onChange,
+  onInput,
   ref,
+  step,
+  style,
+  value,
   ...props
 }: SliderProps): ReactElement {
   const fieldProps = useFieldControlProps({
@@ -327,13 +338,119 @@ export function Slider({
     "aria-invalid": ariaInvalid,
     id,
   });
+  const inputRef = useRef<HTMLInputElement>(null);
+  const controlled = value !== undefined;
+  const parsedMinimum = Number(min);
+  const parsedMaximum = Number(max);
+  const minimum = Number.isFinite(parsedMinimum) ? parsedMinimum : 0;
+  const maximum = Number.isFinite(parsedMaximum) ? parsedMaximum : 100;
+  const range = maximum > minimum ? maximum - minimum : 0;
+  const numericValue = Number(controlled ? value : defaultValue);
+  const initialValue = Number.isFinite(numericValue)
+    ? numericValue
+    : minimum + range / 2;
+  const fill =
+    range > 0
+      ? Math.min(100, Math.max(0, ((initialValue - minimum) / range) * 100))
+      : 0;
+
+  const setInputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      inputRef.current = node;
+      if (typeof ref === "function") {
+        const cleanup = ref(node);
+        if (typeof cleanup === "function") {
+          return () => {
+            inputRef.current = null;
+            cleanup();
+          };
+        }
+      } else if (ref !== null && ref !== undefined) {
+        ref.current = node;
+      }
+    },
+    [ref],
+  );
+
+  const setFill = useCallback(
+    (nextValue: number): void => {
+      const nextFill =
+        range > 0
+          ? Math.min(100, Math.max(0, ((nextValue - minimum) / range) * 100))
+          : 0;
+      inputRef.current?.style.setProperty(
+        "--combric-slider-fill",
+        `${nextFill}%`,
+      );
+    },
+    [minimum, range],
+  );
+
+  useEffect(() => {
+    if (controlled) {
+      return undefined;
+    }
+
+    const input = inputRef.current;
+    const form = input?.form;
+    const view = form?.ownerDocument.defaultView;
+    if (
+      input === null ||
+      form === null ||
+      form === undefined ||
+      view === null ||
+      view === undefined
+    ) {
+      return undefined;
+    }
+
+    setFill(input.valueAsNumber);
+    let resetTimeout: number | undefined;
+    const handleReset = (): void => {
+      if (resetTimeout !== undefined) {
+        view.clearTimeout(resetTimeout);
+      }
+      resetTimeout = view.setTimeout(() => setFill(input.valueAsNumber), 0);
+    };
+    form.addEventListener("reset", handleReset);
+    return () => {
+      form.removeEventListener("reset", handleReset);
+      if (resetTimeout !== undefined) {
+        view.clearTimeout(resetTimeout);
+      }
+    };
+  }, [controlled, setFill]);
+
   return (
     <input
       {...props}
       {...fieldProps}
-      ref={ref}
+      ref={setInputRef}
       type="range"
       className={classNames("combric-slider", className)}
+      min={min}
+      max={max}
+      step={step}
+      value={controlled ? value : undefined}
+      defaultValue={controlled ? undefined : defaultValue}
+      style={
+        {
+          ...style,
+          "--combric-slider-fill": `${fill}%`,
+        } as CSSProperties
+      }
+      onInput={(event) => {
+        if (!controlled) {
+          setFill(event.currentTarget.valueAsNumber);
+        }
+        onInput?.(event);
+      }}
+      onChange={(event) => {
+        if (!controlled) {
+          setFill(event.currentTarget.valueAsNumber);
+        }
+        onChange?.(event);
+      }}
     />
   );
 }

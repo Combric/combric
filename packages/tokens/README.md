@@ -9,9 +9,11 @@ modern ESM tooling and browsers; Node.js 24 or newer is required for repository
 build tooling. The public entry points are `@combric/tokens` for JavaScript and
 TypeScript and `@combric/tokens/css` for CSS.
 
-The default design language is **metriq**: restrained, editorial, and square by
-default. The semantic `radius` token resolves to `0`; future components can use
-that contract without scattering hard-coded geometry rules.
+The default design language is **metriq**: restrained and editorial, with
+structured geometry for surfaces and functional geometry for controls. Buttons
+and Cards default to `0.25rem`; a component-specific semantic radius contract
+also keeps controls, overlays, circles, and pills distinct. The legacy semantic
+`radius` alias still resolves to `0` for compatibility.
 
 ## CSS
 
@@ -25,10 +27,25 @@ Import the public stylesheet without Tailwind or another framework:
   background: var(--combric-color-surface);
   border: var(--combric-border-width) var(--combric-border-style)
     var(--combric-color-border);
-  border-radius: var(--combric-radius);
+  border-radius: var(--combric-radius-card);
   padding: var(--combric-space-4);
 }
+
+/* Consumer overrides use public semantic properties; no internal selectors. */
+:root {
+  --combric-radius-button: 0;
+  --combric-radius-card: 0;
+  --combric-color-primary: #183a55;
+}
+
+[data-theme="dark"] {
+  --combric-color-accent: #ff9c62;
+}
 ```
+
+Light is the default mapping. Set `data-theme="dark"` on an application ancestor
+to select the provided dark semantic palette. Consumers choose theme selection
+and persistence; the Framework supplies tokens, not a theme provider.
 
 All public custom properties use the `--combric-*` namespace. Primitive values
 are emitted as `--combric-primitive-*`; semantic properties reference those
@@ -42,18 +59,25 @@ semantic values, CSS custom-property names, and the `metriq` contract:
 ```ts
 import {
   metriq,
+  darkSemanticTokens,
+  lightSemanticTokens,
   semanticCssVariableNames,
   semanticTokens,
 } from "@combric/tokens";
 
 semanticTokens["color.canvas"];
+lightSemanticTokens["color.canvas"];
+darkSemanticTokens["color.canvas"];
 semanticCssVariableNames["color.canvas"];
 metriq.semantic.radius;
+metriq.themes.dark.semantic["color.canvas"];
 ```
 
-Primitive tokens contain raw reusable values. Semantic tokens name UI roles and
-map to primitives. The CSS file is generated from these typed definitions during
-the repository build; it is not maintained as a second source of truth.
+Primitive tokens contain raw reusable values, including the approved Warm
+Canvas, Graphite, surface, accent, primary, and radius scale. Semantic tokens
+name stable UI roles and map to primitives for both themes. The CSS file is
+generated from these typed definitions during the repository build; it is not
+maintained as a second source of truth.
 
 The package has no React or Tailwind dependency. The optional
 `@combric/tailwind` adapter consumes this contract rather than redefining it.
@@ -63,9 +87,9 @@ The contract includes the deliberately small `size.layout.item.sm`, `.md`, and
 framework-independent CSS, React, and Tailwind consumers without introducing a
 breakpoint scale or arbitrary layout-value API.
 
-The `color.invalid` semantic token is the shared native-control invalid-state
-contract. It resolves to the deliberately limited `color.red.700` primitive;
-Combric styles invalid state but does not implement validation logic.
+The `color.invalid`, `color.invalid.foreground`, and `color.invalid.hover`
+semantic tokens form the shared invalid-state contract. Combric styles invalid
+state but does not implement validation logic.
 
 The minimum overlay-specific contract is `color.backdrop` plus
 `z.index.overlay`, `z.index.modal`, and `z.index.toast`. These roles keep

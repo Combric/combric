@@ -1,8 +1,10 @@
 import type { ButtonHTMLAttributes, ReactElement, Ref } from "react";
 
 import { classNames } from "./class-names.js";
+import type { RadiusPreset } from "./radius.js";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonVariant =
+  "primary" | "secondary" | "ghost" | "accent" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps extends Omit<
@@ -10,12 +12,14 @@ export interface ButtonProps extends Omit<
   "size"
 > {
   ref?: Ref<HTMLButtonElement>;
+  radius?: RadiusPreset;
   size?: ButtonSize;
   variant?: ButtonVariant;
 }
 
 export function Button({
   className,
+  radius,
   ref,
   size = "md",
   type = "button",
@@ -30,6 +34,7 @@ export function Button({
       className={classNames("combric-button", className)}
       data-size={size}
       data-variant={variant}
+      data-radius={radius}
     />
   );
 }
