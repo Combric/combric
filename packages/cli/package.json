@@ -1,6 +1,6 @@
 {
   "name": "@combric/cli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Optional project setup and diagnostics for Combric",
   "license": "MIT",
   "type": "module",

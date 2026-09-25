@@ -1,6 +1,6 @@
 {
   "name": "@combric/react",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Accessible React component primitives for Combric",
   "license": "MIT",
   "type": "module",

@@ -31,7 +31,7 @@ function pnpm(args, cwd, expected = 0) {
 }
 
 try {
-  const version = "1.0.0";
+  const version = "1.1.0";
   for (const name of ["tokens", "guard"]) {
     pnpm(
       ["pack", "--pack-destination", temporary],
