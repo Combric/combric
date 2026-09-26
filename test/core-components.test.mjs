@@ -251,11 +251,114 @@ test("Badge, Separator, and Avatar expose restrained semantic contracts", async 
       image.dispatchEvent(new window.Event("load", { bubbles: true })),
     );
     assert.equal(fallback.hidden, true);
+    assert.equal(image.hidden, false);
     await act(async () =>
       image.dispatchEvent(new window.Event("error", { bubbles: true })),
     );
     assert.equal(image.hidden, true);
     assert.equal(fallback.hidden, false);
+  });
+});
+
+test("Avatar hides the fallback when the image was already complete before mount", async () => {
+  await withDom(async ({ container, root, window }) => {
+    Object.defineProperty(window.HTMLImageElement.prototype, "complete", {
+      configurable: true,
+      get: () => true,
+    });
+    Object.defineProperty(window.HTMLImageElement.prototype, "naturalWidth", {
+      configurable: true,
+      get: () => 640,
+    });
+
+    await act(async () => {
+      root.render(
+        createElement(
+          Avatar,
+          null,
+          createElement(AvatarImage, {
+            alt: "Ada Lovelace",
+            src: "/ada.png",
+          }),
+          createElement(AvatarFallback, null, "AL"),
+        ),
+      );
+    });
+
+    const avatar = container.querySelector(".combric-avatar");
+    const image = container.querySelector("img");
+    const fallback = container.querySelector("span");
+    assert.equal(avatar.dataset.state, "loaded");
+    assert.equal(image.hidden, false);
+    assert.equal(fallback.hidden, true);
+  });
+});
+
+test("Avatar keeps the fallback when an already-complete image has no natural width", async () => {
+  await withDom(async ({ container, root, window }) => {
+    Object.defineProperty(window.HTMLImageElement.prototype, "complete", {
+      configurable: true,
+      get: () => true,
+    });
+    Object.defineProperty(window.HTMLImageElement.prototype, "naturalWidth", {
+      configurable: true,
+      get: () => 0,
+    });
+
+    await act(async () => {
+      root.render(
+        createElement(
+          Avatar,
+          null,
+          createElement(AvatarImage, {
+            alt: "Ada Lovelace",
+            src: "/missing-ada.png",
+          }),
+          createElement(AvatarFallback, null, "AL"),
+        ),
+      );
+    });
+
+    const image = container.querySelector("img");
+    const fallback = container.querySelector("span");
+    assert.equal(image.hidden, true);
+    assert.equal(fallback.hidden, false);
+  });
+});
+
+test("AvatarImage preserves React 19 callback-ref cleanup semantics", async () => {
+  await withDom(async ({ root }) => {
+    const events = [];
+    const firstRef = (node) => {
+      if (node !== null) {
+        events.push("first attach");
+        return () => events.push("first cleanup");
+      }
+      events.push("first detach");
+    };
+    const secondRef = (node) => {
+      events.push(node === null ? "second detach" : "second attach");
+    };
+    const tree = (ref) =>
+      createElement(
+        Avatar,
+        null,
+        createElement(AvatarImage, {
+          alt: "Ada Lovelace",
+          ref,
+          src: "/ada.png",
+        }),
+        createElement(AvatarFallback, null, "AL"),
+      );
+
+    await act(async () => root.render(tree(firstRef)));
+    await act(async () => root.render(tree(secondRef)));
+
+    assert.deepEqual(events, [
+      "first attach",
+      "first cleanup",
+      "second attach",
+    ]);
   });
 });
 
