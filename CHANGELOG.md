@@ -3,6 +3,22 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.1.1] - 2026-09-26
+
+Combric Framework patch release.
+
+- Fixed Avatar fallback state when `AvatarImage` was already loaded from cache
+  before mount.
+
+Published packages:
+
+- `@combric/tokens@1.1.1`;
+- `@combric/layout@1.1.1`;
+- `@combric/react@1.1.1`;
+- `@combric/tailwind@1.1.1`;
+- `@combric/cli@1.1.1`;
+- `@combric/guard@1.1.1`.
+
 ## [1.1.0] - 2026-09-25
 
 Combric Framework remediation release.

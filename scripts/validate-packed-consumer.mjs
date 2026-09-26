@@ -9,7 +9,7 @@ const root = new URL("../", import.meta.url).pathname.replace(
 );
 const temporary = await mkdtemp(join(tmpdir(), "combric-packed-consumer-"));
 const packages = ["tokens", "layout", "react", "tailwind"];
-const version = "1.1.0";
+const version = "1.1.1";
 
 function run(command, arguments_, cwd) {
   const pnpmEntry = process.env.npm_execpath;
