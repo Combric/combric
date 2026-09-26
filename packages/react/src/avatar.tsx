@@ -3,7 +3,9 @@
 import {
   createContext,
   useContext,
+  useCallback,
   useEffect,
+  useRef,
   useState,
   type HTMLAttributes,
   type ImgHTMLAttributes,
@@ -78,15 +80,37 @@ export function AvatarImage({
   ...props
 }: AvatarImageProps): ReactElement {
   const { setStatus, status } = useAvatarContext();
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const setImageRef = useCallback(
+    (node: HTMLImageElement | null) => {
+      imageRef.current = node;
+      if (typeof ref === "function") {
+        const cleanup = ref(node);
+        if (typeof cleanup === "function") {
+          return () => {
+            imageRef.current = null;
+            cleanup();
+          };
+        }
+      } else if (ref !== undefined && ref !== null) {
+        ref.current = node;
+      }
+    },
+    [ref],
+  );
 
   useEffect(() => {
     setStatus("loading");
+    const image = imageRef.current;
+    if (image?.complete) {
+      setStatus(image.naturalWidth > 0 ? "loaded" : "error");
+    }
   }, [setStatus, src]);
 
   return (
     <img
       {...props}
-      ref={ref}
+      ref={setImageRef}
       alt={alt}
       src={src}
       className={classNames("combric-avatar__image", className)}
