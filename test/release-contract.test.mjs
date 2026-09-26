@@ -29,7 +29,7 @@ test("release finalizer configures Git identity before creating its tag", () => 
 });
 
 test("release contract matches the six publishable packages", () => {
-  assert.equal(contract.version, "1.1.0");
+  assert.equal(contract.version, "1.1.1");
   assert.deepEqual(
     contract.packages.map(({ name }) => name),
     [
@@ -117,6 +117,6 @@ test("packed manifests reject workspace and local dependency leaks", () => {
         { dependencies: { "@combric/tokens": "^2.0.0" } },
         contract.version,
       ),
-    /must be \^1\.1\.0/,
+    /must be \^1\.1\.1/,
   );
 });
