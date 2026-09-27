@@ -36,6 +36,8 @@ import {
   TooltipTrigger,
 } from "@combric/react";
 
+const pendingExitAnimations = new WeakMap();
+
 async function withDom(run) {
   const dom = new JSDOM(
     '<button id="outside">Outside</button><div id="root"></div><div id="portal-target"></div>',
@@ -70,6 +72,30 @@ async function withDom(run) {
 
   const container = dom.window.document.querySelector("#root");
   const root = createRoot(container);
+  Object.defineProperty(dom.window.HTMLElement.prototype, "getAnimations", {
+    configurable: true,
+    value() {
+      if (this.dataset.state !== "closed") return [];
+      let animation = pendingExitAnimations.get(this);
+      if (animation === undefined) {
+        let resolveFinished;
+        const finished = new Promise((resolve) => {
+          resolveFinished = resolve;
+        });
+        animation = {
+          effect: { getComputedTiming: () => ({ endTime: 400 }) },
+          finished,
+          finish() {
+            this.playState = "finished";
+            resolveFinished();
+          },
+          playState: "running",
+        };
+        pendingExitAnimations.set(this, animation);
+      }
+      return [animation];
+    },
+  });
   try {
     await run({ container, root, window: dom.window });
   } finally {
@@ -81,6 +107,23 @@ async function withDom(run) {
 
 async function settle() {
   await act(async () => Promise.resolve());
+}
+
+async function finishExitTransition(element) {
+  await settle();
+  const modalLayer = element.closest(".combric-modal-layer");
+  const targets = modalLayer
+    ? [...modalLayer.querySelectorAll('[data-state="closed"]')]
+    : [element];
+  await act(async () => {
+    for (const target of targets) {
+      for (const animation of target.getAnimations()) {
+        animation.finish();
+      }
+      pendingExitAnimations.delete(target);
+    }
+  });
+  await settle();
 }
 
 test("Dialog portals, isolates background, traps focus, dismisses, and restores focus", async () => {
@@ -162,6 +205,8 @@ test("Dialog portals, isolates background, traps focus, dismisses, and restores 
       );
     });
     await settle();
+    const closingDialog = window.document.querySelector('[role="dialog"]');
+    await finishExitTransition(closingDialog, window);
     assert.equal(window.document.querySelector('[role="dialog"]'), null);
     assert.equal(window.document.activeElement === trigger, true);
     assert.notEqual(container.inert, true);
@@ -176,6 +221,9 @@ test("Dialog portals, isolates background, traps focus, dismisses, and restores 
       );
     });
     await settle();
+    const closingBackdropDialog =
+      window.document.querySelector('[role="dialog"]');
+    await finishExitTransition(closingBackdropDialog, window);
     assert.equal(window.document.querySelector('[role="dialog"]'), null);
   });
 });
@@ -348,6 +396,9 @@ test("Dropdown Menu supports keyboard focus, disabled items, activation, and res
     });
     await settle();
     assert.deepEqual(selections, ["edit"]);
+    const closingMenu = window.document.querySelector('[role="menu"]');
+    assert.equal(closingMenu.dataset.state, "closed");
+    await finishExitTransition(closingMenu, window);
     assert.equal(window.document.querySelector('[role="menu"]'), null);
     assert.equal(window.document.activeElement === trigger, true);
 
@@ -404,6 +455,9 @@ test("Dropdown Menu supports keyboard focus, disabled items, activation, and res
         new window.MouseEvent("pointerdown", { bubbles: true }),
       );
     });
+    const outsideClosingMenu = window.document.querySelector('[role="menu"]');
+    assert.equal(outsideClosingMenu.dataset.state, "closed");
+    await finishExitTransition(outsideClosingMenu, window);
     assert.equal(window.document.querySelector('[role="menu"]'), null);
     assert.equal(window.document.activeElement === outside, true);
   });
@@ -474,6 +528,11 @@ test("Popover is non-modal, dismisses outside or on Escape, and flips within vie
         new window.MouseEvent("pointerdown", { bubbles: true }),
       );
     });
+    const closingPopover = window.document.querySelector(
+      ".combric-popover__content",
+    );
+    assert.equal(closingPopover.dataset.state, "closed");
+    await finishExitTransition(closingPopover, window);
     assert.equal(
       window.document.querySelector(".combric-popover__content"),
       null,
@@ -517,6 +576,9 @@ test("Tooltip responds to focus and pointer without stealing focus", async () =>
     assert.equal(window.document.activeElement === trigger, true);
 
     await act(async () => trigger.blur());
+    const closingTooltip = window.document.querySelector('[role="tooltip"]');
+    assert.equal(closingTooltip.dataset.state, "closed");
+    await finishExitTransition(closingTooltip, window);
     assert.equal(window.document.querySelector('[role="tooltip"]'), null);
 
     await act(async () => {
@@ -537,6 +599,9 @@ test("Tooltip responds to focus and pointer without stealing focus", async () =>
         }),
       );
     });
+    const escapeTooltip = window.document.querySelector('[role="tooltip"]');
+    assert.equal(escapeTooltip.dataset.state, "closed");
+    await finishExitTransition(escapeTooltip, window);
     assert.equal(window.document.querySelector('[role="tooltip"]'), null);
   });
 });
@@ -588,10 +653,18 @@ test("Toast portals a live region, closes accessibly, and cleans up its timer", 
       async () => new Promise((resolve) => window.setTimeout(resolve, 20)),
     );
     assert.deepEqual(changes, [false]);
+    const closingStatus = viewport
+      .querySelector('[role="status"]')
+      .closest("li");
+    assert.equal(closingStatus.dataset.state, "closed");
+    await finishExitTransition(closingStatus, window);
     assert.equal(viewport.querySelector('[role="status"]'), null);
 
     const dismiss = viewport.querySelector(".combric-toast__close");
     await act(async () => dismiss.click());
+    const closingAlert = viewport.querySelector('[role="alert"]').closest("li");
+    assert.equal(closingAlert.dataset.state, "closed");
+    await finishExitTransition(closingAlert, window);
     assert.equal(viewport.querySelector('[role="alert"]'), null);
     assert.equal(window.document.activeElement === outside, true);
 

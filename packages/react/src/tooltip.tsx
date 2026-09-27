@@ -21,6 +21,7 @@ import {
   useDismissableLayer,
   useLayer,
   usePortalHost,
+  usePresence,
   type OverlayAlign,
   type OverlaySide,
 } from "./overlay-internals.js";
@@ -174,6 +175,7 @@ export function TooltipContent({
   ...props
 }: TooltipContentProps): ReactElement | null {
   const context = useTooltipContext();
+  const presence = usePresence(context.open);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const host = usePortalHost(container);
   const layerId = useLayer(context.open);
@@ -198,19 +200,21 @@ export function TooltipContent({
     triggerRef: context.triggerRef,
   });
 
-  if (!context.open) {
+  if (!presence.present) {
     return null;
   }
 
   return renderPortal(
     <div
       {...props}
-      ref={mergeRefs(contentRef, ref)}
+      ref={mergeRefs(contentRef, ref, presence.motionRef)}
       id={context.contentId}
       role="tooltip"
+      aria-hidden={!context.open}
       className={classNames("combric-tooltip__content", className)}
       data-side={position.resolvedSide}
-      data-state="open"
+      data-state={presence.state}
+      data-presence={presence.phase}
       style={{ ...position.style, ...style }}
     />,
     host,

@@ -484,19 +484,29 @@ export function Example() {
   ),
   drawer: define(
     () => (
-      <Drawer>
-        <DrawerTrigger>Filters</DrawerTrigger>
-        <DrawerContent side="right">
-          <DrawerTitle>Filters</DrawerTitle>
-          <DrawerDescription>Limit visible results.</DrawerDescription>
-          <DrawerClose>Done</DrawerClose>
-        </DrawerContent>
-      </Drawer>
+      <div className="combric-docs-example-stack">
+        <Drawer>
+          <DrawerTrigger>Open left drawer</DrawerTrigger>
+          <DrawerContent side="left">
+            <DrawerTitle>Navigation</DrawerTitle>
+            <DrawerDescription>Browse project areas.</DrawerDescription>
+            <DrawerClose>Close navigation</DrawerClose>
+          </DrawerContent>
+        </Drawer>
+        <Drawer>
+          <DrawerTrigger>Filters</DrawerTrigger>
+          <DrawerContent side="right">
+            <DrawerTitle>Filters</DrawerTitle>
+            <DrawerDescription>Limit visible results.</DrawerDescription>
+            <DrawerClose>Done</DrawerClose>
+          </DrawerContent>
+        </Drawer>
+      </div>
     ),
     `import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from "@combric/react";
 
 export function Example() {
-  return <Drawer><DrawerTrigger>Filters</DrawerTrigger><DrawerContent side="right"><DrawerTitle>Filters</DrawerTitle><DrawerDescription>Limit visible results.</DrawerDescription><DrawerClose>Done</DrawerClose></DrawerContent></Drawer>;
+  return <><Drawer><DrawerTrigger>Open left drawer</DrawerTrigger><DrawerContent side="left"><DrawerTitle>Navigation</DrawerTitle><DrawerDescription>Browse project areas.</DrawerDescription><DrawerClose>Close navigation</DrawerClose></DrawerContent></Drawer><Drawer><DrawerTrigger>Filters</DrawerTrigger><DrawerContent side="right"><DrawerTitle>Filters</DrawerTitle><DrawerDescription>Limit visible results.</DrawerDescription><DrawerClose>Done</DrawerClose></DrawerContent></Drawer></>;
 }`,
   ),
   "dropdown-menu": define(
@@ -563,12 +573,16 @@ export function Example() {
           <ToastDescription>Your changes are available.</ToastDescription>
           <ToastClose>Dismiss</ToastClose>
         </Toast>
+        <Toast duration={5000}>
+          <ToastTitle>Automatic notice</ToastTitle>
+          <ToastDescription>This notice closes automatically.</ToastDescription>
+        </Toast>
       </ToastViewport>
     ),
     `import { Toast, ToastClose, ToastDescription, ToastTitle, ToastViewport } from "@combric/react";
 
 export function Example() {
-  return <ToastViewport aria-label="Notifications"><Toast duration={0}><ToastTitle>Saved</ToastTitle><ToastDescription>Your changes are available.</ToastDescription><ToastClose>Dismiss</ToastClose></Toast></ToastViewport>;
+  return <ToastViewport aria-label="Notifications"><Toast duration={0}><ToastTitle>Saved</ToastTitle><ToastDescription>Your changes are available.</ToastDescription><ToastClose>Dismiss</ToastClose></Toast><Toast duration={5000}><ToastTitle>Automatic notice</ToastTitle><ToastDescription>This notice closes automatically.</ToastDescription></Toast></ToastViewport>;
 }`,
   ),
   progress: define(

@@ -296,6 +296,8 @@ test("uncontrolled Accordion exposes stable ARIA relationships and toggles one i
     await act(async () => trigger.click());
     assert.equal(trigger.getAttribute("aria-expanded"), "false");
     assert.equal(content.hidden, true);
+    assert.equal(content.getAttribute("aria-hidden"), "true");
+    assert.equal(content.hasAttribute("inert"), true);
     assert.deepEqual(transitions, [null]);
     assert.equal(trigger.id, triggerId);
     assert.equal(content.id, contentId);

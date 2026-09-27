@@ -12,6 +12,7 @@ import {
 
 import { classNames } from "./class-names.js";
 import { useControllableState } from "./controllable-state.js";
+import { mergeRefs, useDisclosureMotion } from "./overlay-internals.js";
 
 interface CollapsibleContextValue {
   contentId: string;
@@ -120,19 +121,24 @@ export interface CollapsibleContentProps extends HTMLAttributes<HTMLDivElement> 
 export function CollapsibleContent({
   className,
   ref,
+  style,
   ...props
 }: CollapsibleContentProps): ReactElement {
   const context = useCollapsibleContext();
+  const motion = useDisclosureMotion(context.open);
   return (
     <div
       {...props}
-      ref={ref}
       id={context.contentId}
       role="region"
       aria-labelledby={context.triggerId}
       className={classNames("combric-collapsible__content", className)}
       data-state={context.open ? "open" : "closed"}
-      hidden={!context.open}
+      ref={mergeRefs(motion.ref, ref)}
+      hidden={motion.hidden}
+      aria-hidden={!context.open}
+      inert={motion.inert}
+      style={{ ...motion.style, ...style }}
     />
   );
 }

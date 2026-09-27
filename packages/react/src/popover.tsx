@@ -22,6 +22,7 @@ import {
   useFocusRestoration,
   useLayer,
   usePortalHost,
+  usePresence,
   type OverlayAlign,
   type OverlaySide,
 } from "./overlay-internals.js";
@@ -138,6 +139,7 @@ export function PopoverContent({
   ...props
 }: PopoverContentProps): ReactElement | null {
   const context = usePopoverContext();
+  const presence = usePresence(context.open);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const host = usePortalHost(container);
   const layerId = useLayer(context.open);
@@ -158,18 +160,21 @@ export function PopoverContent({
     triggerRef: context.triggerRef,
   });
 
-  if (!context.open) {
+  if (!presence.present) {
     return null;
   }
 
   return renderPortal(
     <div
       {...props}
-      ref={mergeRefs(contentRef, ref)}
+      ref={mergeRefs(contentRef, ref, presence.motionRef)}
       id={context.contentId}
+      aria-hidden={!context.open}
+      inert={!context.open}
       className={classNames("combric-popover__content", className)}
       data-side={position.resolvedSide}
-      data-state="open"
+      data-state={presence.state}
+      data-presence={presence.phase}
       style={{ ...position.style, ...style }}
     />,
     host,

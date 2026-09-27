@@ -12,6 +12,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { mergeRefs, usePresence } from "./overlay-internals.js";
 import {
   renderPortal,
   useControllableOpen,
@@ -88,6 +89,7 @@ export function Toast({
     onOpenChange,
     open: openProp,
   });
+  const presence = usePresence(open);
 
   useEffect(() => {
     if (!open || duration <= 0) {
@@ -97,7 +99,7 @@ export function Toast({
     return () => window.clearTimeout(timeout);
   }, [duration, open, setOpen]);
 
-  if (!open) {
+  if (!presence.present) {
     return null;
   }
 
@@ -105,13 +107,14 @@ export function Toast({
     <ToastContext.Provider value={{ close: () => setOpen(false) }}>
       <li
         {...props}
-        ref={ref}
+        ref={mergeRefs(ref, presence.motionRef)}
         role={undefined}
         aria-live={undefined}
         aria-atomic={undefined}
         className={classNames("combric-toast", className)}
         data-priority={priority}
-        data-state="open"
+        data-state={presence.state}
+        data-presence={presence.phase}
       >
         <div
           className="combric-toast__announcer"
