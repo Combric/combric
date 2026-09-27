@@ -421,9 +421,12 @@ test.describe("Combric motion in Chromium", () => {
       Math.max(
         ...element
           .getAnimations()
-          .map(
-            (animation) => animation.effect?.getComputedTiming().endTime ?? 0,
-          ),
+          .map((animation) => {
+            const endTime = animation.effect?.getComputedTiming().endTime;
+            return typeof endTime === "number" && Number.isFinite(endTime)
+              ? endTime
+              : 0;
+          }),
       ),
     );
     expect(duration).toBeGreaterThanOrEqual(400);
