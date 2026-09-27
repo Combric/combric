@@ -419,14 +419,12 @@ test.describe("Combric motion in Chromium", () => {
       .toBe(true);
     const duration = await menu.evaluate((element) =>
       Math.max(
-        ...element
-          .getAnimations()
-          .map((animation) => {
-            const endTime = animation.effect?.getComputedTiming().endTime;
-            return typeof endTime === "number" && Number.isFinite(endTime)
-              ? endTime
-              : 0;
-          }),
+        ...element.getAnimations().map((animation) => {
+          const endTime = animation.effect?.getComputedTiming().endTime;
+          return typeof endTime === "number" && Number.isFinite(endTime)
+            ? endTime
+            : 0;
+        }),
       ),
     );
     expect(duration).toBeGreaterThanOrEqual(400);
