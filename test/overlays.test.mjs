@@ -36,6 +36,8 @@ import {
   TooltipTrigger,
 } from "@combric/react";
 
+const pendingExitAnimations = new WeakMap();
+
 async function withDom(run) {
   const dom = new JSDOM(
     '<button id="outside">Outside</button><div id="root"></div><div id="portal-target"></div>',
@@ -70,6 +72,30 @@ async function withDom(run) {
 
   const container = dom.window.document.querySelector("#root");
   const root = createRoot(container);
+  Object.defineProperty(dom.window.HTMLElement.prototype, "getAnimations", {
+    configurable: true,
+    value() {
+      if (this.dataset.state !== "closed") return [];
+      let animation = pendingExitAnimations.get(this);
+      if (animation === undefined) {
+        let resolveFinished;
+        const finished = new Promise((resolve) => {
+          resolveFinished = resolve;
+        });
+        animation = {
+          effect: { getComputedTiming: () => ({ endTime: 400 }) },
+          finished,
+          finish() {
+            this.playState = "finished";
+            resolveFinished();
+          },
+          playState: "running",
+        };
+        pendingExitAnimations.set(this, animation);
+      }
+      return [animation];
+    },
+  });
   try {
     await run({ container, root, window: dom.window });
   } finally {
@@ -83,12 +109,18 @@ async function settle() {
   await act(async () => Promise.resolve());
 }
 
-async function finishExitTransition(element, window) {
+async function finishExitTransition(element) {
+  await settle();
+  const modalLayer = element.closest(".combric-modal-layer");
+  const targets = modalLayer
+    ? [...modalLayer.querySelectorAll('[data-state="closed"]')]
+    : [element];
   await act(async () => {
-    for (const type of ["transitionrun", "transitionend"]) {
-      const event = new window.Event(type, { bubbles: true });
-      Object.defineProperty(event, "propertyName", { value: "opacity" });
-      element.dispatchEvent(event);
+    for (const target of targets) {
+      for (const animation of target.getAnimations()) {
+        animation.finish();
+      }
+      pendingExitAnimations.delete(target);
     }
   });
   await settle();

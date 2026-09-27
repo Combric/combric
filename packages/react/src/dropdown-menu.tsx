@@ -247,7 +247,7 @@ export function DropdownMenuContent({
   return renderPortal(
     <div
       {...props}
-      ref={mergeRefs(contentRef, ref)}
+      ref={mergeRefs(contentRef, ref, presence.motionRef)}
       id={context.contentId}
       role="menu"
       aria-labelledby={context.triggerId}
@@ -257,8 +257,6 @@ export function DropdownMenuContent({
       data-side={position.resolvedSide}
       data-state={presence.state}
       data-presence={presence.phase}
-      onTransitionRun={presence.onTransitionRun}
-      onTransitionEnd={presence.onTransitionEnd}
       style={{ ...position.style, ...style }}
       onKeyDown={(event) => {
         onKeyDown?.(event);

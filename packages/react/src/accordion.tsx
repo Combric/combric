@@ -201,8 +201,6 @@ export function AccordionContent({
       hidden={motion.hidden}
       aria-hidden={!open}
       inert={motion.inert}
-      onTransitionRun={motion.onTransitionRun}
-      onTransitionEnd={motion.onTransitionEnd}
       style={{ ...motion.style, ...style }}
     />
   );

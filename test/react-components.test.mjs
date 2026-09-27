@@ -273,7 +273,7 @@ test("Slider preserves React 19 callback-ref cleanup semantics", async () => {
 });
 
 test("uncontrolled Accordion exposes stable ARIA relationships and toggles one item", async () => {
-  await withDom(async ({ container, root, window }) => {
+  await withDom(async ({ container, root }) => {
     const transitions = [];
     await act(async () => {
       root.render(
@@ -295,19 +295,9 @@ test("uncontrolled Accordion exposes stable ARIA relationships and toggles one i
 
     await act(async () => trigger.click());
     assert.equal(trigger.getAttribute("aria-expanded"), "false");
-    assert.equal(content.hidden, false);
+    assert.equal(content.hidden, true);
     assert.equal(content.getAttribute("aria-hidden"), "true");
     assert.equal(content.hasAttribute("inert"), true);
-    await act(async () => {
-      for (const type of ["transitionrun", "transitionend"]) {
-        const transition = new window.Event(type, { bubbles: true });
-        Object.defineProperty(transition, "propertyName", {
-          value: "block-size",
-        });
-        content.dispatchEvent(transition);
-      }
-    });
-    assert.equal(content.hidden, true);
     assert.deepEqual(transitions, [null]);
     assert.equal(trigger.id, triggerId);
     assert.equal(content.id, contentId);

@@ -141,6 +141,7 @@ test.describe("Combric motion in Chromium", () => {
     const dialog = page.locator(".combric-dialog__content");
     await expect(dialog).toHaveAttribute("data-state", "open");
     await expectRunningTransition(dialog);
+    await expect(dialog).toHaveCSS("transition-duration", /180ms|0\.18s/);
     await finishCurrentTransitions(dialog);
     await finishCurrentTransitions(page.locator(".combric-dialog__backdrop"));
     await expect(dialog).toHaveAttribute("aria-modal", "true");
@@ -199,16 +200,13 @@ test.describe("Combric motion in Chromium", () => {
 
     await menuTrigger.click();
     await expect(menu).toHaveAttribute("data-state", "open");
+    await finishCurrentTransitions(menu);
     await page.keyboard.press("Escape");
-    await expect(menuTrigger).toHaveAttribute("aria-expanded", "false");
+    await expect(menu).toHaveAttribute("data-state", "closed");
     await menuTrigger.click();
     await expect(menu).toHaveAttribute("data-state", "open");
-    await menu.dispatchEvent("transitionend", {
-      bubbles: true,
-      propertyName: "opacity",
-    });
+    await finishCurrentTransitions(menu);
     await expect(menu).toBeVisible();
-    await expect(menu).toHaveAttribute("data-state", "open");
 
     await page.goto("/components/overlays/popover/");
     const popoverTrigger = page.getByRole("button", { name: "Details" });
@@ -296,10 +294,202 @@ test.describe("Combric motion in Chromium", () => {
     await expectRunningTransition(activity);
   });
 
+  test("consumer motion tokens customize overlays, controls and disclosures", async ({
+    page,
+  }) => {
+    const overrides = `
+      :root {
+        --combric-motion-duration-micro: 37ms;
+        --combric-motion-duration-normal: 333ms;
+        --combric-motion-easing-standard: linear;
+        --combric-motion-easing-enter: ease-in;
+        --combric-motion-easing-exit: ease-out;
+      }
+    `;
+
+    await page.goto("/components/overlays/dialog/");
+    await page.addStyleTag({ content: overrides });
+    await page.getByRole("button", { name: "Open dialog" }).click();
+    const dialog = page.locator(".combric-dialog__content");
+    await expect(dialog).toHaveAttribute("data-presence", "entered");
+    await finishCurrentTransitions(dialog);
+    await expect(dialog).toHaveCSS("transition-duration", /333ms|0\.333s/);
+    await expect(dialog).toHaveCSS("transition-timing-function", /ease-in/);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveAttribute("data-state", "closed");
+    await expect(dialog).toHaveCSS("transition-timing-function", /ease-out/);
+    await expect(dialog).toHaveCount(0);
+
+    await page.goto("/components/overlays/dropdown-menu/");
+    await page.addStyleTag({ content: overrides });
+    await page.getByRole("button", { name: "Actions" }).click();
+    await expect(page.locator(".combric-dropdown-menu__content")).toHaveCSS(
+      "transition-duration",
+      /333ms|0\.333s/,
+    );
+
+    await page.goto("/components/forms/switch/");
+    await page.addStyleTag({ content: overrides });
+    const switchControl = page.getByRole("switch", { name: "Notifications" });
+    expect(
+      await switchControl.evaluate(
+        (element) => getComputedStyle(element, "::after").transitionDuration,
+      ),
+    ).toMatch(/37ms|0\.037s/);
+
+    await page.goto("/components/disclosure/accordion/");
+    await page.addStyleTag({ content: overrides });
+    await expect(page.locator(".combric-accordion__content")).toHaveCSS(
+      "transition-duration",
+      /333ms|0\.333s/,
+    );
+  });
+
+  test("global and per-component opt-outs clean up without visual transitions", async ({
+    page,
+  }) => {
+    await page.goto("/components/overlays/dialog/");
+    await page.locator("html").evaluate((element) => {
+      element.dataset.combricMotion = "off";
+    });
+    await page.getByRole("button", { name: "Open dialog" }).click();
+    let content = page.locator(".combric-dialog__content");
+    await expect(content).toHaveAttribute("data-state", "open");
+    await expectNoTransition(content);
+    await page.keyboard.press("Escape");
+    await expect(content).toHaveCount(0);
+
+    await page.goto("/components/overlays/dropdown-menu/");
+    await page.addStyleTag({
+      content:
+        ".no-motion { transition: none !important; animation: none !important; }",
+    });
+    const menuTrigger = page.getByRole("button", { name: "Actions" });
+    await menuTrigger.click();
+    content = page.locator(".combric-dropdown-menu__content");
+    await content.evaluate((element) => element.classList.add("no-motion"));
+    await expectNoTransition(content);
+    await page.keyboard.press("Escape");
+    await expect(content).toHaveCount(0);
+
+    await page.clock.install();
+    await page.goto("/components/feedback/toast/");
+    await page.addStyleTag({
+      content:
+        ".no-motion { transition: none !important; animation: none !important; }",
+    });
+    const toast = page
+      .getByText("Saved", { exact: true })
+      .locator("xpath=ancestor::li");
+    await toast.evaluate((element) => element.classList.add("no-motion"));
+    await page.getByRole("button", { name: "Dismiss" }).click();
+    await expect(toast).toHaveCount(0);
+  });
+
+  test("custom CSS owns presentation while presence follows actual duration and interruption", async ({
+    page,
+  }) => {
+    await page.goto("/components/overlays/dropdown-menu/");
+    await page.addStyleTag({
+      content: `
+        .motion-long { transition: opacity 400ms linear, transform 400ms linear !important; }
+        .motion-short { transition: opacity 45ms linear, transform 45ms linear !important; }
+        .motion-drawer { transition: opacity 120ms linear, transform 120ms linear !important; }
+        .motion-drawer[data-side="right"][data-state="open"] { opacity: 1; transform: translateX(0) rotate(0); }
+        .motion-drawer[data-side="right"][data-state="closed"] { opacity: 0; transform: translateX(24px) rotate(1deg); }
+      `,
+    });
+    const trigger = page.getByRole("button", { name: "Actions" });
+    await trigger.click();
+    const menu = page.locator(".combric-dropdown-menu__content");
+    await expect(menu).toHaveAttribute("data-presence", "entered");
+    await finishCurrentTransitions(menu);
+    await menu.evaluate((element) => element.classList.add("motion-long"));
+    await expect(menu).toHaveCSS("transition-duration", /400ms|0\.4s/);
+    await page.keyboard.press("Escape");
+    await expect(menu).toHaveAttribute("data-state", "closed");
+    await expect
+      .poll(() =>
+        menu.evaluate((element) =>
+          element
+            .getAnimations()
+            .some((animation) => animation.playState === "running"),
+        ),
+      )
+      .toBe(true);
+    const duration = await menu.evaluate((element) =>
+      Math.max(
+        ...element
+          .getAnimations()
+          .map(
+            (animation) => animation.effect?.getComputedTiming().endTime ?? 0,
+          ),
+      ),
+    );
+    expect(duration).toBeGreaterThanOrEqual(400);
+    await trigger.click();
+    await expect(menu).toHaveAttribute("data-state", "open");
+    await expect(menu).toHaveAttribute("data-presence", "entered");
+    await finishCurrentTransitions(menu);
+    await expect(menu).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(menu).toHaveAttribute("data-state", "closed");
+    await menu.evaluate(async (element) => {
+      const transitions = element.getAnimations();
+      if (transitions.length === 0) {
+        throw new Error("The custom 400ms exit must create CSS transitions");
+      }
+      await Promise.all(transitions.map((animation) => animation.finished));
+    });
+    await expect(menu).toHaveCount(0);
+
+    await page.goto("/components/overlays/dropdown-menu/");
+    await page.addStyleTag({
+      content:
+        ".motion-short { transition: opacity 45ms linear, transform 45ms linear !important; }",
+    });
+    const shortTrigger = page.getByRole("button", { name: "Actions" });
+    await shortTrigger.click();
+    const shortMenu = page.locator(".combric-dropdown-menu__content");
+    await expect(shortMenu).toHaveAttribute("data-presence", "entered");
+    await finishCurrentTransitions(shortMenu);
+    await shortMenu.evaluate((element) =>
+      element.classList.add("motion-short"),
+    );
+    await expect(shortMenu).toHaveCSS("transition-duration", /45ms|0\.045s/);
+    await page.keyboard.press("Escape");
+    await expect(shortMenu).toHaveCount(0);
+
+    await page.goto("/components/overlays/drawer/");
+    await page.addStyleTag({
+      content: `
+        .motion-drawer { transition: opacity 120ms linear, transform 120ms linear !important; }
+        .motion-drawer[data-side="right"][data-state="open"] { opacity: 1; transform: translateX(0) rotate(0); }
+        .motion-drawer[data-side="right"][data-state="closed"] { opacity: 0; transform: translateX(24px) rotate(1deg); }
+      `,
+    });
+    await page.getByRole("button", { name: "Filters" }).click();
+    const drawer = page.locator('.combric-drawer__content[data-side="right"]');
+    await drawer.evaluate((element) => element.classList.add("motion-drawer"));
+    await expect(drawer).toHaveCSS(
+      "transition-duration",
+      /120ms, 120ms|0\.12s, 0\.12s/,
+    );
+    await finishCurrentTransitions(drawer);
+    await page.keyboard.press("Escape");
+    await expect(drawer).toHaveAttribute("data-state", "closed");
+    await expect(drawer).toHaveCount(0);
+  });
+
   test("reduced motion removes decorative transitions and promptly cleans overlays", async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.addStyleTag({
+      content:
+        ":root { --combric-motion-duration-micro: 400ms; --combric-motion-duration-normal: 400ms; }",
+    });
     const routes = [
       [
         "/components/disclosure/accordion/",

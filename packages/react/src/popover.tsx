@@ -167,7 +167,7 @@ export function PopoverContent({
   return renderPortal(
     <div
       {...props}
-      ref={mergeRefs(contentRef, ref)}
+      ref={mergeRefs(contentRef, ref, presence.motionRef)}
       id={context.contentId}
       aria-hidden={!context.open}
       inert={!context.open}
@@ -175,8 +175,6 @@ export function PopoverContent({
       data-side={position.resolvedSide}
       data-state={presence.state}
       data-presence={presence.phase}
-      onTransitionRun={presence.onTransitionRun}
-      onTransitionEnd={presence.onTransitionEnd}
       style={{ ...position.style, ...style }}
     />,
     host,

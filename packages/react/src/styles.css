@@ -539,7 +539,7 @@
 @media (prefers-reduced-motion: reduce) {
   .combric-spinner,
   .combric-skeleton {
-    animation: none;
+    animation: none !important;
   }
 }
 
@@ -833,6 +833,40 @@
       var(--combric-motion-easing-standard);
 }
 
+html[data-combric-motion="off"] {
+  --combric-motion-duration-fast: 0ms;
+  --combric-motion-duration-micro: 0ms;
+  --combric-motion-duration-normal: 0ms;
+  --combric-motion-duration-slow: 0ms;
+}
+
+html[data-combric-motion="off"] .combric-spinner,
+html[data-combric-motion="off"] .combric-skeleton {
+  animation: none;
+}
+
+.combric-dialog__backdrop[data-state="open"],
+.combric-drawer__backdrop[data-state="open"],
+.combric-dialog__content[data-state="open"],
+.combric-drawer__content[data-state="open"],
+.combric-dropdown-menu__content[data-state="open"],
+.combric-popover__content[data-state="open"],
+.combric-tooltip__content[data-state="open"],
+.combric-toast[data-state="open"] {
+  transition-timing-function: var(--combric-motion-easing-enter);
+}
+
+.combric-dialog__backdrop[data-state="closed"],
+.combric-drawer__backdrop[data-state="closed"],
+.combric-dialog__content[data-state="closed"],
+.combric-drawer__content[data-state="closed"],
+.combric-dropdown-menu__content[data-state="closed"],
+.combric-popover__content[data-state="closed"],
+.combric-tooltip__content[data-state="closed"],
+.combric-toast[data-state="closed"] {
+  transition-timing-function: var(--combric-motion-easing-exit);
+}
+
 .combric-dialog__content[data-state="closed"],
 .combric-drawer__content[data-state="closed"] {
   transform: translate(-50%, -50%) scale(0.98);
@@ -898,8 +932,11 @@
   .combric-tooltip__content,
   .combric-toast,
   .combric-switch::after,
-  .combric-tabs__trigger {
-    transition: none;
+  .combric-tabs__trigger,
+  .combric-spinner,
+  .combric-skeleton {
+    transition: none !important;
+    animation: none !important;
   }
 }
 

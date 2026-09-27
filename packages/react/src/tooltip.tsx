@@ -207,7 +207,7 @@ export function TooltipContent({
   return renderPortal(
     <div
       {...props}
-      ref={mergeRefs(contentRef, ref)}
+      ref={mergeRefs(contentRef, ref, presence.motionRef)}
       id={context.contentId}
       role="tooltip"
       aria-hidden={!context.open}
@@ -215,8 +215,6 @@ export function TooltipContent({
       data-side={position.resolvedSide}
       data-state={presence.state}
       data-presence={presence.phase}
-      onTransitionRun={presence.onTransitionRun}
-      onTransitionEnd={presence.onTransitionEnd}
       style={{ ...position.style, ...style }}
     />,
     host,

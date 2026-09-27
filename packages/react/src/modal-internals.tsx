@@ -187,11 +187,10 @@ export function ModalSurfaceBase({
   return renderPortal(
     <div className="combric-modal-layer" data-layer={layerId}>
       <div
+        ref={presence.motionRef}
         className={backdropClassName}
         data-state={presence.state}
         data-presence={presence.phase}
-        onTransitionRun={presence.onTransitionRun}
-        onTransitionEnd={presence.onTransitionEnd}
         onPointerDown={(event: PointerEvent<HTMLDivElement>) => {
           onBackdropPointerDown?.(event);
           if (!event.defaultPrevented && event.target === event.currentTarget) {
@@ -201,7 +200,7 @@ export function ModalSurfaceBase({
       />
       <div
         {...props}
-        ref={mergeRefs(contentRef, ref)}
+        ref={mergeRefs(contentRef, ref, presence.motionRef)}
         id={context.contentId}
         role="dialog"
         aria-describedby={
@@ -221,8 +220,6 @@ export function ModalSurfaceBase({
         className={classNames(classNameBase, className)}
         data-state={presence.state}
         data-presence={presence.phase}
-        onTransitionRun={presence.onTransitionRun}
-        onTransitionEnd={presence.onTransitionEnd}
         tabIndex={-1}
       />
     </div>,

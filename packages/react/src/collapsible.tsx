@@ -138,8 +138,6 @@ export function CollapsibleContent({
       hidden={motion.hidden}
       aria-hidden={!context.open}
       inert={motion.inert}
-      onTransitionRun={motion.onTransitionRun}
-      onTransitionEnd={motion.onTransitionEnd}
       style={{ ...motion.style, ...style }}
     />
   );

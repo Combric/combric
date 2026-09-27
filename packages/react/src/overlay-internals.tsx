@@ -12,7 +12,6 @@ import {
   type ReactPortal,
   type Ref,
   type RefObject,
-  type TransitionEvent as ReactTransitionEvent,
 } from "react";
 import { createPortal } from "react-dom";
 
@@ -23,27 +22,30 @@ export interface PresenceState {
   present: boolean;
   phase: "entering" | "entered" | "exiting";
   state: "open" | "closed";
-  onTransitionRun: (event: ReactTransitionEvent<HTMLElement>) => void;
-  onTransitionEnd: (event: ReactTransitionEvent<HTMLElement>) => void;
+  motionRef: (element: HTMLElement | null) => void;
 }
 
 /** Keeps visual DOM mounted during CSS exit while logical state is already closed. */
 export function usePresence(open: boolean): PresenceState {
   const [mounted, setMounted] = useState(open);
   const [entered, setEntered] = useState(false);
-  const exitTargetsRef = useRef(new Set<HTMLElement>());
-  const removalRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
+  const motionTargetsRef = useRef(new Set<HTMLElement>());
+  const motionRef = useCallback((element: HTMLElement | null) => {
+    if (element !== null) {
+      motionTargetsRef.current.add(element);
+      return;
+    }
+    for (const target of motionTargetsRef.current) {
+      if (!target.isConnected) motionTargetsRef.current.delete(target);
+    }
+  }, []);
 
   useEffect(() => {
-    if (removalRef.current !== undefined) {
-      clearTimeout(removalRef.current);
-      removalRef.current = undefined;
-    }
+    let cancelled = false;
+    let frame: number | undefined;
+    let safetyTimer: ReturnType<typeof setTimeout> | undefined;
 
     if (open) {
-      exitTargetsRef.current.clear();
       setMounted(true);
       setEntered(false);
       if (typeof window === "undefined") return undefined;
@@ -56,79 +58,113 @@ export function usePresence(open: boolean): PresenceState {
         return undefined;
       }
 
-      const frame = window.requestAnimationFrame(() => setEntered(true));
-      return () => window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => setEntered(true));
+    } else if (mounted) {
+      const reduced =
+        typeof window !== "undefined" &&
+        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduced || typeof window === "undefined") {
+        setMounted(false);
+      } else {
+        const finishWithoutFrame = () => {
+          if (cancelled) return;
+          const animations = new Set<Animation>();
+          for (const target of motionTargetsRef.current) {
+            if (
+              !target.isConnected ||
+              typeof target.getAnimations !== "function"
+            ) {
+              continue;
+            }
+            for (const animation of target.getAnimations()) {
+              if (animation.playState === "running" || animation.pending) {
+                animations.add(animation);
+              }
+            }
+          }
+
+          if (animations.size === 0) {
+            setMounted(false);
+            return;
+          }
+
+          const longestEndTime = Math.max(
+            ...Array.from(animations, (animation) => {
+              const endTime = animation.effect?.getComputedTiming().endTime;
+              return typeof endTime === "number" && Number.isFinite(endTime)
+                ? endTime
+                : 0;
+            }),
+          );
+          const safetyDelay = Math.min(
+            Math.max(longestEndTime + 1000, 2000),
+            10000,
+          );
+          safetyTimer = setTimeout(() => {
+            if (!cancelled) setMounted(false);
+          }, safetyDelay);
+          (
+            safetyTimer as ReturnType<typeof setTimeout> & {
+              unref?: () => void;
+            }
+          ).unref?.();
+
+          void Promise.allSettled(
+            Array.from(animations, (animation) => animation.finished),
+          ).then(() => {
+            if (!cancelled) setMounted(false);
+          });
+        };
+
+        if (typeof window.requestAnimationFrame === "function") {
+          frame = window.requestAnimationFrame(finishWithoutFrame);
+        } else {
+          queueMicrotask(finishWithoutFrame);
+        }
+      }
     }
 
-    if (!mounted) return undefined;
-
-    const reduced =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    removalRef.current = setTimeout(() => setMounted(false), reduced ? 0 : 240);
-    (
-      removalRef.current as ReturnType<typeof setTimeout> & {
-        unref?: () => void;
-      }
-    ).unref?.();
     return () => {
-      if (removalRef.current !== undefined) {
-        clearTimeout(removalRef.current);
-        removalRef.current = undefined;
+      cancelled = true;
+      if (frame !== undefined && typeof window !== "undefined") {
+        window.cancelAnimationFrame?.(frame);
       }
+      if (safetyTimer !== undefined) clearTimeout(safetyTimer);
     };
   }, [open, mounted]);
-
-  const onTransitionRun = useCallback(
-    (event: ReactTransitionEvent<HTMLElement>) => {
-      if (!open && event.target === event.currentTarget) {
-        exitTargetsRef.current.add(event.currentTarget);
-      }
-    },
-    [open],
-  );
-
-  const onTransitionEnd = useCallback(
-    (event: ReactTransitionEvent<HTMLElement>) => {
-      if (
-        !open &&
-        event.target === event.currentTarget &&
-        event.propertyName !== "" &&
-        exitTargetsRef.current.delete(event.currentTarget)
-      ) {
-        setMounted(false);
-      }
-    },
-    [open],
-  );
 
   return {
     present: mounted || open,
     phase: open ? (entered ? "entered" : "entering") : "exiting",
     state: open ? "open" : "closed",
-    onTransitionRun,
-    onTransitionEnd,
+    motionRef,
   };
 }
 
 export function useDisclosureMotion(open: boolean): {
-  ref: RefObject<HTMLElement | null>;
+  ref: Ref<HTMLElement>;
   style: CSSProperties;
   hidden: boolean;
   inert: boolean;
-  onTransitionRun: (event: ReactTransitionEvent<HTMLElement>) => void;
-  onTransitionEnd: (event: ReactTransitionEvent<HTMLElement>) => void;
 } {
   const ref = useRef<HTMLElement | null>(null);
   const [height, setHeight] = useState<number | null>(null);
   const presence = usePresence(open);
+  const mergedRef = useCallback(
+    (element: HTMLElement | null) => {
+      ref.current = element;
+      presence.motionRef(element);
+    },
+    [presence.motionRef],
+  );
   useEffect(() => {
     const element = ref.current;
     if (element === null || typeof window === "undefined") return;
     if (open) setHeight(element.scrollHeight);
   }, [open]);
   return {
-    ref,
+    ref: mergedRef,
     style: {
       "--combric-disclosure-height":
         open && presence.phase === "entered" && height !== null
@@ -137,8 +173,6 @@ export function useDisclosureMotion(open: boolean): {
     } as CSSProperties,
     hidden: !presence.present,
     inert: !open,
-    onTransitionRun: presence.onTransitionRun,
-    onTransitionEnd: presence.onTransitionEnd,
   };
 }
 
