@@ -12,11 +12,135 @@ import {
   type ReactPortal,
   type Ref,
   type RefObject,
+  type TransitionEvent as ReactTransitionEvent,
 } from "react";
 import { createPortal } from "react-dom";
 
 export type OverlaySide = "bottom" | "left" | "right" | "top";
 export type OverlayAlign = "center" | "end" | "start";
+
+export interface PresenceState {
+  present: boolean;
+  phase: "entering" | "entered" | "exiting";
+  state: "open" | "closed";
+  onTransitionRun: (event: ReactTransitionEvent<HTMLElement>) => void;
+  onTransitionEnd: (event: ReactTransitionEvent<HTMLElement>) => void;
+}
+
+/** Keeps visual DOM mounted during CSS exit while logical state is already closed. */
+export function usePresence(open: boolean): PresenceState {
+  const [mounted, setMounted] = useState(open);
+  const [entered, setEntered] = useState(false);
+  const exitTargetsRef = useRef(new Set<HTMLElement>());
+  const removalRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    if (removalRef.current !== undefined) {
+      clearTimeout(removalRef.current);
+      removalRef.current = undefined;
+    }
+
+    if (open) {
+      exitTargetsRef.current.clear();
+      setMounted(true);
+      setEntered(false);
+      if (typeof window === "undefined") return undefined;
+
+      const reduced = window.matchMedia?.(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (reduced || typeof window.requestAnimationFrame !== "function") {
+        setEntered(true);
+        return undefined;
+      }
+
+      const frame = window.requestAnimationFrame(() => setEntered(true));
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    if (!mounted) return undefined;
+
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    removalRef.current = setTimeout(() => setMounted(false), reduced ? 0 : 240);
+    (
+      removalRef.current as ReturnType<typeof setTimeout> & {
+        unref?: () => void;
+      }
+    ).unref?.();
+    return () => {
+      if (removalRef.current !== undefined) {
+        clearTimeout(removalRef.current);
+        removalRef.current = undefined;
+      }
+    };
+  }, [open, mounted]);
+
+  const onTransitionRun = useCallback(
+    (event: ReactTransitionEvent<HTMLElement>) => {
+      if (!open && event.target === event.currentTarget) {
+        exitTargetsRef.current.add(event.currentTarget);
+      }
+    },
+    [open],
+  );
+
+  const onTransitionEnd = useCallback(
+    (event: ReactTransitionEvent<HTMLElement>) => {
+      if (
+        !open &&
+        event.target === event.currentTarget &&
+        event.propertyName !== "" &&
+        exitTargetsRef.current.delete(event.currentTarget)
+      ) {
+        setMounted(false);
+      }
+    },
+    [open],
+  );
+
+  return {
+    present: mounted || open,
+    phase: open ? (entered ? "entered" : "entering") : "exiting",
+    state: open ? "open" : "closed",
+    onTransitionRun,
+    onTransitionEnd,
+  };
+}
+
+export function useDisclosureMotion(open: boolean): {
+  ref: RefObject<HTMLElement | null>;
+  style: CSSProperties;
+  hidden: boolean;
+  inert: boolean;
+  onTransitionRun: (event: ReactTransitionEvent<HTMLElement>) => void;
+  onTransitionEnd: (event: ReactTransitionEvent<HTMLElement>) => void;
+} {
+  const ref = useRef<HTMLElement | null>(null);
+  const [height, setHeight] = useState<number | null>(null);
+  const presence = usePresence(open);
+  useEffect(() => {
+    const element = ref.current;
+    if (element === null || typeof window === "undefined") return;
+    if (open) setHeight(element.scrollHeight);
+  }, [open]);
+  return {
+    ref,
+    style: {
+      "--combric-disclosure-height":
+        open && presence.phase === "entered" && height !== null
+          ? `${height}px`
+          : "0",
+    } as CSSProperties,
+    hidden: !presence.present,
+    inert: !open,
+    onTransitionRun: presence.onTransitionRun,
+    onTransitionEnd: presence.onTransitionEnd,
+  };
+}
 
 interface ControllableOpenOptions {
   componentName: string;

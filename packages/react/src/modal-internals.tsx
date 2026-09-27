@@ -27,6 +27,7 @@ import {
   useLayer,
   useModalIsolation,
   usePortalHost,
+  usePresence,
 } from "./overlay-internals.js";
 
 interface ModalContextValue {
@@ -164,6 +165,7 @@ export function ModalSurfaceBase({
   ...props
 }: ModalSurfaceBaseProps): ReactElement | null {
   const context = useModalContext(componentName);
+  const presence = usePresence(context.open);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const host = usePortalHost(container);
   const layerId = useLayer(context.open);
@@ -175,10 +177,10 @@ export function ModalSurfaceBase({
     contentRef,
     layerId,
     onEscape: close,
-    readyDependency: host,
+    readyDependency: `${host !== null}-${presence.present}`,
   });
 
-  if (!context.open) {
+  if (!presence.present) {
     return null;
   }
 
@@ -186,7 +188,10 @@ export function ModalSurfaceBase({
     <div className="combric-modal-layer" data-layer={layerId}>
       <div
         className={backdropClassName}
-        data-state="open"
+        data-state={presence.state}
+        data-presence={presence.phase}
+        onTransitionRun={presence.onTransitionRun}
+        onTransitionEnd={presence.onTransitionEnd}
         onPointerDown={(event: PointerEvent<HTMLDivElement>) => {
           onBackdropPointerDown?.(event);
           if (!event.defaultPrevented && event.target === event.currentTarget) {
@@ -211,8 +216,13 @@ export function ModalSurfaceBase({
             : ariaLabelledBy
         }
         aria-modal="true"
+        aria-hidden={!context.open}
+        inert={!context.open}
         className={classNames(classNameBase, className)}
-        data-state="open"
+        data-state={presence.state}
+        data-presence={presence.phase}
+        onTransitionRun={presence.onTransitionRun}
+        onTransitionEnd={presence.onTransitionEnd}
         tabIndex={-1}
       />
     </div>,

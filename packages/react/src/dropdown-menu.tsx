@@ -25,6 +25,7 @@ import {
   useFocusRestoration,
   useLayer,
   usePortalHost,
+  usePresence,
   type OverlayAlign,
   type OverlaySide,
 } from "./overlay-internals.js";
@@ -176,6 +177,7 @@ export function DropdownMenuContent({
   ...props
 }: DropdownMenuContentProps): ReactElement | null {
   const context = useDropdownMenuContext();
+  const presence = usePresence(context.open);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const host = usePortalHost(container);
   const layerId = useLayer(context.open);
@@ -197,7 +199,7 @@ export function DropdownMenuContent({
   });
 
   useEffect(() => {
-    if (!context.open || host === null) {
+    if (!context.open || !presence.present || host === null) {
       return;
     }
     const items = Array.from(
@@ -208,7 +210,7 @@ export function DropdownMenuContent({
     const target =
       context.focusIntentRef.current === "last" ? items.at(-1) : items[0];
     target?.focus();
-  }, [context.focusIntentRef, context.open, host]);
+  }, [context.focusIntentRef, context.open, host, presence.present]);
 
   function moveFocus(event: KeyboardEvent<HTMLDivElement>): void {
     const items = Array.from(
@@ -238,7 +240,7 @@ export function DropdownMenuContent({
     }
   }
 
-  if (!context.open) {
+  if (!presence.present) {
     return null;
   }
 
@@ -249,9 +251,14 @@ export function DropdownMenuContent({
       id={context.contentId}
       role="menu"
       aria-labelledby={context.triggerId}
+      aria-hidden={!context.open}
+      inert={!context.open}
       className={classNames("combric-dropdown-menu__content", className)}
       data-side={position.resolvedSide}
-      data-state="open"
+      data-state={presence.state}
+      data-presence={presence.phase}
+      onTransitionRun={presence.onTransitionRun}
+      onTransitionEnd={presence.onTransitionEnd}
       style={{ ...position.style, ...style }}
       onKeyDown={(event) => {
         onKeyDown?.(event);

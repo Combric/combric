@@ -13,6 +13,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { mergeRefs, useDisclosureMotion } from "./overlay-internals.js";
 
 type AccordionValue = string | null;
 
@@ -182,20 +183,27 @@ export interface AccordionContentProps extends HTMLAttributes<HTMLDivElement> {
 export function AccordionContent({
   className,
   ref,
+  style,
   ...props
 }: AccordionContentProps): ReactElement {
   const { contentId, open, triggerId } = useAccordionItemContext();
+  const motion = useDisclosureMotion(open);
 
   return (
     <div
       {...props}
-      ref={ref}
       id={contentId}
       role="region"
       aria-labelledby={triggerId}
       className={classNames("combric-accordion__content", className)}
       data-state={open ? "open" : "closed"}
-      hidden={!open}
+      ref={mergeRefs(motion.ref, ref)}
+      hidden={motion.hidden}
+      aria-hidden={!open}
+      inert={motion.inert}
+      onTransitionRun={motion.onTransitionRun}
+      onTransitionEnd={motion.onTransitionEnd}
+      style={{ ...motion.style, ...style }}
     />
   );
 }
