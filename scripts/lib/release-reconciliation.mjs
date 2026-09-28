@@ -5,24 +5,7 @@ export const RELEASE_STATES = Object.freeze({
   CONFLICT: "CONFLICT",
 });
 
-export async function reconcilePackage({
-  artifact,
-  contract,
-  fetchImpl = fetch,
-}) {
-  const url = `https://registry.npmjs.org/${encodeURIComponent(artifact.name)}`;
-  const response = await fetchImpl(url, {
-    headers: { accept: "application/json" },
-  });
-  if (response.status === 404)
-    return { state: RELEASE_STATES.PENDING, artifact };
-  if (!response.ok)
-    return {
-      state: RELEASE_STATES.CONFLICT,
-      artifact,
-      reason: `registry returned ${response.status}`,
-    };
-  const metadata = await response.json();
+export function reconcileMetadata({ artifact, contract, metadata }) {
   const version = metadata.versions?.[contract.version];
   if (!version) return { state: RELEASE_STATES.PENDING, artifact };
   if (metadata.name !== artifact.name || version.version !== contract.version)
@@ -52,6 +35,27 @@ export async function reconcilePackage({
   // npm tarball gzip metadata can differ by platform while package metadata
   // remains identical; stable registry contract fields are reconciled here.
   return { state: RELEASE_STATES.VERIFIED_PUBLISHED, artifact };
+}
+
+export async function reconcilePackage({
+  artifact,
+  contract,
+  fetchImpl = fetch,
+}) {
+  const url = `https://registry.npmjs.org/${encodeURIComponent(artifact.name)}`;
+  const response = await fetchImpl(url, {
+    headers: { accept: "application/json" },
+  });
+  if (response.status === 404)
+    return { state: RELEASE_STATES.PENDING, artifact };
+  if (!response.ok)
+    return {
+      state: RELEASE_STATES.CONFLICT,
+      artifact,
+      reason: `registry returned ${response.status}`,
+    };
+  const metadata = await response.json();
+  return reconcileMetadata({ artifact, contract, metadata });
 }
 
 export async function waitForVisible({
