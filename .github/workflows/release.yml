@@ -125,6 +125,8 @@ jobs:
     needs: prepare
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      RESUME_PUBLISHED_PACKAGES: ${{ inputs.resume_published_packages }}
     environment: npm-release
     permissions:
       contents: read

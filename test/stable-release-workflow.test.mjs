@@ -23,3 +23,12 @@ test("Stable Release keeps normal preflight strict and skips only approved packa
   assert.match(workflow, /if \[ -n "\$RESUME_PUBLISHED_PACKAGES" \]/);
   assert.match(workflow, /pnpm release:check-registry\n/);
 });
+
+test("Stable Release passes the recovery package list to the publish job", () => {
+  const publishJob = workflow.slice(workflow.indexOf("\n  publish:"));
+
+  assert.match(
+    publishJob,
+    /env:\n\s+RESUME_PUBLISHED_PACKAGES: \$\{\{ inputs\.resume_published_packages \}\}/,
+  );
+});
