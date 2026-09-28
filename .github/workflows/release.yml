@@ -11,6 +11,19 @@ on:
         description: Type PUBLISH APPROVED after Product Owner authorization
         required: true
         type: string
+      recovery_approval:
+        description:
+          Type RECOVERY APPROVED only for an authorized partial release recovery
+        required: false
+        default: ""
+        type: string
+      resume_published_packages:
+        description:
+          Comma-separated target packages already verified as published; leave
+          empty for a normal release
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -28,11 +41,13 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_COMMIT: ${{ inputs.release_commit }}
       PUBLISH_APPROVAL: ${{ inputs.publish_approval }}
+      RECOVERY_APPROVAL: ${{ inputs.recovery_approval }}
+      RESUME_PUBLISHED_PACKAGES: ${{ inputs.resume_published_packages }}
     steps:
       - name: Validate manual authorization inputs
         shell: bash
         run: |
-          node -e 'if (!/^[0-9a-f]{40}$/.test(process.env.RELEASE_COMMIT ?? "")) throw new Error("release_commit must be a lowercase 40-character SHA"); if (process.env.PUBLISH_APPROVAL !== "PUBLISH APPROVED") throw new Error("Missing exact Product Owner publication approval")'
+          node -e 'if (!/^[0-9a-f]{40}$/.test(process.env.RELEASE_COMMIT ?? "")) throw new Error("release_commit must be a lowercase 40-character SHA"); if (process.env.PUBLISH_APPROVAL !== "PUBLISH APPROVED") throw new Error("Missing exact Product Owner publication approval"); const packages=(process.env.RESUME_PUBLISHED_PACKAGES ?? "").split(",").map((name)=>name.trim()).filter(Boolean); if (packages.length && process.env.RECOVERY_APPROVAL !== "RECOVERY APPROVED") throw new Error("Missing exact recovery authorization"); if (!packages.length && process.env.RECOVERY_APPROVAL) throw new Error("Recovery approval requires an explicit package list")'
 
       - name: Check out exact approved commit
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -85,8 +100,14 @@ jobs:
       - name: Run browser and accessibility gates
         run: pnpm docs:test
 
-      - name: Confirm every target version is absent from npm
-        run: pnpm release:check-registry
+      - name: Confirm target versions are absent or approved existing
+        shell: bash
+        run: |
+          if [ -n "$RESUME_PUBLISHED_PACKAGES" ]; then
+            pnpm release:check-registry --allow-existing "$RESUME_PUBLISHED_PACKAGES"
+          else
+            pnpm release:check-registry
+          fi
 
       - name: Pack and hash the release artifacts
         run: pnpm release:artifacts --output release-artifacts
@@ -142,11 +163,23 @@ jobs:
           name: combric-v1.3.0
           path: release-artifacts
 
-      - name: Reconfirm target versions are absent
-        run: pnpm release:check-registry
+      - name: Reconfirm target versions are absent or approved existing
+        shell: bash
+        run: |
+          if [ -n "$RESUME_PUBLISHED_PACKAGES" ]; then
+            pnpm release:check-registry --allow-existing "$RESUME_PUBLISHED_PACKAGES"
+          else
+            pnpm release:check-registry
+          fi
 
       - name: Publish in dependency-safe order
-        run: node scripts/publish-release.mjs release-artifacts
+        shell: bash
+        run: |
+          if [ -n "$RESUME_PUBLISHED_PACKAGES" ]; then
+            node scripts/publish-release.mjs release-artifacts --skip-existing "$RESUME_PUBLISHED_PACKAGES"
+          else
+            node scripts/publish-release.mjs release-artifacts
+          fi
 
   finalize:
     name: Verify npm and create repository release
