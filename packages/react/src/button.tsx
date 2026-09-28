@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, ReactElement, Ref } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 import type { RadiusPreset } from "./radius.js";
 
 export type ButtonVariant =
@@ -11,19 +12,24 @@ export interface ButtonProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "size"
 > {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
   radius?: RadiusPreset;
   size?: ButtonSize;
+  trailingIcon?: IconSlot;
   variant?: ButtonVariant;
 }
 
 export function Button({
   className,
+  leadingIcon,
   radius,
   ref,
   size = "md",
   type = "button",
+  trailingIcon,
   variant = "primary",
+  children,
   ...props
 }: ButtonProps): ReactElement {
   return (
@@ -35,6 +41,10 @@ export function Button({
       data-size={size}
       data-variant={variant}
       data-radius={radius}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }

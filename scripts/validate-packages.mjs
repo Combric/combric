@@ -3,6 +3,7 @@ import { access, readFile } from "node:fs/promises";
 const packages = new Map([
   ["core", "@combric/core"],
   ["tokens", "@combric/tokens"],
+  ["icons", "@combric/icons"],
   ["layout", "@combric/layout"],
   ["react", "@combric/react"],
   ["cli", "@combric/cli"],
@@ -13,6 +14,7 @@ const packages = new Map([
 const allowedInternalDependencies = new Map([
   ["@combric/core", new Set()],
   ["@combric/tokens", new Set()],
+  ["@combric/icons", new Set()],
   ["@combric/layout", new Set(["@combric/tokens"])],
   ["@combric/react", new Set(["@combric/core", "@combric/layout"])],
   ["@combric/cli", new Set(["@combric/core", "@combric/tokens"])],
@@ -40,8 +42,8 @@ for (const [directory, expectedName] of packages) {
         "@combric/core must remain an unpublished reserved boundary",
       );
     }
-  } else if (manifest.private === true || manifest.version !== "1.2.0") {
-    throw new Error(`${expectedName} must remain publishable at 1.2.0`);
+  } else if (manifest.private === true || manifest.version !== "1.3.0") {
+    throw new Error(`${expectedName} must remain publishable at 1.3.0`);
   }
   if (manifest.type !== "module" || manifest.license !== "MIT") {
     throw new Error(`${expectedName} must be an MIT-licensed ESM package`);
@@ -88,6 +90,19 @@ for (const [directory, expectedName] of packages) {
       throw new Error("@combric/tokens CSS must be marked as a side effect");
     }
     await access(new URL("dist/tokens.css", packageUrl));
+  }
+
+  if (expectedName === "@combric/icons") {
+    if (
+      manifest.engines?.node !== ">=24.0.0" ||
+      !manifest.sideEffects?.includes("./dist/css/*.css") ||
+      manifest.publishConfig?.access !== "public" ||
+      manifest.publishConfig?.provenance !== true
+    ) {
+      throw new Error("@combric/icons has an invalid publication contract");
+    }
+    await access(new URL("dist/metadata.json", packageUrl));
+    await access(new URL("dist/css/index.css", packageUrl));
   }
 
   if (expectedName === "@combric/cli") {

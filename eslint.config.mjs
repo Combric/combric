@@ -9,6 +9,8 @@ export default tseslint.config(
       "**/dist/**",
       "**/playwright-report/**",
       "**/test-results/**",
+      "packages/icons/src/generated/**",
+      "packages/icons/src/metadata.ts",
       "node_modules/**",
     ],
   },

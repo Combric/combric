@@ -143,6 +143,11 @@ export {
   type CardTitleProps,
 } from "./card.js";
 export type { RadiusPreset } from "./radius.js";
+export type {
+  IconSlot,
+  IconSlotPosition,
+  IconSlotProps,
+} from "./icon-slots.js";
 export {
   Checkbox,
   Input,

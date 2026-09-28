@@ -3,6 +3,26 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.3.0] - 2026-09-28
+
+Combric Framework minor release.
+
+- Added the public `@combric/icons` package with regular and solid Iconoir
+  assets, React components, CSS, SVG, and typed metadata.
+- Added composable `ReactNode` icon slots to interactive controls, navigation,
+  titles, and empty-state media without coupling `@combric/react` to an icon
+  library.
+
+Published packages:
+
+- `@combric/tokens@1.3.0`;
+- `@combric/icons@1.3.0`;
+- `@combric/layout@1.3.0`;
+- `@combric/react@1.3.0`;
+- `@combric/tailwind@1.3.0`;
+- `@combric/cli@1.3.0`;
+- `@combric/guard@1.3.0`.
+
 ## [1.1.1] - 2026-09-26
 
 Combric Framework patch release.

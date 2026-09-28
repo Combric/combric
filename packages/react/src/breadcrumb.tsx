@@ -7,6 +7,7 @@ import type {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 export interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
   ref?: Ref<HTMLElement>;
@@ -65,12 +66,17 @@ export function BreadcrumbItem({
 }
 
 export interface BreadcrumbLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLAnchorElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function BreadcrumbLink({
   className,
+  leadingIcon,
   ref,
+  trailingIcon,
+  children,
   ...props
 }: BreadcrumbLinkProps): ReactElement {
   return (
@@ -78,17 +84,23 @@ export function BreadcrumbLink({
       {...props}
       ref={ref}
       className={classNames("combric-breadcrumb__link", className)}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </a>
   );
 }
 
 export interface BreadcrumbSeparatorProps extends LiHTMLAttributes<HTMLLIElement> {
+  icon?: IconSlot;
   ref?: Ref<HTMLLIElement>;
 }
 
 export function BreadcrumbSeparator({
   children = "/",
   className,
+  icon,
   ref,
   ...props
 }: BreadcrumbSeparatorProps): ReactElement {
@@ -100,18 +112,23 @@ export function BreadcrumbSeparator({
       className={classNames("combric-breadcrumb__separator", className)}
       role="presentation"
     >
-      {children}
+      {icon === undefined ? children : renderIconSlot(icon, "icon")}
     </li>
   );
 }
 
 export interface BreadcrumbPageProps extends HTMLAttributes<HTMLSpanElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLSpanElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function BreadcrumbPage({
   className,
+  leadingIcon,
   ref,
+  trailingIcon,
+  children,
   ...props
 }: BreadcrumbPageProps): ReactElement {
   return (
@@ -120,6 +137,10 @@ export function BreadcrumbPage({
       ref={ref}
       aria-current="page"
       className={classNames("combric-breadcrumb__page", className)}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </span>
   );
 }

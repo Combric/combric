@@ -1,18 +1,24 @@
 import type { HTMLAttributes, ReactElement, Ref } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 export type BadgeVariant = "neutral" | "accent";
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLSpanElement>;
+  trailingIcon?: IconSlot;
   variant?: BadgeVariant;
 }
 
 export function Badge({
   className,
+  leadingIcon,
   ref,
+  trailingIcon,
   variant = "neutral",
+  children,
   ...props
 }: BadgeProps): ReactElement {
   if (variant !== "neutral" && variant !== "accent") {
@@ -25,7 +31,11 @@ export function Badge({
       ref={ref}
       className={classNames("combric-badge", className)}
       data-variant={variant}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </span>
   );
 }
 

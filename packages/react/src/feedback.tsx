@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 export type AlertTone = "error" | "neutral";
 export type AlertLive = "assertive" | "polite";
@@ -41,12 +42,15 @@ export function Alert({
 }
 
 export interface AlertTitleProps extends HTMLAttributes<HTMLSpanElement> {
+  icon?: IconSlot;
   ref?: Ref<HTMLSpanElement>;
 }
 
 export function AlertTitle({
   className,
+  icon,
   ref,
+  children,
   ...props
 }: AlertTitleProps): ReactElement {
   return (
@@ -54,7 +58,10 @@ export function AlertTitle({
       {...props}
       ref={ref}
       className={classNames("combric-alert__title", className)}
-    />
+    >
+      {renderIconSlot(icon, "icon")}
+      {children}
+    </span>
   );
 }
 
@@ -163,12 +170,15 @@ export function EmptyState({
 }
 
 export interface EmptyStateMediaProps extends HTMLAttributes<HTMLDivElement> {
+  icon?: IconSlot;
   ref?: Ref<HTMLDivElement>;
 }
 
 export function EmptyStateMedia({
   className,
+  icon,
   ref,
+  children,
   ...props
 }: EmptyStateMediaProps): ReactElement {
   return (
@@ -176,13 +186,17 @@ export function EmptyStateMedia({
       {...props}
       ref={ref}
       className={classNames("combric-empty-state__media", className)}
-    />
+    >
+      {renderIconSlot(icon, "icon")}
+      {children}
+    </div>
   );
 }
 
 export type EmptyStateHeadingLevel = 2 | 3 | 4 | 5 | 6;
 
 export interface EmptyStateTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+  icon?: IconSlot;
   level?: EmptyStateHeadingLevel;
   ref?: Ref<HTMLHeadingElement>;
 }
@@ -206,15 +220,22 @@ function headingTag(
 
 export function EmptyStateTitle({
   className,
+  icon,
   level = 2,
   ref,
+  children,
   ...props
 }: EmptyStateTitleProps): ReactElement {
-  return createElement(headingTag(level), {
-    ...props,
-    className: classNames("combric-empty-state__title", className),
-    ref,
-  });
+  return createElement(
+    headingTag(level),
+    {
+      ...props,
+      className: classNames("combric-empty-state__title", className),
+      ref,
+    },
+    renderIconSlot(icon, "icon"),
+    children,
+  );
 }
 
 export interface EmptyStateDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {

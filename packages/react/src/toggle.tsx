@@ -16,25 +16,31 @@ import {
 
 import { classNames } from "./class-names.js";
 import { useControllableState } from "./controllable-state.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 export interface ToggleProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "aria-pressed"
 > {
   defaultPressed?: boolean;
+  leadingIcon?: IconSlot;
   onPressedChange?: (pressed: boolean) => void;
   pressed?: boolean;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function Toggle({
   className,
   defaultPressed = false,
+  leadingIcon,
   onClick,
   onPressedChange,
   pressed,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: ToggleProps): ReactElement {
   const [currentPressed, setPressed] = useControllableState({
@@ -58,7 +64,11 @@ export function Toggle({
           setPressed(!currentPressed);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 
@@ -227,11 +237,14 @@ export interface ToggleGroupItemProps extends Omit<
 export function ToggleGroupItem({
   className,
   disabled: disabledProp = false,
+  leadingIcon,
   onClick,
   onKeyDown,
   ref,
+  trailingIcon,
   type = "button",
   value,
+  children,
   ...props
 }: ToggleGroupItemProps): ReactElement {
   const context = useToggleGroupContext();
@@ -317,6 +330,10 @@ export function ToggleGroupItem({
           moveFocus(event);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }

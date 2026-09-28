@@ -5,6 +5,7 @@ const packageNames = [
   "core",
   "tokens",
   "layout",
+  "icons",
   "react",
   "cli",
   "guard",
@@ -54,6 +55,15 @@ for (const packageName of packageNames) {
   }
   if (packageName === "guard") {
     requiredFiles.push("dist/bin.js", "dist/check.d.ts", "README.md");
+  }
+  if (packageName === "icons") {
+    requiredFiles.push(
+      "dist/css/index.css",
+      "dist/css/regular.css",
+      "dist/css/solid.css",
+      "dist/metadata.json",
+      "README.md",
+    );
   }
 
   for (const requiredFile of requiredFiles) {

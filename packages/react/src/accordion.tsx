@@ -13,6 +13,11 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import {
+  renderIconSlot,
+  renderIconSlotContent,
+  type IconSlot,
+} from "./icon-slots.js";
 import { mergeRefs, useDisclosureMotion } from "./overlay-internals.js";
 
 type AccordionValue = string | null;
@@ -139,15 +144,20 @@ export function AccordionItem({
 }
 
 export interface AccordionTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function AccordionTrigger({
   className,
   disabled: disabledProp,
+  leadingIcon,
   onClick,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: AccordionTriggerProps): ReactElement {
   const { setValue } = useAccordionContext();
@@ -172,7 +182,11 @@ export function AccordionTrigger({
           setValue(open ? null : value);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {renderIconSlotContent(children, leadingIcon, trailingIcon)}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 

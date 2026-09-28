@@ -8,7 +8,16 @@ const pnpmCli = process.env.npm_execpath;
 if (!pnpmCli) throw new Error("Run the package-size report through pnpm");
 const root = fileURLToPath(new URL("../", import.meta.url));
 const temporary = await mkdtemp(join(tmpdir(), "combric-size-report-"));
-const names = ["core", "tokens", "layout", "react", "cli", "guard", "tailwind"];
+const names = [
+  "core",
+  "tokens",
+  "icons",
+  "layout",
+  "react",
+  "cli",
+  "guard",
+  "tailwind",
+];
 const baseline = JSON.parse(
   await readFile(
     new URL("./package-size-baseline.json", import.meta.url),

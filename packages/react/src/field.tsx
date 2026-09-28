@@ -12,6 +12,7 @@ import {
 
 import { classNames } from "./class-names.js";
 import { FieldContext, useOptionalFieldContext } from "./field-internals.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 export interface FieldProps extends HTMLAttributes<HTMLDivElement> {
   controlId?: string;
@@ -137,12 +138,17 @@ export function Fieldset({
 }
 
 export interface FieldLegendProps extends HTMLAttributes<HTMLLegendElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLLegendElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function FieldLegend({
   className,
+  leadingIcon,
   ref,
+  trailingIcon,
+  children,
   ...props
 }: FieldLegendProps): ReactElement {
   return (
@@ -150,7 +156,11 @@ export function FieldLegend({
       {...props}
       ref={ref}
       className={classNames("combric-fieldset__legend", className)}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </legend>
   );
 }
 

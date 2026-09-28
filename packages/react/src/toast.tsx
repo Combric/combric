@@ -12,6 +12,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 import { mergeRefs, usePresence } from "./overlay-internals.js";
 import {
   renderPortal,
@@ -129,12 +130,15 @@ export function Toast({
 }
 
 export interface ToastTitleProps extends HTMLAttributes<HTMLElement> {
+  icon?: IconSlot;
   ref?: Ref<HTMLElement>;
 }
 
 export function ToastTitle({
   className,
+  icon,
   ref,
+  children,
   ...props
 }: ToastTitleProps): ReactElement {
   return (
@@ -142,7 +146,10 @@ export function ToastTitle({
       {...props}
       ref={ref}
       className={classNames("combric-toast__title", className)}
-    />
+    >
+      {renderIconSlot(icon, "icon")}
+      {children}
+    </strong>
   );
 }
 
@@ -165,14 +172,19 @@ export function ToastDescription({
 }
 
 export interface ToastCloseProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function ToastClose({
   className,
+  leadingIcon,
   onClick,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: ToastCloseProps): ReactElement {
   const context = useToastContext();
@@ -188,6 +200,10 @@ export function ToastClose({
           context.close();
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }

@@ -3,6 +3,8 @@ node_modules/
 dist/
 coverage/
 .cache/
+packages/icons/src/generated/
+packages/icons/src/metadata.ts
 .astro/
 test-results/
 playwright-report/

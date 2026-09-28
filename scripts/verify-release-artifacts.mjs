@@ -33,6 +33,23 @@ const output = requestedOutput
 
 const expectedFiles = {
   tokens: ["dist/index.d.ts", "dist/index.js", "dist/tokens.css"],
+  icons: [
+    "dist/index.d.ts",
+    "dist/index.js",
+    "dist/react.d.ts",
+    "dist/react.js",
+    "dist/regular.d.ts",
+    "dist/regular.js",
+    "dist/solid.d.ts",
+    "dist/solid.js",
+    "dist/metadata.d.ts",
+    "dist/metadata.js",
+    "dist/metadata.json",
+    "dist/ICONOIR-LICENSE",
+    "dist/css/index.css",
+    "dist/css/regular.css",
+    "dist/css/solid.css",
+  ],
   layout: ["dist/index.css"],
   react: ["dist/index.d.ts", "dist/index.js", "dist/index.css"],
   tailwind: ["dist/index.css"],

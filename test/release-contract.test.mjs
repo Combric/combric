@@ -28,12 +28,13 @@ test("release finalizer configures Git identity before creating its tag", () => 
   }
 });
 
-test("release contract matches the six publishable packages", () => {
-  assert.equal(contract.version, "1.2.0");
+test("release contract matches the seven publishable packages", () => {
+  assert.equal(contract.version, "1.3.0");
   assert.deepEqual(
     contract.packages.map(({ name }) => name),
     [
       "@combric/tokens",
+      "@combric/icons",
       "@combric/layout",
       "@combric/react",
       "@combric/tailwind",
@@ -77,9 +78,10 @@ test("release contract rejects invalid dependency order", () => {
   const reordered = {
     ...contract,
     packages: [
+      contract.packages[2],
       contract.packages[1],
       contract.packages[0],
-      ...contract.packages.slice(2),
+      ...contract.packages.slice(3),
     ],
   };
   assert.throws(
@@ -117,6 +119,6 @@ test("packed manifests reject workspace and local dependency leaks", () => {
         { dependencies: { "@combric/tokens": "^2.0.0" } },
         contract.version,
       ),
-    /must be \^1\.2\.0/,
+    /must be \^1\.3\.0/,
   );
 });
