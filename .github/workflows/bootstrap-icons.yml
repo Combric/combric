@@ -1,0 +1,113 @@
+name: Bootstrap Icons Package
+
+# One-time registry namespace bootstrap for the new @combric/icons package.
+# The NPM_BOOTSTRAP_TOKEN must be an environment-scoped, short-lived npm
+# publishing credential. It is not stored in the repository or used by the
+# normal Stable Release workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_commit:
+        description: Exact 40-character main commit containing @combric/icons
+        required: true
+        type: string
+      bootstrap_approval:
+        description: Type BOOTSTRAP APPROVED after Product Owner authorization
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bootstrap-icons
+  cancel-in-progress: false
+
+env:
+  RELEASE_COMMIT: ${{ inputs.release_commit }}
+  BOOTSTRAP_APPROVAL: ${{ inputs.bootstrap_approval }}
+  BOOTSTRAP_VERSION: 0.0.0-bootstrap.0
+
+jobs:
+  bootstrap:
+    name: Publish @combric/icons bootstrap package
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm-bootstrap
+
+    steps:
+      - name: Validate manual authorization inputs
+        shell: bash
+        run: |
+          node -e 'if (!/^[0-9a-f]{40}$/.test(process.env.RELEASE_COMMIT ?? "")) throw new Error("release_commit must be a lowercase 40-character SHA"); if (process.env.BOOTSTRAP_APPROVAL !== "BOOTSTRAP APPROVED") throw new Error("Missing exact bootstrap authorization")'
+
+      - name: Check out exact approved commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.release_commit }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify repository, main, and approved commit
+        shell: bash
+        run: |
+          test "$GITHUB_REPOSITORY" = "Combric/combric"
+          test "$(git rev-parse HEAD)" = "$RELEASE_COMMIT"
+          git fetch --no-tags origin main
+          test "$(git rev-parse origin/main)" = "$RELEASE_COMMIT"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          run_install: false
+
+      - name: Set up Node.js and npm registry
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Require supported npm
+        shell: bash
+        run: |
+          node -e 'const [major, minor, patch] = process.argv[1].split(".").map(Number); if (major < 11 || (major === 11 && (minor < 5 || (minor === 5 && patch < 1)))) throw new Error("npm 11.5.1 or newer is required")' "$(npm --version)"
+
+      - name: Confirm bootstrap version is absent
+        shell: bash
+        run: |
+          if npm view "@combric/icons@$BOOTSTRAP_VERSION" version --registry https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "@combric/icons@$BOOTSTRAP_VERSION already exists" >&2
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and validate icons
+        run: pnpm build && pnpm validate:icons:built
+
+      - name: Prepare bootstrap tarball
+        run: node scripts/bootstrap-icons.mjs --output .cache/icons-bootstrap
+
+      - name: Publish bootstrap package
+        run: >-
+          npm publish
+          ".cache/icons-bootstrap/combric-icons-${BOOTSTRAP_VERSION}.tgz"
+          --access public --tag bootstrap --provenance=false
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_BOOTSTRAP_TOKEN }}
+
+      - name: Verify bootstrap package visibility
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            if [ "$(npm view "@combric/icons@$BOOTSTRAP_VERSION" version --registry https://registry.npmjs.org 2>/dev/null || true)" = "$BOOTSTRAP_VERSION" ]; then
+              echo "@combric/icons@$BOOTSTRAP_VERSION is visible on npm."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Bootstrap package was accepted but is not visible after 60 seconds" >&2
+          exit 1
