@@ -4,6 +4,7 @@
   "references": [
     { "path": "./packages/core" },
     { "path": "./packages/tokens" },
+    { "path": "./packages/icons" },
     { "path": "./packages/react" },
     { "path": "./packages/cli" },
     { "path": "./packages/guard" }

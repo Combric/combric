@@ -13,6 +13,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 import {
   mergeRefs,
   renderPortal,
@@ -85,17 +86,22 @@ export function Tooltip({
 }
 
 export interface TooltipTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function TooltipTrigger({
   "aria-describedby": ariaDescribedBy,
   className,
+  children,
+  leadingIcon,
   onBlur,
   onFocus,
   onPointerEnter,
   onPointerLeave,
   ref,
+  trailingIcon,
   type = "button",
   ...props
 }: TooltipTriggerProps): ReactElement {
@@ -148,7 +154,11 @@ export function TooltipTrigger({
           updateOpen();
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 

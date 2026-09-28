@@ -13,6 +13,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 import {
   mergeRefs,
   renderPortal,
@@ -84,15 +85,20 @@ export function Popover({
 }
 
 export interface PopoverTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function PopoverTrigger({
   className,
   disabled,
+  leadingIcon,
   onClick,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: PopoverTriggerProps): ReactElement {
   const context = usePopoverContext();
@@ -112,7 +118,11 @@ export function PopoverTrigger({
           context.setOpen(!context.open);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 

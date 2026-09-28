@@ -18,6 +18,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 import {
   mergeRefs,
   renderPortal,
@@ -103,7 +104,9 @@ export function ModalRootBase({
 export interface ModalTriggerBaseProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   classNameBase: string;
   componentName: string;
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function ModalTriggerBase({
@@ -111,9 +114,12 @@ export function ModalTriggerBase({
   classNameBase,
   componentName,
   disabled,
+  leadingIcon,
   onClick,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: ModalTriggerBaseProps): ReactElement {
   const context = useModalContext(componentName);
@@ -135,7 +141,11 @@ export function ModalTriggerBase({
           context.setOpen(!context.open);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 
@@ -233,6 +243,7 @@ export interface ModalTitleBaseProps extends Omit<
 > {
   classNameBase: string;
   componentName: string;
+  icon?: IconSlot;
   ref?: Ref<HTMLHeadingElement>;
 }
 
@@ -240,7 +251,9 @@ export function ModalTitleBase({
   className,
   classNameBase,
   componentName,
+  icon,
   ref,
+  children,
   ...props
 }: ModalTitleBaseProps): ReactElement {
   const context = useModalContext(componentName);
@@ -254,7 +267,10 @@ export function ModalTitleBase({
       ref={ref}
       id={context.titleId}
       className={classNames(classNameBase, className)}
-    />
+    >
+      {renderIconSlot(icon, "icon")}
+      {children}
+    </h2>
   );
 }
 
@@ -292,16 +308,21 @@ export function ModalDescriptionBase({
 export interface ModalCloseBaseProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   classNameBase: string;
   componentName: string;
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function ModalCloseBase({
   className,
   classNameBase,
   componentName,
+  leadingIcon,
   onClick,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: ModalCloseBaseProps): ReactElement {
   const context = useModalContext(componentName);
@@ -317,6 +338,10 @@ export function ModalCloseBase({
           context.setOpen(false);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }

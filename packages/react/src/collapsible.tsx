@@ -12,6 +12,11 @@ import {
 
 import { classNames } from "./class-names.js";
 import { useControllableState } from "./controllable-state.js";
+import {
+  renderIconSlot,
+  renderIconSlotContent,
+  type IconSlot,
+} from "./icon-slots.js";
 import { mergeRefs, useDisclosureMotion } from "./overlay-internals.js";
 
 interface CollapsibleContextValue {
@@ -81,15 +86,20 @@ export function Collapsible({
 }
 
 export interface CollapsibleTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function CollapsibleTrigger({
   className,
   disabled: disabledProp = false,
+  leadingIcon,
   onClick,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: CollapsibleTriggerProps): ReactElement {
   const context = useCollapsibleContext();
@@ -110,7 +120,11 @@ export function CollapsibleTrigger({
           context.setOpen(!context.open);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {renderIconSlotContent(children, leadingIcon, trailingIcon)}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 

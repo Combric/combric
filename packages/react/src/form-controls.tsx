@@ -23,16 +23,22 @@ import {
   useFieldControlProps,
   useOptionalFieldContext,
 } from "./field-internals.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLLabelElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function Label({
   className,
   htmlFor,
   id,
+  leadingIcon,
   ref,
+  trailingIcon,
+  children,
   ...props
 }: LabelProps): ReactElement {
   const field = useOptionalFieldContext();
@@ -43,7 +49,11 @@ export function Label({
       id={id ?? field?.labelId}
       htmlFor={htmlFor ?? field?.controlId}
       className={classNames("combric-label", className)}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </label>
   );
 }
 

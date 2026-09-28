@@ -1,5 +1,101 @@
 @import "@combric/layout/css";
 
+.combric-icon-slot {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1em;
+  block-size: 1em;
+  color: currentColor;
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.combric-icon-slot > svg {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  block-size: 100%;
+  color: inherit;
+}
+
+.combric-accordion__trigger,
+.combric-collapsible__trigger,
+.combric-dialog__trigger,
+.combric-dialog__close,
+.combric-drawer__trigger,
+.combric-drawer__close,
+.combric-dropdown-menu__trigger,
+.combric-dropdown-menu__item,
+.combric-popover__trigger,
+.combric-tooltip__trigger,
+.combric-toast__close,
+.combric-tabs__trigger,
+.combric-toggle,
+.combric-toggle-group__item,
+.combric-pagination__link {
+  align-items: center;
+  gap: var(--combric-space-2);
+}
+
+.combric-accordion__trigger,
+.combric-collapsible__trigger,
+.combric-dialog__trigger,
+.combric-dialog__close,
+.combric-drawer__trigger,
+.combric-drawer__close,
+.combric-dropdown-menu__trigger,
+.combric-dropdown-menu__item,
+.combric-popover__trigger,
+.combric-tooltip__trigger,
+.combric-toast__close,
+.combric-tabs__trigger,
+.combric-toggle,
+.combric-toggle-group__item {
+  display: inline-flex;
+}
+
+.combric-label,
+.combric-fieldset__legend,
+.combric-breadcrumb__link,
+.combric-breadcrumb__page,
+.combric-card__title,
+.combric-alert__title,
+.combric-empty-state__title,
+.combric-dialog__title,
+.combric-drawer__title,
+.combric-toast__title {
+  align-items: center;
+  gap: var(--combric-space-2);
+}
+
+.combric-label,
+.combric-fieldset__legend,
+.combric-breadcrumb__link,
+.combric-breadcrumb__page,
+.combric-card__title,
+.combric-alert__title,
+.combric-empty-state__title,
+.combric-dialog__title,
+.combric-drawer__title,
+.combric-toast__title {
+  display: inline-flex;
+}
+
+.combric-empty-state__media {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.combric-accordion__trigger > .combric-icon-slot__content,
+.combric-collapsible__trigger > .combric-icon-slot__content {
+  min-inline-size: 0;
+  flex: 1;
+}
+
 .combric-button {
   display: inline-flex;
   align-items: center;
@@ -719,6 +815,7 @@
 .combric-badge {
   display: inline-flex;
   align-items: center;
+  gap: var(--combric-space-1);
   border: var(--combric-border-width) var(--combric-border-style)
     var(--combric-color-border);
   border-radius: var(--combric-radius-control);

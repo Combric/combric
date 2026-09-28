@@ -1,3 +1,5 @@
 dist
 node_modules
 pnpm-lock.yaml
+packages/icons/src/generated
+packages/icons/src/metadata.ts

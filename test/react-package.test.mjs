@@ -38,6 +38,8 @@ test("React CSS consumes canonical variables and component geometry roles", () =
   assert.match(css, /:focus-visible/);
   assert.match(css, /var\(--combric-color-invalid\)/);
   assert.match(css, /\.combric-input/);
+  assert.match(css, /\.combric-icon-slot/);
+  assert.match(css, /color: currentColor/);
   assert.match(css, /\.combric-tabs__trigger/);
   assert.match(css, /\.combric-avatar/);
   assert.match(css, /\.combric-pagination__link/);

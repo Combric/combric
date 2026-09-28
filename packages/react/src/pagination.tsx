@@ -7,6 +7,7 @@ import type {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 export interface PaginationProps extends HTMLAttributes<HTMLElement> {
   ref?: Ref<HTMLElement>;
@@ -67,7 +68,9 @@ export function PaginationItem({
 export interface PaginationLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   current?: boolean;
   disabled?: boolean;
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLAnchorElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function PaginationLink({
@@ -75,8 +78,11 @@ export function PaginationLink({
   current = false,
   disabled = false,
   href,
+  leadingIcon,
   onClick,
   ref,
+  trailingIcon,
+  children,
   ...props
 }: PaginationLinkProps): ReactElement {
   return (
@@ -96,33 +102,49 @@ export function PaginationLink({
         }
         onClick?.(event);
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </a>
   );
 }
 
-export type PaginationPreviousProps = PaginationLinkProps;
+export interface PaginationPreviousProps extends Omit<
+  PaginationLinkProps,
+  "leadingIcon" | "trailingIcon"
+> {
+  icon?: IconSlot;
+}
 
 export function PaginationPrevious({
   "aria-label": ariaLabel = "Previous page",
   children = "Previous",
+  icon,
   ...props
 }: PaginationPreviousProps): ReactElement {
   return (
-    <PaginationLink {...props} aria-label={ariaLabel}>
+    <PaginationLink {...props} aria-label={ariaLabel} leadingIcon={icon}>
       {children}
     </PaginationLink>
   );
 }
 
-export type PaginationNextProps = PaginationLinkProps;
+export interface PaginationNextProps extends Omit<
+  PaginationLinkProps,
+  "leadingIcon" | "trailingIcon"
+> {
+  icon?: IconSlot;
+}
 
 export function PaginationNext({
   "aria-label": ariaLabel = "Next page",
   children = "Next",
+  icon,
   ...props
 }: PaginationNextProps): ReactElement {
   return (
-    <PaginationLink {...props} aria-label={ariaLabel}>
+    <PaginationLink {...props} aria-label={ariaLabel} trailingIcon={icon}>
       {children}
     </PaginationLink>
   );

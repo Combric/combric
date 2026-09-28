@@ -16,6 +16,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 import {
   mergeRefs,
   renderPortal,
@@ -104,16 +105,21 @@ export function DropdownMenu({
 }
 
 export interface DropdownMenuTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function DropdownMenuTrigger({
   className,
   disabled,
+  leadingIcon,
   onClick,
   onKeyDown,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: DropdownMenuTriggerProps): ReactElement {
   const context = useDropdownMenuContext();
@@ -149,7 +155,11 @@ export function DropdownMenuTrigger({
           context.setOpen(true);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 
@@ -279,18 +289,23 @@ export interface DropdownMenuItemProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "role"
 > {
+  leadingIcon?: IconSlot;
   onSelect?: (event: MouseEvent<HTMLButtonElement>) => void;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
 }
 
 export function DropdownMenuItem({
   className,
   disabled,
+  leadingIcon,
   onClick,
   onKeyDown,
   onSelect,
   ref,
+  trailingIcon,
   type = "button",
+  children,
   ...props
 }: DropdownMenuItemProps): ReactElement {
   const context = useDropdownMenuContext();
@@ -322,7 +337,11 @@ export function DropdownMenuItem({
           event.currentTarget.click();
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 

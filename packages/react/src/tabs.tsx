@@ -14,6 +14,7 @@ import {
 } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 
 interface TabsContextValue {
   baseId: string;
@@ -121,18 +122,23 @@ export interface TabsTriggerProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "value"
 > {
+  leadingIcon?: IconSlot;
   ref?: Ref<HTMLButtonElement>;
+  trailingIcon?: IconSlot;
   value: string;
 }
 
 export function TabsTrigger({
   className,
   disabled = false,
+  leadingIcon,
   onClick,
   onKeyDown,
   ref,
+  trailingIcon,
   type = "button",
   value,
+  children,
   ...props
 }: TabsTriggerProps): ReactElement {
   const context = useTabsContext();
@@ -200,7 +206,11 @@ export function TabsTrigger({
           moveFocus(event);
         }
       }}
-    />
+    >
+      {renderIconSlot(leadingIcon, "leading")}
+      {children}
+      {renderIconSlot(trailingIcon, "trailing")}
+    </button>
   );
 }
 

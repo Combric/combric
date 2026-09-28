@@ -13,18 +13,23 @@ import { loadReleaseContract } from "../scripts/lib/release-contract.mjs";
 import {
   assertBootstrapContract,
   BOOTSTRAP_APPROVAL,
+  BOOTSTRAP_PACKAGES,
 } from "../scripts/lib/bootstrap-contract.mjs";
 
 const { contract } = await loadReleaseContract();
+const bootstrapPackages = BOOTSTRAP_PACKAGES.map((name) =>
+  contract.packages.find((entry) => entry.name === name),
+);
 const bootstrapContract = {
   ...contract,
   version: "1.0.0",
   tag: "v1.0.0",
+  packages: bootstrapPackages,
 };
 const report = {
   version: "1.0.0",
   distTag: "latest",
-  packages: contract.packages.map((entry, index) => ({
+  packages: bootstrapPackages.map((entry, index) => ({
     name: entry.name,
     directory: entry.directory,
     sha256: `${index}`.padStart(64, "0"),
@@ -65,8 +70,8 @@ test("bootstrap rejects incomplete or reordered artifacts", () => {
   );
 });
 
-test("bootstrap preparation rejects the later 1.2.0 release target", async () => {
-  assert.equal(contract.version, "1.2.0");
+test("bootstrap preparation rejects the later 1.3.0 release target", async () => {
+  assert.equal(contract.version, "1.3.0");
   const output = `release-bootstrap-test-${process.pid}`;
   try {
     const result = spawnSync(
@@ -138,7 +143,7 @@ test("local bootstrap explicitly disables provenance without changing release CI
   );
 });
 
-test("reconciliation classifies 0/6, 1/6, 2/6, 5/6, and 6/6 states", async () => {
+test("reconciliation classifies 0/7, 1/7, 2/7, 5/7, 6/7, and 7/7 states", async () => {
   const makeFetch = (published) => async () =>
     published
       ? new Response(
@@ -151,7 +156,7 @@ test("reconciliation classifies 0/6, 1/6, 2/6, 5/6, and 6/6 states", async () =>
         )
       : new Response("not found", { status: 404 });
   const makeArtifact = (entry) => ({ ...entry, path: "missing-for-404-test" });
-  for (const count of [0, 1, 2, 5, 6]) {
+  for (const count of [0, 1, 2, 5, 6, 7]) {
     const states = [];
     for (let index = 0; index < contract.packages.length; index += 1) {
       const entry = contract.packages[index];
@@ -172,7 +177,7 @@ test("reconciliation classifies 0/6, 1/6, 2/6, 5/6, and 6/6 states", async () =>
     );
     assert.equal(
       states.filter((state) => state === RELEASE_STATES.PENDING).length,
-      6 - count,
+      contract.packages.length - count,
     );
   }
 });
@@ -210,8 +215,8 @@ test("reconciliation fails closed on conflicts and propagation retries never rep
   assert.equal(publishes, 1);
 });
 
-test("first-publish bootstrap rejects the current 1.2.0 release contract", () => {
-  assert.equal(contract.version, "1.2.0");
+test("first-publish bootstrap rejects the current 1.3.0 release contract", () => {
+  assert.equal(contract.version, "1.3.0");
   assert.throws(
     () => assertBootstrapContract(contract, report),
     /Bootstrap is restricted to 1\.0\.0\/latest/,

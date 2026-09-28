@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactElement, Ref } from "react";
 
 import { classNames } from "./class-names.js";
+import { renderIconSlot, type IconSlot } from "./icon-slots.js";
 import type { RadiusPreset } from "./radius.js";
 
 export type CardTone = "surface" | "muted" | "elevated";
@@ -48,12 +49,15 @@ export function CardHeader({
 }
 
 export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+  icon?: IconSlot;
   ref?: Ref<HTMLHeadingElement>;
 }
 
 export function CardTitle({
   className,
+  icon,
   ref,
+  children,
   ...props
 }: CardTitleProps): ReactElement {
   return (
@@ -61,7 +65,10 @@ export function CardTitle({
       {...props}
       ref={ref}
       className={classNames("combric-card__title", className)}
-    />
+    >
+      {renderIconSlot(icon, "icon")}
+      {children}
+    </h2>
   );
 }
 

@@ -27,6 +27,29 @@ Set `data-theme="dark"` on an ancestor to select the dark token mapping; theme
 selection and persistence remain application-owned. Geometry is component
 appropriate by default and can be customized through semantic variables.
 
+## Icon slots
+
+Interactive controls and navigation expose `leadingIcon` and `trailingIcon`;
+titles, media, and breadcrumb separators expose `icon`. Every slot accepts a
+`ReactNode`, so Combric icons, another icon library, or a custom SVG can be used
+without coupling `@combric/react` to a particular icon package:
+
+```tsx
+import { ActivityIcon } from "@combric/icons";
+import { Button, CardTitle, EmptyStateMedia } from "@combric/react";
+
+<Button leadingIcon={<ActivityIcon />} trailingIcon={<ActivityIcon />}>
+  Open project
+</Button>;
+<CardTitle icon={<ActivityIcon />}>Projects</CardTitle>;
+<EmptyStateMedia icon={<ActivityIcon />} />;
+```
+
+Icon slots are decorative and are rendered with `aria-hidden`. Keep the
+component's visible text or provide an accessible name such as `aria-label` when
+a control contains only an icon. Slot geometry follows the surrounding text
+size, current color, and responsive inline layout.
+
 ## Layout
 
 ```tsx

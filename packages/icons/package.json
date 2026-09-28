@@ -1,0 +1,71 @@
+{
+  "name": "@combric/icons",
+  "version": "1.3.0",
+  "description": "Standalone SVG, CSS and React icons for Combric, generated from Iconoir",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "./dist/css/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./regular": {
+      "types": "./dist/regular.d.ts",
+      "import": "./dist/regular.js"
+    },
+    "./regular/*": {
+      "types": "./dist/generated/regular/*.d.ts",
+      "import": "./dist/generated/regular/*.js"
+    },
+    "./solid": {
+      "types": "./dist/solid.d.ts",
+      "import": "./dist/solid.js"
+    },
+    "./solid/*": {
+      "types": "./dist/generated/solid/*.d.ts",
+      "import": "./dist/generated/solid/*.js"
+    },
+    "./metadata": {
+      "types": "./dist/metadata.d.ts",
+      "import": "./dist/metadata.js"
+    },
+    "./metadata.json": "./dist/metadata.json",
+    "./css": "./dist/css/index.css",
+    "./css/regular": "./dist/css/regular.css",
+    "./css/solid": "./dist/css/solid.css",
+    "./svg/regular/*.svg": "./dist/svg/regular/*.svg",
+    "./svg/solid/*.svg": "./dist/svg/solid/*.svg"
+  },
+  "style": "./dist/css/index.css",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0 <20"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Combric/combric.git",
+    "directory": "packages/icons"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
