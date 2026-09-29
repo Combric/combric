@@ -71,8 +71,14 @@ const IGNORED = new Set([
   ".astro",
   ".cache",
 ]);
+const ICONS_CSS = new Set([
+  "@combric/icons/css",
+  "@combric/icons/css/regular",
+  "@combric/icons/css/solid",
+]);
 const PUBLIC_CSS = new Set([
   "@combric/tokens/css",
+  ...ICONS_CSS,
   "@combric/react/css",
   "@combric/layout/css",
   "@combric/tailwind",
@@ -476,20 +482,25 @@ export async function checkProject(
     : cssFiles;
   const allImports = new Set(scope.flatMap((item) => item.imports));
   const expected = config ? requiredForMode(config.mode) : null;
-  const expectedPackages = expected?.packages ?? [
-    ...(dependencies["@combric/tokens"] ? ["@combric/tokens"] : []),
-    ...(dependencies["@combric/react"]
-      ? ["@combric/react", "react", "react-dom"]
-      : []),
-    ...(dependencies["@combric/tailwind"]
-      ? ["@combric/tailwind", "tailwindcss"]
-      : []),
-    ...(allImports.has("@combric/tokens/css") ? ["@combric/tokens"] : []),
-    ...(allImports.has("@combric/react/css")
-      ? ["@combric/react", "react", "react-dom"]
-      : []),
-    ...(allImports.has("@combric/tailwind")
-      ? ["@combric/tailwind", "tailwindcss"]
+  const expectedPackages = [
+    ...(expected?.packages ?? [
+      ...(dependencies["@combric/tokens"] ? ["@combric/tokens"] : []),
+      ...(dependencies["@combric/react"]
+        ? ["@combric/react", "react", "react-dom"]
+        : []),
+      ...(dependencies["@combric/tailwind"]
+        ? ["@combric/tailwind", "tailwindcss"]
+        : []),
+      ...(allImports.has("@combric/tokens/css") ? ["@combric/tokens"] : []),
+      ...(allImports.has("@combric/react/css")
+        ? ["@combric/react", "react", "react-dom"]
+        : []),
+      ...(allImports.has("@combric/tailwind")
+        ? ["@combric/tailwind", "tailwindcss"]
+        : []),
+    ]),
+    ...([...ICONS_CSS].some((name) => allImports.has(name))
+      ? ["@combric/icons"]
       : []),
   ];
   // A package declaration alone does not prove that a zero-config consumer

@@ -16,7 +16,11 @@ import {
   type PackageManager,
   type ProjectInfo,
 } from "./model.js";
-import { requiredImports, requiredPackages } from "./requirements.js";
+import {
+  isSupportedCssImport,
+  requiredImports,
+  requiredPackages,
+} from "./requirements.js";
 
 export interface InitOptions {
   mode?: string | undefined;
@@ -132,7 +136,8 @@ export async function planInit(
   const imports = cssImports(originalCss);
   const needed = requiredImports(selectedMode);
   const conflicting = imports.filter(
-    (name) => name.startsWith("@combric/") && !needed.includes(name),
+    (name) =>
+      name.startsWith("@combric/") && !isSupportedCssImport(selectedMode, name),
   );
   if (conflicting.length) {
     throw new CliError(

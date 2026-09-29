@@ -70,8 +70,8 @@ test("bootstrap rejects incomplete or reordered artifacts", () => {
   );
 });
 
-test("bootstrap preparation rejects the later 1.3.0 release target", async () => {
-  assert.equal(contract.version, "1.3.0");
+test("bootstrap preparation rejects the later 1.3.1 release target", async () => {
+  assert.equal(contract.version, "1.3.1");
   const output = `release-bootstrap-test-${process.pid}`;
   try {
     const result = spawnSync(
@@ -215,8 +215,8 @@ test("reconciliation fails closed on conflicts and propagation retries never rep
   assert.equal(publishes, 1);
 });
 
-test("first-publish bootstrap rejects the current 1.3.0 release contract", () => {
-  assert.equal(contract.version, "1.3.0");
+test("first-publish bootstrap rejects the current 1.3.1 release contract", () => {
+  assert.equal(contract.version, "1.3.1");
   assert.throws(
     () => assertBootstrapContract(contract, report),
     /Bootstrap is restricted to 1\.0\.0\/latest/,
