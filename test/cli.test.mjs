@@ -64,7 +64,7 @@ test("help, version, command help and unknown command have stable exits", () => 
     assert.equal(result.status, 0);
     assert.match(result.stdout, new RegExp(`combric ${command}`));
   }
-  assert.equal(run(process.cwd(), ["--version"]).stdout.trim(), "1.3.0");
+  assert.equal(run(process.cwd(), ["--version"]).stdout.trim(), "1.3.1");
   const unknown = run(process.cwd(), ["add", "button"]);
   assert.equal(unknown.status, 1);
   assert.match(unknown.stderr, /Unknown command/);
@@ -178,6 +178,39 @@ test("React and React+Tailwind modes use their public CSS entries", async () => 
         assert.match(css, /@import "tailwindcss"/);
         assert.match(css, /@import "@combric\/tailwind"/);
       }
+      assert.equal(run(root, ["doctor"]).status, 0);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  }
+});
+
+test("public Icons CSS entries are additive to React setup", async () => {
+  for (const iconImport of [
+    "@combric/icons/css",
+    "@combric/icons/css/regular",
+    "@combric/icons/css/solid",
+  ]) {
+    const root = await fixture({
+      "@combric/icons": "file:./icons.tgz",
+      "@combric/react": "file:./react.tgz",
+      react: "19.3.0",
+      "react-dom": "19.3.0",
+    });
+    try {
+      await writeFile(
+        join(root, "style.css"),
+        `@import "@combric/react/css";\n@import "${iconImport}";\n`,
+      );
+      const result = run(root, [
+        "init",
+        "--mode",
+        "react",
+        "--css-file",
+        "style.css",
+        "--yes",
+      ]);
+      assert.equal(result.status, 0, result.stderr);
       assert.equal(run(root, ["doctor"]).status, 0);
     } finally {
       await rm(root, { recursive: true, force: true });

@@ -3,6 +3,24 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.3.1] - 2026-09-29
+
+Combric Framework patch release.
+
+- Fixed `@combric/cli` and `@combric/guard` so public Icons CSS imports are
+  accepted alongside the React consumer setup and still require `@combric/icons`
+  as a dependency.
+
+Published packages:
+
+- `@combric/tokens@1.3.1`;
+- `@combric/icons@1.3.1`;
+- `@combric/layout@1.3.1`;
+- `@combric/react@1.3.1`;
+- `@combric/tailwind@1.3.1`;
+- `@combric/cli@1.3.1`;
+- `@combric/guard@1.3.1`.
+
 ## [1.3.0] - 2026-09-28
 
 Combric Framework minor release.

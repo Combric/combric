@@ -1,4 +1,8 @@
-import { requiredImports, requiredPackages } from "./requirements.js";
+import {
+  isSupportedCssImport,
+  requiredImports,
+  requiredPackages,
+} from "./requirements.js";
 import { supportsReact19, supportsTailwind4 } from "./inspect.js";
 import type { Diagnostic, ProjectInfo } from "./model.js";
 
@@ -102,10 +106,11 @@ export function diagnose(project: ProjectInfo): Diagnostic[] {
         `Configured CSS file ${project.config.cssFile} is missing or unsafe.`,
       );
     } else {
-      const expectedImports = requiredImports(project.config.mode);
+      const mode = project.config.mode;
+      const expectedImports = requiredImports(mode);
       const conflicting = project.cssImports.filter(
         (name) =>
-          name.startsWith("@combric/") && !expectedImports.includes(name),
+          name.startsWith("@combric/") && !isSupportedCssImport(mode, name),
       );
       if (conflicting.length) {
         add(

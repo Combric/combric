@@ -42,8 +42,8 @@ for (const [directory, expectedName] of packages) {
         "@combric/core must remain an unpublished reserved boundary",
       );
     }
-  } else if (manifest.private === true || manifest.version !== "1.3.0") {
-    throw new Error(`${expectedName} must remain publishable at 1.3.0`);
+  } else if (manifest.private === true || manifest.version !== "1.3.1") {
+    throw new Error(`${expectedName} must remain publishable at 1.3.1`);
   }
   if (manifest.type !== "module" || manifest.license !== "MIT") {
     throw new Error(`${expectedName} must be an MIT-licensed ESM package`);

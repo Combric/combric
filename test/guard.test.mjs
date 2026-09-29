@@ -89,7 +89,7 @@ test("help and metadata version work without a project; unknown arguments exit 2
   const root = await mkdtemp(join(tmpdir(), "combric-guard-empty-"));
   try {
     assert.match(run(root, ["--help"]).stdout, /read-only, offline/);
-    assert.equal(run(root, ["--version"]).stdout.trim(), "1.3.0");
+    assert.equal(run(root, ["--version"]).stdout.trim(), "1.3.1");
     assert.equal(run(root, ["--fix"]).status, 2);
     assert.equal(run(root, ["check", "--json"]).status, 2);
     assert.equal(
@@ -174,6 +174,50 @@ test("unknown token and unsupported CSS entry produce located stable errors", as
     assert.ok(entries.some((item) => item.ruleId === "GUARD_CSS_IMPORT"));
   } finally {
     await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("public Icons CSS entries are supported and require the Icons package", async () => {
+  for (const iconImport of [
+    "@combric/icons/css",
+    "@combric/icons/css/regular",
+    "@combric/icons/css/solid",
+  ]) {
+    const root = await fixture({
+      "@combric/icons": "0.0.0",
+      "@combric/react": "0.0.0",
+      react: "19.3.0",
+      "react-dom": "19.3.0",
+    });
+    try {
+      await writeFile(
+        join(root, "combric.config.json"),
+        `${JSON.stringify({ schemaVersion: 1, packageManager: "pnpm", mode: "react", cssFile: "style.css" })}\n`,
+      );
+      await writeFile(
+        join(root, "style.css"),
+        `@import "@combric/react/css";\n@import "${iconImport}";\n`,
+      );
+      assert.equal(run(root, ["check"]).status, 0);
+      const manifest = JSON.parse(
+        await readFile(join(root, "package.json"), "utf8"),
+      );
+      delete manifest.dependencies["@combric/icons"];
+      await writeFile(
+        join(root, "package.json"),
+        `${JSON.stringify(manifest)}\n`,
+      );
+      const result = JSON.parse(run(root, ["check", "--json"]).stdout);
+      assert.ok(
+        result.diagnostics.some(
+          (item) =>
+            item.ruleId === "GUARD_PACKAGE_MISSING" &&
+            item.message.includes("@combric/icons"),
+        ),
+      );
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   }
 });
 
