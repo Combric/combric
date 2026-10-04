@@ -6,7 +6,7 @@
     "icons": { "tarballBytes": 1126646, "fileCount": 8395 },
     "layout": { "tarballBytes": 2759, "fileCount": 4 },
     "react": { "tarballBytes": 53014, "fileCount": 112 },
-    "menu": { "tarballBytes": 1868, "fileCount": 8 },
+    "menu": { "tarballBytes": 26026, "fileCount": 32 },
     "cli": { "tarballBytes": 21531, "fileCount": 43 },
     "guard": { "tarballBytes": 12943, "fileCount": 19 },
     "tailwind": { "tarballBytes": 2941, "fileCount": 4 }

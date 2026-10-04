@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "packages": {
+    "menu": {
+      "maxTarballBytes": 32768,
+      "maxFileCount": 40
+    }
+  }
+}
