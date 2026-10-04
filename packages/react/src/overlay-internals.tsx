@@ -176,7 +176,7 @@ export function useDisclosureMotion(open: boolean): {
   };
 }
 
-interface ControllableOpenOptions {
+export interface ControllableOpenOptions {
   componentName: string;
   defaultOpen?: boolean | undefined;
   onOpenChange?: ((open: boolean) => void) | undefined;
@@ -478,7 +478,7 @@ export function useModalIsolation(
   }, [active, host]);
 }
 
-interface DismissableLayerOptions {
+export interface DismissableLayerOptions {
   active: boolean;
   contentRef: RefObject<HTMLElement | null>;
   layerId: string;

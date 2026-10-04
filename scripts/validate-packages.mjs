@@ -6,6 +6,7 @@ const packages = new Map([
   ["icons", "@combric/icons"],
   ["layout", "@combric/layout"],
   ["react", "@combric/react"],
+  ["menu", "@combric/menu"],
   ["cli", "@combric/cli"],
   ["guard", "@combric/guard"],
   ["tailwind", "@combric/tailwind"],
@@ -17,6 +18,7 @@ const allowedInternalDependencies = new Map([
   ["@combric/icons", new Set()],
   ["@combric/layout", new Set(["@combric/tokens"])],
   ["@combric/react", new Set(["@combric/core", "@combric/layout"])],
+  ["@combric/menu", new Set(["@combric/layout", "@combric/react"])],
   ["@combric/cli", new Set(["@combric/core", "@combric/tokens"])],
   ["@combric/guard", new Set(["@combric/core", "@combric/tokens"])],
   ["@combric/tailwind", new Set(["@combric/tokens"])],
@@ -40,6 +42,16 @@ for (const [directory, expectedName] of packages) {
     ) {
       throw new Error(
         "@combric/core must remain an unpublished reserved boundary",
+      );
+    }
+  } else if (expectedName === "@combric/menu") {
+    if (
+      manifest.private !== true ||
+      manifest.version !== "0.0.0" ||
+      manifest.publishConfig
+    ) {
+      throw new Error(
+        "@combric/menu must remain a private foundation until its release milestone",
       );
     }
   } else if (manifest.private === true || manifest.version !== "1.3.1") {
@@ -141,6 +153,17 @@ for (const [directory, expectedName] of packages) {
     if (manifest.dependencies?.["@combric/layout"] !== "workspace:^") {
       throw new Error("@combric/react must consume @combric/layout");
     }
+    if (manifest.dependencies?.["@floating-ui/react"] !== "0.27.20") {
+      throw new Error(
+        "@combric/react must pin its approved floating interaction foundation",
+      );
+    }
+    if (
+      manifest.exports?.["./overlay"]?.types !== "./dist/overlay.d.ts" ||
+      manifest.exports?.["./overlay"]?.import !== "./dist/overlay.js"
+    ) {
+      throw new Error("@combric/react must expose its overlay foundation");
+    }
     if (manifest.peerDependencies?.react !== ">=19.0.0 <20") {
       throw new Error("@combric/react must declare its React 19 peer range");
     }
@@ -155,6 +178,46 @@ for (const [directory, expectedName] of packages) {
         )
       ) {
         throw new Error("@combric/react must not depend on Tailwind");
+      }
+    }
+    await access(new URL("dist/index.css", packageUrl));
+    await access(new URL("dist/overlay.js", packageUrl));
+    await access(new URL("dist/overlay.d.ts", packageUrl));
+  }
+
+  if (expectedName === "@combric/menu") {
+    if (
+      manifest.exports?.["./css"] !== "./dist/index.css" ||
+      manifest.style !== "./dist/index.css" ||
+      !manifest.sideEffects?.includes("./dist/index.css")
+    ) {
+      throw new Error("@combric/menu has an invalid CSS export contract");
+    }
+    if (
+      manifest.dependencies?.["@combric/layout"] !== "workspace:^" ||
+      manifest.dependencies?.["@combric/react"] !== "workspace:^"
+    ) {
+      throw new Error(
+        "@combric/menu must consume the canonical layout and overlay owners",
+      );
+    }
+    if (
+      manifest.peerDependencies?.react !== ">=19.0.0 <20" ||
+      manifest.peerDependencies?.["react-dom"] !== ">=19.0.0 <20"
+    ) {
+      throw new Error("@combric/menu must declare the React 19 peer range");
+    }
+    for (const field of [
+      "dependencies",
+      "optionalDependencies",
+      "peerDependencies",
+    ]) {
+      if (
+        Object.keys(manifest[field] ?? {}).some((name) =>
+          name.includes("tailwind"),
+        )
+      ) {
+        throw new Error("@combric/menu must not depend on Tailwind");
       }
     }
     await access(new URL("dist/index.css", packageUrl));

@@ -14,6 +14,7 @@ const names = [
   "icons",
   "layout",
   "react",
+  "menu",
   "cli",
   "guard",
   "tailwind",
@@ -73,7 +74,7 @@ try {
         schemaVersion: 1,
         scope: "repository-package-baseline",
         publicReleasePackages: names
-          .filter((name) => name !== "core")
+          .filter((name) => name !== "core" && name !== "menu")
           .map((name) => `@combric/${name}`),
         report,
       },

@@ -7,6 +7,7 @@ const packageNames = [
   "layout",
   "icons",
   "react",
+  "menu",
   "cli",
   "guard",
   "tailwind",
@@ -47,7 +48,7 @@ for (const packageName of packageNames) {
     requiredFiles.push("dist/tokens.css", "README.md");
   }
 
-  if (packageName === "react") {
+  if (packageName === "react" || packageName === "menu") {
     requiredFiles.push("dist/index.css", "README.md");
   }
   if (packageName === "cli") {

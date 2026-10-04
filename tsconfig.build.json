@@ -6,6 +6,7 @@
     { "path": "./packages/tokens" },
     { "path": "./packages/icons" },
     { "path": "./packages/react" },
+    { "path": "./packages/menu" },
     { "path": "./packages/cli" },
     { "path": "./packages/guard" }
   ]
