@@ -79,9 +79,9 @@ test("release finalizer stops before tagging when npm reports a registry conflic
   );
 });
 
-test("release contract matches the coordinated beta package set", () => {
-  assert.equal(contract.version, "1.4.0-beta.1");
-  assert.equal(contract.distTag, "beta");
+test("release contract matches the coordinated package set", () => {
+  assert.equal(contract.version, "1.4.0-rc.0");
+  assert.equal(contract.distTag, "next");
   assert.deepEqual(
     contract.packages.map(({ name }) => name),
     [
@@ -97,12 +97,12 @@ test("release contract matches the coordinated beta package set", () => {
   );
   assert.doesNotThrow(() => validateReleaseContract(contract, manifests));
   assert.deepEqual(releaseMetadata(contract), {
-    version: "1.4.0-beta.1",
-    tag: "v1.4.0-beta.1",
-    distTag: "beta",
-    channel: "beta",
+    version: "1.4.0-rc.0",
+    tag: "v1.4.0-rc.0",
+    distTag: "next",
+    channel: "rc",
     prerelease: true,
-    artifactName: "combric-v1.4.0-beta.1",
+    artifactName: "combric-v1.4.0-rc.0",
   });
 });
 

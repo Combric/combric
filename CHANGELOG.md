@@ -3,6 +3,24 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.4.0-rc.0] - 2026-10-04
+
+Release candidate for the Combric 1.4.0 Menu release train.
+
+- Promoted the registry-verified beta.1 package set, including the published
+  Menu consumer validation, to the `next` channel without API changes.
+
+Candidate packages:
+
+- `@combric/tokens@1.4.0-rc.0`;
+- `@combric/icons@1.4.0-rc.0`;
+- `@combric/layout@1.4.0-rc.0`;
+- `@combric/react@1.4.0-rc.0`;
+- `@combric/menu@1.4.0-rc.0`;
+- `@combric/tailwind@1.4.0-rc.0`;
+- `@combric/cli@1.4.0-rc.0`;
+- `@combric/guard@1.4.0-rc.0`.
+
 ## [1.4.0-beta.1] - 2026-10-04
 
 Second coordinated beta candidate for the Combric 1.4.0 Menu release train.
