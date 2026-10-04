@@ -7,6 +7,10 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
+const bootstrapWorkflow = await readFile(
+  new URL("../.github/workflows/bootstrap-menu.yml", import.meta.url),
+  "utf8",
+);
 
 test("Menu bootstrap creates only the registry placeholder artifact", async () => {
   const output = await mkdtemp(join(tmpdir(), "combric-menu-bootstrap-test-"));
@@ -38,4 +42,17 @@ test("Menu bootstrap creates only the registry placeholder artifact", async () =
   } finally {
     await rm(output, { recursive: true, force: true });
   }
+});
+
+test("Menu bootstrap verifies registry propagation without reusing an npm cache", () => {
+  const visibilityCheck = bootstrapWorkflow.slice(
+    bootstrapWorkflow.indexOf("- name: Verify bootstrap package visibility"),
+  );
+
+  assert.match(visibilityCheck, /fetch\(/);
+  assert.match(visibilityCheck, /metadata\["dist-tags"\]\?\.bootstrap/);
+  assert.match(visibilityCheck, /for attempt in \{1\.\.30\}/);
+  assert.match(visibilityCheck, /sleep 10/);
+  assert.match(visibilityCheck, /after 5 minutes/);
+  assert.doesNotMatch(visibilityCheck, /npm view/);
 });
