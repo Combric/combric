@@ -629,8 +629,10 @@
 }
 
 .combric-bottom-navigation__link {
+  box-sizing: border-box;
   display: grid;
   min-block-size: var(--combric-size-control-lg);
+  align-content: center;
   justify-items: center;
   gap: var(--combric-space-1);
   border: var(--combric-border-width) var(--combric-border-style) transparent;

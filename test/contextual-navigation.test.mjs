@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import axeCore from "axe-core";
@@ -523,4 +524,58 @@ test("BottomNavigation preserves native navigation structure and router renderin
     assert.equal(home.getAttribute("aria-current"), "page");
     assert.equal(inbox.getAttribute("data-router-link"), "true");
   });
+});
+
+test("BottomNavigation centres its label group and accepts spacing and label customisation", async () => {
+  await withDom(async ({ root, window }) => {
+    const { BottomNavigation, BottomNavigationLink, BottomNavigationList } =
+      await import(menuEntry);
+
+    await act(async () => {
+      root.render(
+        createElement(
+          BottomNavigation,
+          { margin: "12px", padding: "6px" },
+          createElement(
+            BottomNavigationList,
+            { gap: "4px", margin: "2px", padding: "3px" },
+            createElement(BottomNavigationLink, {
+              href: "/home",
+              label: "Dashboard",
+              labelClassName: "custom-label",
+              labelStyle: { marginBlock: "2px", paddingInline: "4px" },
+              margin: "1px",
+              padding: "8px",
+            }),
+          ),
+        ),
+      );
+    });
+
+    const navigation = window.document.querySelector("nav");
+    const list = navigation.querySelector("ul");
+    const link = navigation.querySelector("a");
+    const label = link.querySelector(".combric-bottom-navigation__link-label");
+
+    assert.equal(navigation.style.margin, "12px");
+    assert.equal(navigation.style.padding, "6px");
+    assert.equal(list.style.gap, "4px");
+    assert.equal(list.style.margin, "2px");
+    assert.equal(list.style.padding, "3px");
+    assert.equal(link.style.margin, "1px");
+    assert.equal(link.style.padding, "8px");
+    assert.equal(label.textContent, "Dashboard");
+    assert.ok(label.classList.contains("custom-label"));
+    assert.equal(label.style.marginBlock, "2px");
+    assert.equal(label.style.paddingInline, "4px");
+  });
+
+  const css = await readFile(
+    new URL("../packages/menu/dist/index.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(
+    css,
+    /\.combric-bottom-navigation__link\s*\{[^}]*align-content:\s*center;/s,
+  );
 });

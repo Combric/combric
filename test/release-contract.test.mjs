@@ -7,6 +7,10 @@ import {
   validatePackedDependencies,
   validateReleaseContract,
 } from "../scripts/lib/release-contract.mjs";
+import {
+  RELEASE_STATES,
+  verifyPublishedRelease,
+} from "../scripts/lib/release-reconciliation.mjs";
 
 const { contract, manifests } = await loadReleaseContract();
 const releaseWorkflow = await readFile(
@@ -29,8 +33,54 @@ test("release finalizer configures Git identity before creating its tag", () => 
   }
 });
 
+test("release finalizer gives the coordinated package set one shared npm propagation window", async () => {
+  let visibilityRound = 0;
+  const waits = [];
+  const logs = [];
+
+  await verifyPublishedRelease({
+    contract,
+    attempts: 2,
+    delayMs: 1,
+    reconcile: async (artifact) => ({
+      artifact,
+      state:
+        visibilityRound === 0
+          ? RELEASE_STATES.PENDING
+          : RELEASE_STATES.VERIFIED_PUBLISHED,
+    }),
+    sleep: async (milliseconds) => {
+      waits.push(milliseconds);
+      visibilityRound += 1;
+    },
+    log: (message) => logs.push(message),
+    warn: () => {},
+  });
+
+  assert.deepEqual(waits, [1]);
+  assert.equal(logs.length, contract.packages.length);
+  assert.ok(logs.every((message) => message.includes(contract.distTag)));
+});
+
+test("release finalizer stops before tagging when npm reports a registry conflict", async () => {
+  await assert.rejects(
+    verifyPublishedRelease({
+      contract,
+      attempts: 1,
+      reconcile: async (artifact) => ({
+        artifact,
+        state: RELEASE_STATES.CONFLICT,
+        reason: "dist-tag mismatch",
+      }),
+      log: () => {},
+      warn: () => {},
+    }),
+    /registry conflict: dist-tag mismatch/,
+  );
+});
+
 test("release contract matches the coordinated beta package set", () => {
-  assert.equal(contract.version, "1.4.0-beta.0");
+  assert.equal(contract.version, "1.4.0-beta.1");
   assert.equal(contract.distTag, "beta");
   assert.deepEqual(
     contract.packages.map(({ name }) => name),
@@ -47,12 +97,12 @@ test("release contract matches the coordinated beta package set", () => {
   );
   assert.doesNotThrow(() => validateReleaseContract(contract, manifests));
   assert.deepEqual(releaseMetadata(contract), {
-    version: "1.4.0-beta.0",
-    tag: "v1.4.0-beta.0",
+    version: "1.4.0-beta.1",
+    tag: "v1.4.0-beta.1",
     distTag: "beta",
     channel: "beta",
     prerelease: true,
-    artifactName: "combric-v1.4.0-beta.0",
+    artifactName: "combric-v1.4.0-beta.1",
   });
 });
 
