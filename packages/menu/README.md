@@ -1,13 +1,15 @@
 # `@combric/menu`
 
-`@combric/menu` is the future home of Combric navigation systems and advanced
-menu primitives.
+`@combric/menu` is the home of Combric navigation systems and advanced menu
+primitives.
 
-This private foundation package is intentionally not publishable or consumable
-yet. It establishes the ESM, CSS, type, package-validation, and shared overlay
-contracts required before public Menu components are introduced.
+It is intentionally private while its API matures, but it can be consumed by the
+Combric workspace. Sprint 2 introduces the composable `ActionMenu` family: the
+root, trigger, positioned content, action items, checkbox and radio items,
+labels, and separators. It uses the shared `@combric/react/overlay` foundation
+for portals, positioning, layering, dismissal, and focus restoration.
 
 Generic primitives remain in `@combric/react`: Drawer, Dialog, Tabs, Breadcrumb,
 Popover, Tooltip, and the basic DropdownMenu. Future Menu milestones add
-advanced Action Menu, Navigation, SideNav, NavigationMenu, and related systems
-without duplicating those primitives.
+Navigation, SideNav, NavigationMenu, and related systems without duplicating
+those primitives.

@@ -1,6 +1,22 @@
-/**
- * Public Menu components are introduced by subsequent approved milestones.
- * The package and shared interaction foundation are intentionally established
- * before any navigation surface becomes public.
- */
-export {};
+export {
+  ActionMenu,
+  ActionMenuCheckboxItem,
+  ActionMenuContent,
+  ActionMenuItem,
+  ActionMenuLabel,
+  ActionMenuRadioGroup,
+  ActionMenuRadioItem,
+  ActionMenuSeparator,
+  ActionMenuTrigger,
+  type ActionMenuAlign,
+  type ActionMenuCheckboxItemProps,
+  type ActionMenuContentProps,
+  type ActionMenuItemProps,
+  type ActionMenuLabelProps,
+  type ActionMenuProps,
+  type ActionMenuRadioGroupProps,
+  type ActionMenuRadioItemProps,
+  type ActionMenuSeparatorProps,
+  type ActionMenuSide,
+  type ActionMenuTriggerProps,
+} from "./action-menu.js";

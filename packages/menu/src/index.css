@@ -1,3 +1,147 @@
 @import "@combric/layout/css";
 
-/* Component styles are introduced with their owning Menu milestones. */
+.combric-action-menu__trigger,
+.combric-action-menu__item {
+  font: inherit;
+}
+
+.combric-action-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--combric-space-2);
+  border: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+  border-radius: var(--combric-radius-control);
+  padding: var(--combric-space-2) var(--combric-space-3);
+  background: var(--combric-color-surface);
+  color: var(--combric-color-text);
+  cursor: pointer;
+}
+
+.combric-action-menu__trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.combric-action-menu__trigger-label,
+.combric-action-menu__item [data-combric-action-menu-label] {
+  min-inline-size: 0;
+}
+
+.combric-action-menu__content {
+  z-index: var(--combric-z-index-overlay);
+  box-sizing: border-box;
+  display: grid;
+  min-inline-size: var(--combric-size-layout-item-sm);
+  max-block-size: calc(100vh - var(--combric-space-8));
+  overflow: auto;
+  border: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+  border-radius: var(--combric-radius-overlay);
+  padding: var(--combric-space-1);
+  background: var(--combric-color-surface-elevated);
+  color: var(--combric-color-text);
+  font-family: var(--combric-font-family-body);
+  transition:
+    opacity var(--combric-motion-duration-normal)
+      var(--combric-motion-easing-standard),
+    transform var(--combric-motion-duration-normal)
+      var(--combric-motion-easing-standard);
+}
+
+.combric-action-menu__content[data-state="open"] {
+  transition-timing-function: var(--combric-motion-easing-enter);
+}
+
+.combric-action-menu__content[data-state="closed"] {
+  opacity: 0;
+  transform: translateY(var(--combric-space-1)) scale(0.98);
+  pointer-events: none;
+  transition-timing-function: var(--combric-motion-easing-exit);
+}
+
+.combric-action-menu__content[data-presence="entering"] {
+  opacity: 0;
+  transform: translateY(var(--combric-space-1)) scale(0.98);
+}
+
+.combric-action-menu__item {
+  display: flex;
+  width: 100%;
+  min-block-size: var(--combric-size-control-md);
+  align-items: center;
+  gap: var(--combric-space-2);
+  border: 0;
+  border-radius: var(--combric-radius-control);
+  padding: var(--combric-space-2) var(--combric-space-3);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.combric-action-menu__item [data-combric-action-menu-label] {
+  flex: 1;
+}
+
+.combric-action-menu__item:hover:not([aria-disabled="true"]),
+.combric-action-menu__item:focus-visible {
+  background: var(--combric-color-surface);
+}
+
+.combric-action-menu__item[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.combric-action-menu__item-indicator {
+  display: inline-flex;
+  min-inline-size: var(--combric-size-control-sm);
+  align-items: center;
+  justify-content: center;
+  color: var(--combric-color-accent);
+  font-weight: var(--combric-font-weight-emphasis);
+}
+
+.combric-action-menu__item-leading,
+.combric-action-menu__item-trailing {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.combric-action-menu__item-trailing {
+  color: var(--combric-color-text-muted);
+}
+
+.combric-action-menu__label {
+  padding: var(--combric-space-2) var(--combric-space-3);
+  color: var(--combric-color-text-muted);
+  font-size: var(--combric-font-size-small);
+  font-weight: var(--combric-font-weight-emphasis);
+}
+
+.combric-action-menu__radio-group {
+  display: grid;
+}
+
+.combric-action-menu__separator {
+  block-size: var(--combric-border-width);
+  margin: var(--combric-space-1) 0;
+  background: var(--combric-color-border);
+}
+
+.combric-action-menu__trigger:focus-visible,
+.combric-action-menu__item:focus-visible,
+.combric-action-menu__content:focus-visible {
+  outline: var(--combric-border-width-strong) var(--combric-border-style)
+    var(--combric-color-focus);
+  outline-offset: var(--combric-space-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .combric-action-menu__content {
+    transition: none;
+  }
+}
