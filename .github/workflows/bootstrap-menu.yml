@@ -97,11 +97,11 @@ jobs:
         shell: bash
         run: |
           for attempt in {1..30}; do
-            if [ "$(npm view "@combric/menu@$BOOTSTRAP_VERSION" version --registry https://registry.npmjs.org 2>/dev/null || true)" = "$BOOTSTRAP_VERSION" ]; then
+            if node -e 'const version=process.argv[1]; const response=await fetch(`https://registry.npmjs.org/${encodeURIComponent("@combric/menu")}`,{headers:{accept:"application/json"}}); if (!response.ok) process.exit(1); const metadata=await response.json(); if (metadata.versions?.[version]?.version !== version || metadata["dist-tags"]?.bootstrap !== version) process.exit(1);' "$BOOTSTRAP_VERSION"; then
               echo "@combric/menu@$BOOTSTRAP_VERSION is visible on npm."
               exit 0
             fi
-            sleep 2
+            sleep 10
           done
-          echo "Bootstrap package was accepted but is not visible after 60 seconds" >&2
+          echo "Bootstrap package was accepted but is not visible after 5 minutes" >&2
           exit 1
