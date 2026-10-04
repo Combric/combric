@@ -19,6 +19,9 @@ import { checkProject } from "../packages/guard/dist/index.js";
 const bin = fileURLToPath(
   new URL("../packages/guard/dist/bin.js", import.meta.url),
 );
+const releaseManifest = JSON.parse(
+  await readFile(new URL("../release/manifest.json", import.meta.url), "utf8"),
+);
 
 function run(root, args) {
   return spawnSync(process.execPath, [bin, ...args], {
@@ -89,7 +92,10 @@ test("help and metadata version work without a project; unknown arguments exit 2
   const root = await mkdtemp(join(tmpdir(), "combric-guard-empty-"));
   try {
     assert.match(run(root, ["--help"]).stdout, /read-only, offline/);
-    assert.equal(run(root, ["--version"]).stdout.trim(), "1.3.1");
+    assert.equal(
+      run(root, ["--version"]).stdout.trim(),
+      releaseManifest.version,
+    );
     assert.equal(run(root, ["--fix"]).status, 2);
     assert.equal(run(root, ["check", "--json"]).status, 2);
     assert.equal(

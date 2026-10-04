@@ -12,7 +12,7 @@ export const BOOTSTRAP_PACKAGES = [
   "@combric/guard",
 ];
 
-export function assertBootstrapContract(contract, report) {
+export function assertBootstrapTarget(contract) {
   if (
     contract.version !== "1.0.0" ||
     contract.tag !== "v1.0.0" ||
@@ -20,15 +20,21 @@ export function assertBootstrapContract(contract, report) {
   )
     throw new Error("Bootstrap is restricted to 1.0.0/latest");
   if (
-    report.version !== contract.version ||
-    report.distTag !== contract.distTag
-  )
-    throw new Error("Artifact report does not match the bootstrap contract");
-  if (
     JSON.stringify(contract.packages.map(({ name }) => name)) !==
     JSON.stringify(BOOTSTRAP_PACKAGES)
   )
     throw new Error("Bootstrap package set is not the fixed six-package set");
+
+  return contract.packages.map(({ name }) => name);
+}
+
+export function assertBootstrapContract(contract, report) {
+  const packageNames = assertBootstrapTarget(contract);
+  if (
+    report.version !== contract.version ||
+    report.distTag !== contract.distTag
+  )
+    throw new Error("Artifact report does not match the bootstrap contract");
   if (report.packages.length !== BOOTSTRAP_PACKAGES.length)
     throw new Error("Bootstrap package set is incomplete");
   for (const [index, entry] of contract.packages.entries()) {
@@ -42,7 +48,7 @@ export function assertBootstrapContract(contract, report) {
     if (!/^[a-f0-9]{64}$/.test(artifact.sha256))
       throw new Error(`Invalid artifact hash for ${entry.name}`);
   }
-  return contract.packages.map(({ name }) => name);
+  return packageNames;
 }
 
 export async function verifyArtifactHashes(directory, report) {

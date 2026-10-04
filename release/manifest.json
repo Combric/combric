@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "1.3.1",
-  "tag": "v1.3.1",
-  "distTag": "latest",
+  "version": "1.4.0-beta.0",
+  "tag": "v1.4.0-beta.0",
+  "distTag": "beta",
   "packages": [
     { "directory": "tokens", "name": "@combric/tokens", "dependencies": [] },
     { "directory": "icons", "name": "@combric/icons", "dependencies": [] },
@@ -15,6 +15,11 @@
       "directory": "react",
       "name": "@combric/react",
       "dependencies": ["@combric/layout"]
+    },
+    {
+      "directory": "menu",
+      "name": "@combric/menu",
+      "dependencies": ["@combric/layout", "@combric/react"]
     },
     {
       "directory": "tailwind",

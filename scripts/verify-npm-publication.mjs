@@ -1,26 +1,27 @@
 import { loadReleaseContract } from "./lib/release-contract.mjs";
+import {
+  reconcilePackage,
+  RELEASE_STATES,
+} from "./lib/release-reconciliation.mjs";
 
 const { contract } = await loadReleaseContract();
-for (const { name } of contract.packages) {
-  let published = false;
+for (const artifact of contract.packages) {
+  let reconciliation;
   for (let attempt = 1; attempt <= 12; attempt += 1) {
-    const response = await fetch(
-      `https://registry.npmjs.org/${encodeURIComponent(name)}`,
-      { headers: { accept: "application/json" } },
-    );
-    if (response.ok) {
-      const metadata = await response.json();
-      if (metadata.versions?.[contract.version]) {
-        published = true;
-        break;
-      }
-    } else if (response.status !== 404) {
-      throw new Error(`npm registry returned ${response.status} for ${name}`);
-    }
+    reconciliation = await reconcilePackage({ artifact, contract });
+    if (reconciliation.state === RELEASE_STATES.VERIFIED_PUBLISHED) break;
+    if (reconciliation.state === RELEASE_STATES.CONFLICT)
+      throw new Error(
+        `${artifact.name}@${contract.version} has a registry conflict: ${reconciliation.reason}`,
+      );
     if (attempt < 12)
       await new Promise((resolve) => setTimeout(resolve, 10_000));
   }
-  if (!published)
-    throw new Error(`${name}@${contract.version} could not be verified on npm`);
-  console.log(`Verified ${name}@${contract.version} on npm.`);
+  if (reconciliation?.state !== RELEASE_STATES.VERIFIED_PUBLISHED)
+    throw new Error(
+      `${artifact.name}@${contract.version} could not be verified on npm with its ${contract.distTag} dist-tag`,
+    );
+  console.log(
+    `Verified ${artifact.name}@${contract.version} on npm with ${contract.distTag}.`,
+  );
 }

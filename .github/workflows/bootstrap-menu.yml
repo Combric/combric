@@ -1,15 +1,14 @@
-name: Bootstrap Icons Package
+name: Bootstrap Menu Package
 
-# One-time registry namespace bootstrap for the new @combric/icons package.
-# The NPM_BOOTSTRAP_TOKEN must be an environment-scoped, short-lived npm
-# publishing credential. It is not stored in the repository or used by the
-# normal Combric Release workflow.
+# One-time registry namespace bootstrap for the new @combric/menu package.
+# NPM_BOOTSTRAP_TOKEN is limited to the protected npm-bootstrap environment and
+# is never used by the OIDC-based Combric Release workflow.
 
 on:
   workflow_dispatch:
     inputs:
       release_commit:
-        description: Exact 40-character main commit containing @combric/icons
+        description: Exact 40-character main commit containing @combric/menu
         required: true
         type: string
       bootstrap_approval:
@@ -21,7 +20,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: bootstrap-icons
+  group: bootstrap-menu
   cancel-in-progress: false
 
 env:
@@ -31,7 +30,7 @@ env:
 
 jobs:
   bootstrap:
-    name: Publish @combric/icons bootstrap package
+    name: Publish @combric/menu bootstrap package
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: npm-bootstrap
@@ -69,33 +68,28 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
 
-      - name: Require supported npm
-        shell: bash
-        run: |
-          node -e 'const [major, minor, patch] = process.argv[1].split(".").map(Number); if (major < 11 || (major === 11 && (minor < 5 || (minor === 5 && patch < 1)))) throw new Error("npm 11.5.1 or newer is required")' "$(npm --version)"
-
       - name: Confirm bootstrap version is absent
         shell: bash
         run: |
-          if npm view "@combric/icons@$BOOTSTRAP_VERSION" version --registry https://registry.npmjs.org >/dev/null 2>&1; then
-            echo "@combric/icons@$BOOTSTRAP_VERSION already exists" >&2
+          if npm view "@combric/menu@$BOOTSTRAP_VERSION" version --registry https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "@combric/menu@$BOOTSTRAP_VERSION already exists" >&2
             exit 1
           fi
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build and validate icons
-        run: pnpm build && pnpm validate:icons:built
+      - name: Build and validate Menu
+        run: pnpm build && pnpm test:menu:packed && pnpm validate:menu:budget
 
       - name: Prepare bootstrap tarball
-        run: node scripts/bootstrap-icons.mjs --output .cache/icons-bootstrap
+        run: node scripts/bootstrap-menu.mjs --output .cache/menu-bootstrap
 
       - name: Publish bootstrap package
         run: >-
           npm publish
-          ".cache/icons-bootstrap/combric-icons-${BOOTSTRAP_VERSION}.tgz"
-          --access public --tag bootstrap --provenance=false
+          ".cache/menu-bootstrap/combric-menu-${BOOTSTRAP_VERSION}.tgz" --access
+          public --tag bootstrap --provenance=false
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_BOOTSTRAP_TOKEN }}
 
@@ -103,8 +97,8 @@ jobs:
         shell: bash
         run: |
           for attempt in {1..30}; do
-            if [ "$(npm view "@combric/icons@$BOOTSTRAP_VERSION" version --registry https://registry.npmjs.org 2>/dev/null || true)" = "$BOOTSTRAP_VERSION" ]; then
-              echo "@combric/icons@$BOOTSTRAP_VERSION is visible on npm."
+            if [ "$(npm view "@combric/menu@$BOOTSTRAP_VERSION" version --registry https://registry.npmjs.org 2>/dev/null || true)" = "$BOOTSTRAP_VERSION" ]; then
+              echo "@combric/menu@$BOOTSTRAP_VERSION is visible on npm."
               exit 0
             fi
             sleep 2

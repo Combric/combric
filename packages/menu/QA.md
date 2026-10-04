@@ -1,7 +1,7 @@
 # `@combric/menu` QA and promotion gate
 
-This file defines the quality gate for the first `@combric/menu` alpha
-candidate. It is intentionally separate from a registry release decision.
+This file defines the quality gate for the `1.4.0` coordinated Menu release
+train. It is intentionally separate from a registry release decision.
 
 ## Automated package gate
 
@@ -14,12 +14,15 @@ requires both of these menu-specific gates:
   Navigation APIs, and verifies the public CSS and package exports.
 - `pnpm validate:menu:budget` packs the actual `@combric/menu` artifact and
   fails if it exceeds 32,768 bytes or 40 files.
+- `pnpm test:menu:published` is intentionally a separate, post-publication gate:
+  it installs the exact coordinated npm version from the public registry into a
+  clean temporary consumer, then type-checks and renders the Menu API. It must
+  pass for the beta before RC promotion, and again after stable.
 
 The budget is a packed-artifact guard, not a claim about every application's
 tree-shaken bundle. A consumer's final bundle also depends on its imports,
-compiler, React, and shared Combric dependencies. The current first-alpha
-baseline is 26,026 bytes and 32 files, leaving 6,742 bytes and eight files of
-explicit headroom.
+compiler, React, and shared Combric dependencies. The current baseline is 26,026
+bytes and 32 files, leaving 6,742 bytes and eight files of explicit headroom.
 
 ## Sprint 6 local browser evidence
 
@@ -87,16 +90,32 @@ beta gate therefore needs a documented NVDA + Firefox or Chromium pass and a
 VoiceOver + Safari pass; the final compatibility matrix may add browsers based
 on the supported-product policy.
 
+## Manual screen-reader sign-off
+
+Record the following against the exact release commit before promoting to beta:
+
+| Assistive technology | Browser             | Tester | Date | Result | Notes |
+| -------------------- | ------------------- | ------ | ---- | ------ | ----- |
+| NVDA                 | Firefox or Chromium |        |      |        |       |
+| VoiceOver            | Safari              |        |      |        |       |
+
+For each row, exercise Action Menu, Context Menu, Navigation/Mega Menu, Menubar,
+and Bottom Navigation using the scenarios above. A result is accepted only when
+the expected landmark, disclosure, menu, item, link, and current-page
+announcements are understandable and keyboard operation reaches the same
+destinations as pointer operation.
+
 ## Promotion boundaries
 
-| Promotion       | Required evidence                                                                                                                                                 |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Alpha candidate | Green package QA, packed-consumer gate, budget gate, and browser/accessibility-tree inspection. No npm publication is implied.                                    |
-| Beta            | Manual screen-reader evidence, public version and publication policy, stable API inventory, and an approved release contract that includes `@combric/menu`.       |
-| RC              | No unresolved accessibility or package-budget regressions, release artifacts validated from the exact approved commit, and a downstream reference-consumer check. |
-| Stable          | Approved merge to `main`, the canonical OIDC Stable Release workflow, registry/provenance verification, and post-release downstream validation.                   |
+| Promotion       | Required evidence                                                                                                                                                                                                     |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Alpha candidate | Green package QA, packed-consumer gate, budget gate, and browser/accessibility-tree inspection. No npm publication is implied.                                                                                        |
+| Beta            | Manual screen-reader evidence, public version and publication policy, stable API inventory, and an approved coordinated release contract that includes `@combric/menu`.                                               |
+| RC              | No unresolved accessibility or package-budget regressions, release artifacts validated from the exact approved commit, and a passing `pnpm test:menu:published` downstream reference-consumer check against the beta. |
+| Stable          | Approved merge to `main`, the canonical OIDC Combric Release workflow, registry/provenance verification, and post-release downstream validation.                                                                      |
 
-At Sprint 6 completion the package remains private at `0.0.0` and is not in the
-repository release manifest. That is deliberate: making it public, assigning
-beta/RC/stable versions, amending the release contract, publishing, tagging, and
-releasing require an explicit release decision.
+The release train starts at `1.4.0-beta.0` with the `beta` dist-tag, then
+promotes the same coordinated package set through `1.4.0-rc.0`/`next` and
+`1.4.0`/`latest`. A one-time bootstrap publication reserves the Menu registry
+identity before its OIDC Trusted Publisher is configured; it is not an install
+candidate or a substitute for the beta artifact.

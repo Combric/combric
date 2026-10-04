@@ -74,7 +74,7 @@ try {
         schemaVersion: 1,
         scope: "repository-package-baseline",
         publicReleasePackages: names
-          .filter((name) => name !== "core" && name !== "menu")
+          .filter((name) => name !== "core")
           .map((name) => `@combric/${name}`),
         report,
       },

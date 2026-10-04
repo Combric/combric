@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
   loadReleaseContract,
+  releaseMetadata,
   validatePackedDependencies,
   validateReleaseContract,
 } from "../scripts/lib/release-contract.mjs";
@@ -28,8 +29,9 @@ test("release finalizer configures Git identity before creating its tag", () => 
   }
 });
 
-test("release contract matches the seven publishable packages", () => {
-  assert.equal(contract.version, "1.3.1");
+test("release contract matches the coordinated beta package set", () => {
+  assert.equal(contract.version, "1.4.0-beta.0");
+  assert.equal(contract.distTag, "beta");
   assert.deepEqual(
     contract.packages.map(({ name }) => name),
     [
@@ -37,12 +39,71 @@ test("release contract matches the seven publishable packages", () => {
       "@combric/icons",
       "@combric/layout",
       "@combric/react",
+      "@combric/menu",
       "@combric/tailwind",
       "@combric/cli",
       "@combric/guard",
     ],
   );
   assert.doesNotThrow(() => validateReleaseContract(contract, manifests));
+  assert.deepEqual(releaseMetadata(contract), {
+    version: "1.4.0-beta.0",
+    tag: "v1.4.0-beta.0",
+    distTag: "beta",
+    channel: "beta",
+    prerelease: true,
+    artifactName: "combric-v1.4.0-beta.0",
+  });
+});
+
+test("release contract rejects an invalid prerelease channel or dist-tag", () => {
+  assert.throws(
+    () =>
+      validateReleaseContract({ ...contract, distTag: "latest" }, manifests),
+    /release channel contract/,
+  );
+  assert.throws(
+    () =>
+      validateReleaseContract(
+        { ...contract, version: "1.4.0-preview.0", tag: "v1.4.0-preview.0" },
+        manifests,
+      ),
+    /alpha, beta, or rc prerelease/,
+  );
+});
+
+test("release channels map alpha, beta, rc, and stable versions to their public tags", () => {
+  for (const [version, distTag, channel, prerelease] of [
+    ["1.4.0-alpha.0", "alpha", "alpha", true],
+    ["1.4.0-beta.0", "beta", "beta", true],
+    ["1.4.0-rc.0", "next", "rc", true],
+    ["1.4.0", "latest", "stable", false],
+  ]) {
+    const candidate = {
+      ...contract,
+      version,
+      tag: `v${version}`,
+      distTag,
+    };
+    const candidateManifests = new Map(
+      [...manifests].map(([name, manifest]) => [
+        name,
+        { ...manifest, version },
+      ]),
+    );
+
+    assert.doesNotThrow(() =>
+      validateReleaseContract(candidate, candidateManifests),
+    );
+    assert.deepEqual(releaseMetadata(candidate), {
+      version,
+      tag: `v${version}`,
+      distTag,
+      channel,
+      prerelease,
+      artifactName: `combric-v${version}`,
+    });
+  }
 });
 
 test("release contract rejects a wrong package version", () => {
@@ -119,6 +180,6 @@ test("packed manifests reject workspace and local dependency leaks", () => {
         { dependencies: { "@combric/tokens": "^2.0.0" } },
         contract.version,
       ),
-    /must be \^1\.3\.1/,
+    new RegExp(`must be \\^${contract.version.replaceAll(".", "\\.")}`),
   );
 });

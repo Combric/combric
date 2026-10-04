@@ -8,6 +8,7 @@ import {
 } from "./lib/release-contract.mjs";
 import {
   assertBootstrapContract,
+  assertBootstrapTarget,
   verifyArtifactHashes,
   BOOTSTRAP_APPROVAL,
 } from "./lib/bootstrap-contract.mjs";
@@ -34,6 +35,7 @@ if (!publish && !prepare)
   throw new Error('Use --prepare or --publish "PUBLISH APPROVED"');
 
 const { contract } = await loadReleaseContract();
+assertBootstrapTarget(contract);
 const testPublisher =
   process.env.NODE_ENV === "test" && process.env.COMBRIC_TEST_PUBLISHER === "1";
 const publishDirectory = publish

@@ -12,6 +12,7 @@ import { rm } from "node:fs/promises";
 import { loadReleaseContract } from "../scripts/lib/release-contract.mjs";
 import {
   assertBootstrapContract,
+  assertBootstrapTarget,
   BOOTSTRAP_APPROVAL,
   BOOTSTRAP_PACKAGES,
 } from "../scripts/lib/bootstrap-contract.mjs";
@@ -24,6 +25,7 @@ const bootstrapContract = {
   ...contract,
   version: "1.0.0",
   tag: "v1.0.0",
+  distTag: "latest",
   packages: bootstrapPackages,
 };
 const report = {
@@ -70,8 +72,8 @@ test("bootstrap rejects incomplete or reordered artifacts", () => {
   );
 });
 
-test("bootstrap preparation rejects the later 1.3.1 release target", async () => {
-  assert.equal(contract.version, "1.3.1");
+test("bootstrap preparation rejects every non-initial release target", async () => {
+  assert.notEqual(contract.version, "1.0.0");
   const output = `release-bootstrap-test-${process.pid}`;
   try {
     const result = spawnSync(
@@ -143,20 +145,20 @@ test("local bootstrap explicitly disables provenance without changing release CI
   );
 });
 
-test("reconciliation classifies 0/7, 1/7, 2/7, 5/7, 6/7, and 7/7 states", async () => {
+test("reconciliation classifies every coordinated release recovery state", async () => {
   const makeFetch = (published) => async () =>
     published
       ? new Response(
           JSON.stringify({
             name: published.name,
-            "dist-tags": { latest: contract.version },
+            "dist-tags": { [contract.distTag]: contract.version },
             versions: { [contract.version]: { version: contract.version } },
           }),
           { status: 200 },
         )
       : new Response("not found", { status: 404 });
   const makeArtifact = (entry) => ({ ...entry, path: "missing-for-404-test" });
-  for (const count of [0, 1, 2, 5, 6, 7]) {
+  for (const count of [0, 1, 2, 5, 6, 7, contract.packages.length]) {
     const states = [];
     for (let index = 0; index < contract.packages.length; index += 1) {
       const entry = contract.packages[index];
@@ -191,7 +193,7 @@ test("reconciliation fails closed on conflicts and propagation retries never rep
         JSON.stringify({
           name: "@combric/tokens",
           repository: { directory: "wrong" },
-          "dist-tags": { latest: contract.version },
+          "dist-tags": { [contract.distTag]: contract.version },
           versions: { [contract.version]: { version: contract.version } },
         }),
         { status: 200 },
@@ -215,10 +217,10 @@ test("reconciliation fails closed on conflicts and propagation retries never rep
   assert.equal(publishes, 1);
 });
 
-test("first-publish bootstrap rejects the current 1.3.1 release contract", () => {
-  assert.equal(contract.version, "1.3.1");
+test("first-publish bootstrap rejects every non-initial release contract", () => {
+  assert.notEqual(contract.version, "1.0.0");
   assert.throws(
-    () => assertBootstrapContract(contract, report),
+    () => assertBootstrapTarget(contract),
     /Bootstrap is restricted to 1\.0\.0\/latest/,
   );
 });

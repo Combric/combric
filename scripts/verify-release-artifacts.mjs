@@ -58,6 +58,7 @@ const expectedFiles = {
     "dist/overlay.d.ts",
     "dist/overlay.js",
   ],
+  menu: ["dist/index.d.ts", "dist/index.js", "dist/index.css"],
   tailwind: ["dist/index.css"],
   cli: ["dist/index.d.ts", "dist/index.js", "dist/bin.js"],
   guard: ["dist/index.d.ts", "dist/index.js", "dist/bin.js", "dist/check.d.ts"],

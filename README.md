@@ -5,9 +5,9 @@ canonical design tokens, framework-independent CSS layout, and accessible React
 19 components. Standard CSS is the default path; Tailwind CSS, the setup CLI,
 and Guard are optional.
 
-> **Release-candidate source.** The repository is prepared for its first stable
-> release, but the `@combric/*` packages are not claimed to be available on npm
-> until publication is separately approved and completed.
+> **Coordinated release source.** Public packages share the version and channel
+> declared by `release/manifest.json`; publication occurs only through the
+> approved GitHub Actions release workflow.
 
 ## Packages
 
@@ -16,6 +16,7 @@ and Guard are optional.
 | [`@combric/tokens`](packages/tokens/README.md)     | Typed design tokens and generated CSS custom properties | `.`, `./css`                    |
 | [`@combric/layout`](packages/layout/README.md)     | Native Grid and Flexbox layout primitives               | `.`, `./css`                    |
 | [`@combric/react`](packages/react/README.md)       | React 19 component catalogue and typed layout wrappers  | `.`, `./css`                    |
+| [`@combric/menu`](packages/menu/README.md)         | Navigation systems and advanced React menu patterns     | `.`, `./css`                    |
 | [`@combric/tailwind`](packages/tailwind/README.md) | Optional Tailwind CSS v4 adapter                        | `.`                             |
 | [`@combric/cli`](packages/cli/README.md)           | Optional setup and diagnostics for existing projects    | `.`, `combric` executable       |
 | [`@combric/guard`](packages/guard/README.md)       | Optional read-only integration checks                   | `.`, `combric-guard` executable |

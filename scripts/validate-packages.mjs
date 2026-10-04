@@ -1,4 +1,5 @@
 import { access, readFile } from "node:fs/promises";
+import { loadReleaseContract } from "./lib/release-contract.mjs";
 
 const packages = new Map([
   ["core", "@combric/core"],
@@ -25,6 +26,8 @@ const allowedInternalDependencies = new Map([
 ]);
 
 const manifests = new Map();
+const { contract } = await loadReleaseContract();
+const releasePackageNames = new Set(contract.packages.map(({ name }) => name));
 
 for (const [directory, expectedName] of packages) {
   const packageUrl = new URL(`../packages/${directory}/`, import.meta.url);
@@ -44,18 +47,18 @@ for (const [directory, expectedName] of packages) {
         "@combric/core must remain an unpublished reserved boundary",
       );
     }
-  } else if (expectedName === "@combric/menu") {
+  } else {
     if (
-      manifest.private !== true ||
-      manifest.version !== "0.0.0" ||
-      manifest.publishConfig
+      !releasePackageNames.has(expectedName) ||
+      manifest.private === true ||
+      manifest.version !== contract.version ||
+      manifest.publishConfig?.access !== "public" ||
+      manifest.publishConfig?.provenance !== true
     ) {
       throw new Error(
-        "@combric/menu must remain a private foundation until its release milestone",
+        `${expectedName} must match the active publishable release contract`,
       );
     }
-  } else if (manifest.private === true || manifest.version !== "1.3.1") {
-    throw new Error(`${expectedName} must remain publishable at 1.3.1`);
   }
   if (manifest.type !== "module" || manifest.license !== "MIT") {
     throw new Error(`${expectedName} must be an MIT-licensed ESM package`);

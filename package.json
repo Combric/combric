@@ -26,6 +26,7 @@
     "docs:validate": "node scripts/validate-docs.mjs",
     "test:consumer:packed": "node scripts/validate-packed-consumer.mjs",
     "test:menu:packed": "node scripts/validate-packed-menu-consumer.mjs",
+    "test:menu:published": "node scripts/validate-published-menu-consumer.mjs",
     "test:cli:packed": "node scripts/validate-packed-cli.mjs",
     "test:guard:packed": "node scripts/validate-packed-guard.mjs",
     "validate:icons:built": "node scripts/validate-icons.mjs",
