@@ -25,6 +25,13 @@ convenience, never the only activation path. On compact layouts, compose the
 same content inside the existing `Drawer` from `@combric/react` rather than
 forcing a hover-only menu.
 
+Sprint 5 completes the first-alpha contextual and compact-navigation family:
+`ContextMenu` is a pointer-anchored application action menu with correct menu
+semantics and keyboard support; `Menubar` is an application menubar with roving
+trigger focus; `BottomNavigation` remains native website navigation with
+ordinary links. These roles are deliberately distinct: a `Menubar` or
+`ContextMenu` is not a substitute for the semantic `Navigation` family.
+
 Generic primitives remain in `@combric/react`: Drawer, Dialog, Tabs, Breadcrumb,
 Popover, Tooltip, and the basic DropdownMenu. Future Menu milestones add related
 systems without duplicating those primitives.
