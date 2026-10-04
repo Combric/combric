@@ -15,6 +15,16 @@ groups are disclosure buttons, never `role="menu"`. Router consumers can use a
 typed `render` callback rather than cloned children. Compact layouts compose the
 existing `Drawer` from `@combric/react`.
 
+Sprint 4 adds `NavigationMenu` (also exported as `MegaMenu`) for rich website
+navigation panels. A menu has one expanded disclosure panel at a time; consumers
+place their own card grids, responsive images, descriptions, links, and CTAs in
+`NavigationMenuContent`. It preserves ordinary navigation and disclosure
+semantics instead of applying `role="menu"` to page navigation. Click and
+keyboard activation are always available; `openOnHover` is an optional desktop
+convenience, never the only activation path. On compact layouts, compose the
+same content inside the existing `Drawer` from `@combric/react` rather than
+forcing a hover-only menu.
+
 Generic primitives remain in `@combric/react`: Drawer, Dialog, Tabs, Breadcrumb,
-Popover, Tooltip, and the basic DropdownMenu. Future Menu milestones add
-NavigationMenu and related systems without duplicating those primitives.
+Popover, Tooltip, and the basic DropdownMenu. Future Menu milestones add related
+systems without duplicating those primitives.
