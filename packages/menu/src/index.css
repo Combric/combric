@@ -145,3 +145,177 @@
     transition: none;
   }
 }
+
+.combric-navigation {
+  color: var(--combric-color-text);
+  font-family: var(--combric-font-family-body);
+}
+
+.combric-navigation__list,
+.combric-side-nav__list,
+.combric-side-nav__group-content {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.combric-navigation__list {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--combric-space-1);
+}
+
+.combric-navigation__list[data-orientation="vertical"],
+.combric-side-nav__list,
+.combric-side-nav__group-content {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.combric-navigation__link,
+.combric-side-nav__link,
+.combric-side-nav__group-trigger {
+  display: flex;
+  min-block-size: var(--combric-size-control-md);
+  align-items: center;
+  gap: var(--combric-space-2);
+  border: var(--combric-border-width) var(--combric-border-style) transparent;
+  border-radius: var(--combric-radius-control);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+
+.combric-navigation__link,
+.combric-side-nav__link {
+  padding: var(--combric-space-2) var(--combric-space-3);
+}
+
+.combric-navigation__link:hover,
+.combric-navigation__link:focus-visible,
+.combric-side-nav__link:hover,
+.combric-side-nav__link:focus-visible,
+.combric-side-nav__group-trigger:hover,
+.combric-side-nav__group-trigger:focus-visible {
+  background: var(--combric-color-surface);
+}
+
+.combric-navigation__link[data-state="active"],
+.combric-side-nav__link[data-state="active"] {
+  border-color: var(--combric-color-accent);
+  background: var(--combric-color-accent);
+  color: var(--combric-color-accent-foreground);
+}
+
+.combric-navigation__link-leading,
+.combric-navigation__link-trailing,
+.combric-side-nav__link-leading,
+.combric-side-nav__link-trailing,
+.combric-side-nav__group-leading,
+.combric-side-nav__group-trailing {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.combric-navigation__link-label,
+.combric-side-nav__link-label,
+.combric-side-nav__group-label {
+  min-inline-size: 0;
+}
+
+.combric-navigation__link-trailing,
+.combric-side-nav__link-trailing,
+.combric-side-nav__group-trailing {
+  color: var(--combric-color-text-muted);
+}
+
+.combric-navigation__link[data-state="active"]
+  .combric-navigation__link-trailing,
+.combric-side-nav__link[data-state="active"] .combric-side-nav__link-trailing {
+  color: currentColor;
+}
+
+.combric-side-nav {
+  box-sizing: border-box;
+  display: flex;
+  inline-size: min(100%, var(--combric-size-layout-item-md));
+  min-block-size: 100%;
+  flex-direction: column;
+  border: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+  border-radius: var(--combric-radius-surface);
+  background: var(--combric-color-surface);
+  color: var(--combric-color-text);
+  font-family: var(--combric-font-family-body);
+}
+
+.combric-side-nav__header,
+.combric-side-nav__content,
+.combric-side-nav__footer {
+  padding: var(--combric-space-4);
+}
+
+.combric-side-nav__header,
+.combric-side-nav__footer {
+  display: grid;
+  gap: var(--combric-space-2);
+}
+
+.combric-side-nav__content {
+  min-block-size: 0;
+  flex: 1;
+  overflow: auto;
+}
+
+.combric-side-nav__footer {
+  border-top: var(--combric-border-width) var(--combric-border-style)
+    var(--combric-color-border);
+}
+
+.combric-side-nav__navigation {
+  display: grid;
+  gap: var(--combric-space-2);
+}
+
+.combric-side-nav__list {
+  gap: var(--combric-space-1);
+}
+
+.combric-side-nav__item,
+.combric-side-nav__group {
+  min-inline-size: 0;
+}
+
+.combric-side-nav__link,
+.combric-side-nav__group-trigger {
+  box-sizing: border-box;
+  inline-size: 100%;
+}
+
+.combric-side-nav__group-trigger {
+  padding: var(--combric-space-2) var(--combric-space-3);
+  background: transparent;
+  cursor: pointer;
+}
+
+.combric-side-nav__group-label {
+  flex: 1;
+}
+
+.combric-side-nav__group-content {
+  margin-block-start: var(--combric-space-1);
+  padding-inline-start: var(--combric-space-4);
+  gap: var(--combric-space-1);
+}
+
+.combric-navigation__link:focus-visible,
+.combric-side-nav__link:focus-visible,
+.combric-side-nav__group-trigger:focus-visible {
+  outline: var(--combric-border-width-strong) var(--combric-border-style)
+    var(--combric-color-focus);
+  outline-offset: var(--combric-space-1);
+}
