@@ -58,6 +58,68 @@ export async function reconcilePackage({
   return reconcileMetadata({ artifact, contract, metadata });
 }
 
+/**
+ * Waits for a whole coordinated release set to become visible on npm.
+ *
+ * npm accepts a publish before its registry metadata is immediately available.
+ * Probe the outstanding packages together so the finalizer has one bounded
+ * propagation window rather than one delay window per package.
+ */
+export async function verifyPublishedRelease({
+  contract,
+  reconcile = (artifact) => reconcilePackage({ artifact, contract }),
+  attempts = 30,
+  delayMs = 10_000,
+  sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  log = console.log,
+  warn = console.warn,
+}) {
+  let pending = [...contract.packages];
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const results = await Promise.all(
+      pending.map(async (artifact) => ({
+        artifact,
+        reconciliation: await reconcile(artifact),
+      })),
+    );
+    const conflict = results.find(
+      ({ reconciliation }) => reconciliation.state === RELEASE_STATES.CONFLICT,
+    );
+    if (conflict)
+      throw new Error(
+        `${conflict.artifact.name}@${contract.version} has a registry conflict: ${conflict.reconciliation.reason}`,
+      );
+
+    for (const { artifact, reconciliation } of results)
+      if (reconciliation.state === RELEASE_STATES.VERIFIED_PUBLISHED)
+        log(
+          `Verified ${artifact.name}@${contract.version} on npm with ${contract.distTag}.`,
+        );
+
+    pending = results
+      .filter(
+        ({ reconciliation }) =>
+          reconciliation.state !== RELEASE_STATES.VERIFIED_PUBLISHED,
+      )
+      .map(({ artifact }) => artifact);
+    if (!pending.length) return;
+
+    if (attempt < attempts) {
+      warn(
+        `Waiting for npm registry propagation (${attempt}/${attempts}): ${pending
+          .map(({ name }) => name)
+          .join(", ")}`,
+      );
+      await sleep(delayMs);
+    }
+  }
+
+  throw new Error(
+    `${pending.map(({ name }) => `${name}@${contract.version}`).join(", ")} could not be verified on npm with the ${contract.distTag} dist-tag after 5 minutes`,
+  );
+}
+
 export async function waitForVisible({
   check,
   attempts = 6,

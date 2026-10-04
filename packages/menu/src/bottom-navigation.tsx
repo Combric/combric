@@ -2,6 +2,7 @@
 
 import {
   type AnchorHTMLAttributes,
+  type CSSProperties,
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
@@ -15,6 +16,10 @@ function classNames(
 }
 
 export interface BottomNavigationProps extends HTMLAttributes<HTMLElement> {
+  /** Optional external spacing for this navigation surface. */
+  margin?: CSSProperties["margin"];
+  /** Optional internal spacing for this navigation surface. */
+  padding?: CSSProperties["padding"];
   ref?: Ref<HTMLElement>;
 }
 
@@ -24,7 +29,10 @@ export interface BottomNavigationProps extends HTMLAttributes<HTMLElement> {
  */
 export function BottomNavigation({
   className,
+  margin,
+  padding,
   ref,
+  style,
   ...props
 }: BottomNavigationProps): ReactElement {
   return (
@@ -32,17 +40,28 @@ export function BottomNavigation({
       {...props}
       ref={ref}
       className={classNames("combric-bottom-navigation", className)}
+      style={{ margin, padding, ...style }}
     />
   );
 }
 
 export interface BottomNavigationListProps extends HTMLAttributes<HTMLUListElement> {
+  /** Optional gap between navigation items. */
+  gap?: CSSProperties["gap"];
+  /** Optional external spacing for the item list. */
+  margin?: CSSProperties["margin"];
+  /** Optional internal spacing for the item list. */
+  padding?: CSSProperties["padding"];
   ref?: Ref<HTMLUListElement>;
 }
 
 export function BottomNavigationList({
   className,
+  gap,
+  margin,
+  padding,
   ref,
+  style,
   ...props
 }: BottomNavigationListProps): ReactElement {
   return (
@@ -50,6 +69,7 @@ export function BottomNavigationList({
       {...props}
       ref={ref}
       className={classNames("combric-bottom-navigation__list", className)}
+      style={{ gap, margin, padding, ...style }}
     />
   );
 }
@@ -63,7 +83,17 @@ export interface BottomNavigationLinkRenderProps extends AnchorHTMLAttributes<HT
 
 export interface BottomNavigationLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   active?: boolean;
+  /** Overrides children when a label needs to be supplied separately. */
+  label?: ReactNode;
+  /** Class name applied only to the text label. */
+  labelClassName?: string;
+  /** Inline style applied only to the text label. */
+  labelStyle?: CSSProperties;
   leading?: ReactNode;
+  /** Optional external spacing for this link. */
+  margin?: CSSProperties["margin"];
+  /** Optional internal spacing for this link. */
+  padding?: CSSProperties["padding"];
   /** Renders a router-specific link without relying on asChild cloning. */
   render?: (props: BottomNavigationLinkRenderProps) => ReactElement;
   ref?: Ref<HTMLAnchorElement>;
@@ -74,9 +104,15 @@ export function BottomNavigationLink({
   active = false,
   children,
   className,
+  label,
+  labelClassName,
+  labelStyle,
   leading,
+  margin,
+  padding,
   ref,
   render,
+  style,
   trailing,
   "aria-current": ariaCurrent,
   ...props
@@ -85,6 +121,7 @@ export function BottomNavigationLink({
     ...props,
     ref,
     "aria-current": active ? (ariaCurrent ?? "page") : ariaCurrent,
+    style: { margin, padding, ...style },
     children: (
       <>
         {leading === undefined ? null : (
@@ -92,8 +129,14 @@ export function BottomNavigationLink({
             {leading}
           </span>
         )}
-        <span className="combric-bottom-navigation__link-label">
-          {children}
+        <span
+          className={classNames(
+            "combric-bottom-navigation__link-label",
+            labelClassName,
+          )}
+          style={labelStyle}
+        >
+          {label ?? children}
         </span>
         {trailing === undefined ? null : (
           <span className="combric-bottom-navigation__link-trailing">

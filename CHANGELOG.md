@@ -3,6 +3,27 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.4.0-beta.1] - 2026-10-04
+
+Second coordinated beta candidate for the Combric 1.4.0 Menu release train.
+
+- Fixed `@combric/menu` Bottom Navigation so a label-only link is vertically
+  centred within its touch target; surface, list, link, and label spacing can
+  now be customised through public props.
+- Made the release finalizer check all coordinated packages together for up to
+  five minutes of npm registry propagation before it creates a repository tag.
+
+Candidate packages:
+
+- `@combric/tokens@1.4.0-beta.1`;
+- `@combric/icons@1.4.0-beta.1`;
+- `@combric/layout@1.4.0-beta.1`;
+- `@combric/react@1.4.0-beta.1`;
+- `@combric/menu@1.4.0-beta.1`;
+- `@combric/tailwind@1.4.0-beta.1`;
+- `@combric/cli@1.4.0-beta.1`;
+- `@combric/guard@1.4.0-beta.1`.
+
 ## [1.4.0-beta.0] - 2026-10-04
 
 First coordinated beta candidate for `@combric/menu` and the Combric 1.4.0
