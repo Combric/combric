@@ -1,6 +1,6 @@
 {
   "name": "@combric/menu",
-  "version": "1.4.0-rc.0",
+  "version": "1.4.0",
   "description": "Composable navigation and menu systems for Combric",
   "license": "MIT",
   "type": "module",

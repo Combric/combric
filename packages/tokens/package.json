@@ -1,6 +1,6 @@
 {
   "name": "@combric/tokens",
-  "version": "1.4.0-rc.0",
+  "version": "1.4.0",
   "description": "Typed design tokens and CSS custom properties for Combric",
   "license": "MIT",
   "type": "module",

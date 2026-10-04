@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "1.4.0-rc.0",
-  "tag": "v1.4.0-rc.0",
-  "distTag": "next",
+  "version": "1.4.0",
+  "tag": "v1.4.0",
+  "distTag": "latest",
   "packages": [
     { "directory": "tokens", "name": "@combric/tokens", "dependencies": [] },
     { "directory": "icons", "name": "@combric/icons", "dependencies": [] },

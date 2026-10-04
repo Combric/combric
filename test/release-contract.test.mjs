@@ -80,8 +80,8 @@ test("release finalizer stops before tagging when npm reports a registry conflic
 });
 
 test("release contract matches the coordinated package set", () => {
-  assert.equal(contract.version, "1.4.0-rc.0");
-  assert.equal(contract.distTag, "next");
+  assert.equal(contract.version, "1.4.0");
+  assert.equal(contract.distTag, "latest");
   assert.deepEqual(
     contract.packages.map(({ name }) => name),
     [
@@ -97,19 +97,18 @@ test("release contract matches the coordinated package set", () => {
   );
   assert.doesNotThrow(() => validateReleaseContract(contract, manifests));
   assert.deepEqual(releaseMetadata(contract), {
-    version: "1.4.0-rc.0",
-    tag: "v1.4.0-rc.0",
-    distTag: "next",
-    channel: "rc",
-    prerelease: true,
-    artifactName: "combric-v1.4.0-rc.0",
+    version: "1.4.0",
+    tag: "v1.4.0",
+    distTag: "latest",
+    channel: "stable",
+    prerelease: false,
+    artifactName: "combric-v1.4.0",
   });
 });
 
 test("release contract rejects an invalid prerelease channel or dist-tag", () => {
   assert.throws(
-    () =>
-      validateReleaseContract({ ...contract, distTag: "latest" }, manifests),
+    () => validateReleaseContract({ ...contract, distTag: "next" }, manifests),
     /release channel contract/,
   );
   assert.throws(

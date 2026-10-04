@@ -114,10 +114,9 @@ destinations as pointer operation.
 | RC              | No unresolved accessibility or package-budget regressions, release artifacts validated from the exact approved commit, and a passing `pnpm test:menu:published` downstream reference-consumer check against the beta. |
 | Stable          | Approved merge to `main`, the canonical OIDC Combric Release workflow, registry/provenance verification, and post-release downstream validation.                                                                      |
 
-The current coordinated candidate is `1.4.0-rc.0` with the `next` dist-tag,
-following the registry-verified `1.4.0-beta.1` consumer gate. It then promotes
-the same package set through `1.4.0`/`latest`. The incomplete `1.4.0-beta.0`
-publication attempt is not a promotion candidate. A one-time bootstrap
-publication reserves the Menu registry identity before its OIDC Trusted
-Publisher is configured; it is not an install candidate or a substitute for the
-beta artifact.
+The current coordinated candidate is `1.4.0` with the `latest` dist-tag,
+following the registry-verified `1.4.0-rc.0` consumer gate. The incomplete
+`1.4.0-beta.0` publication attempt is not a promotion candidate. A one-time
+bootstrap publication reserves the Menu registry identity before its OIDC
+Trusted Publisher is configured; it is not an install candidate or a substitute
+for the beta artifact.
