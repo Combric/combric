@@ -3,7 +3,7 @@ name: Bootstrap Icons Package
 # One-time registry namespace bootstrap for the new @combric/icons package.
 # The NPM_BOOTSTRAP_TOKEN must be an environment-scoped, short-lived npm
 # publishing credential. It is not stored in the repository or used by the
-# normal Stable Release workflow.
+# normal Combric Release workflow.
 
 on:
   workflow_dispatch:

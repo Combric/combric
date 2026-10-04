@@ -1,0 +1,42 @@
+{
+  "name": "@combric/menu",
+  "version": "1.4.0-beta.0",
+  "description": "Composable navigation and menu systems for Combric",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "./dist/index.css"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./css": "./dist/index.css"
+  },
+  "style": "./dist/index.css",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0 <20",
+    "react-dom": ">=19.0.0 <20"
+  },
+  "dependencies": {
+    "@combric/layout": "workspace:^",
+    "@combric/react": "workspace:^"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Combric/combric.git",
+    "directory": "packages/menu"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

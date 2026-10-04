@@ -16,6 +16,9 @@ import { fileURLToPath } from "node:url";
 const bin = fileURLToPath(
   new URL("../packages/cli/dist/bin.js", import.meta.url),
 );
+const releaseManifest = JSON.parse(
+  await readFile(new URL("../release/manifest.json", import.meta.url), "utf8"),
+);
 
 function run(cwd, args, env = {}) {
   return spawnSync(process.execPath, [bin, ...args], {
@@ -64,7 +67,10 @@ test("help, version, command help and unknown command have stable exits", () => 
     assert.equal(result.status, 0);
     assert.match(result.stdout, new RegExp(`combric ${command}`));
   }
-  assert.equal(run(process.cwd(), ["--version"]).stdout.trim(), "1.3.1");
+  assert.equal(
+    run(process.cwd(), ["--version"]).stdout.trim(),
+    releaseManifest.version,
+  );
   const unknown = run(process.cwd(), ["add", "button"]);
   assert.equal(unknown.status, 1);
   assert.match(unknown.stderr, /Unknown command/);

@@ -14,6 +14,7 @@ const names = [
   "icons",
   "layout",
   "react",
+  "menu",
   "cli",
   "guard",
   "tailwind",

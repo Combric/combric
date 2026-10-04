@@ -40,8 +40,10 @@ packages on the synchronized version declared by `release/manifest.json`.
 
 `pnpm release:candidate` only prepares and verifies tarballs. Publication uses
 the manually dispatched `.github/workflows/release.yml` workflow after a
-separate Product Owner approval and protected npm environment approval. Never
-publish from a pull request or ordinary `main` push.
+separate Product Owner approval and protected npm environment approval. The
+manifest permits only `alpha`, `beta`, `rc`/`next`, and stable/`latest`
+channels; every public package remains on the same version. Never publish from a
+pull request or ordinary `main` push.
 
 Pull requests must pass the repository CI before merge.
 

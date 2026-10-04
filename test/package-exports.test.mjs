@@ -2,7 +2,61 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-const packageNames = ["core", "tokens", "react", "cli", "guard"];
+const packageNames = ["core", "tokens", "react", "menu", "cli", "guard"];
+const menuRuntimeExports = [
+  "ActionMenu",
+  "ActionMenuCheckboxItem",
+  "ActionMenuContent",
+  "ActionMenuItem",
+  "ActionMenuLabel",
+  "ActionMenuRadioGroup",
+  "ActionMenuRadioItem",
+  "ActionMenuSeparator",
+  "ActionMenuTrigger",
+  "BottomNavigation",
+  "BottomNavigationLink",
+  "BottomNavigationList",
+  "ContextMenu",
+  "ContextMenuContent",
+  "ContextMenuItem",
+  "ContextMenuLabel",
+  "ContextMenuSeparator",
+  "ContextMenuTrigger",
+  "MegaMenu",
+  "MegaMenuContent",
+  "MegaMenuItem",
+  "MegaMenuLink",
+  "MegaMenuList",
+  "MegaMenuTrigger",
+  "Menubar",
+  "MenubarContent",
+  "MenubarItem",
+  "MenubarLabel",
+  "MenubarMenu",
+  "MenubarSeparator",
+  "MenubarTrigger",
+  "Navigation",
+  "NavigationItem",
+  "NavigationLink",
+  "NavigationList",
+  "NavigationMenu",
+  "NavigationMenuContent",
+  "NavigationMenuItem",
+  "NavigationMenuLink",
+  "NavigationMenuList",
+  "NavigationMenuTrigger",
+  "SideNav",
+  "SideNavContent",
+  "SideNavFooter",
+  "SideNavGroup",
+  "SideNavGroupContent",
+  "SideNavGroupTrigger",
+  "SideNavHeader",
+  "SideNavItem",
+  "SideNavLink",
+  "SideNavList",
+  "SideNavNavigation",
+];
 const tokenRuntimeExports = [
   "darkSemanticTokenReferences",
   "darkSemanticTokens",
@@ -151,9 +205,11 @@ for (const packageName of packageNames) {
         ? tokenRuntimeExports
         : packageName === "react"
           ? reactRuntimeExports
-          : packageName === "guard"
-            ? ["GuardOperationalError", "checkProject"]
-            : [],
+          : packageName === "menu"
+            ? menuRuntimeExports
+            : packageName === "guard"
+              ? ["GuardOperationalError", "checkProject"]
+              : [],
     );
   });
 }

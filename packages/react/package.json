@@ -1,6 +1,6 @@
 {
   "name": "@combric/react",
-  "version": "1.3.1",
+  "version": "1.4.0-beta.0",
   "description": "Accessible React component primitives for Combric",
   "license": "MIT",
   "type": "module",
@@ -16,6 +16,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./overlay": {
+      "types": "./dist/overlay.d.ts",
+      "import": "./dist/overlay.js"
+    },
     "./css": "./dist/index.css"
   },
   "style": "./dist/index.css",
@@ -27,7 +31,8 @@
     "react-dom": ">=19.0.0 <20"
   },
   "dependencies": {
-    "@combric/layout": "workspace:^"
+    "@combric/layout": "workspace:^",
+    "@floating-ui/react": "0.27.20"
   },
   "repository": {
     "type": "git",

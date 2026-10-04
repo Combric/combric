@@ -7,6 +7,7 @@ const packageNames = [
   "icons",
   "layout",
   "react",
+  "menu",
   "cli",
   "guard",
   "tailwind",

@@ -36,7 +36,7 @@ test("recovery verifies an existing target before allowing it to be skipped", ()
   const metadata = {
     name: artifact.name,
     repository: { directory: "packages/tokens" },
-    "dist-tags": { latest: contract.version },
+    "dist-tags": { [contract.distTag]: contract.version },
     versions: { [contract.version]: { version: contract.version } },
   };
   assert.equal(
@@ -47,7 +47,10 @@ test("recovery verifies an existing target before allowing it to be skipped", ()
     reconcileMetadata({
       artifact,
       contract,
-      metadata: { ...metadata, "dist-tags": { latest: "1.2.0" } },
+      metadata: {
+        ...metadata,
+        "dist-tags": { [contract.distTag]: "1.2.0" },
+      },
     }).state,
     RELEASE_STATES.CONFLICT,
   );

@@ -31,7 +31,9 @@ function pnpm(args, cwd, expected = 0) {
 }
 
 try {
-  const version = "1.3.1";
+  const version = JSON.parse(
+    await readFile(join(root, "release", "manifest.json"), "utf8"),
+  ).version;
   for (const name of ["tokens", "guard"]) {
     pnpm(
       ["pack", "--pack-destination", temporary],

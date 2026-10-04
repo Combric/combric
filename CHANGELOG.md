@@ -3,6 +3,30 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.4.0-beta.0] - 2026-10-04
+
+First coordinated beta candidate for `@combric/menu` and the Combric 1.4.0
+release train.
+
+- Added `@combric/menu`: Action Menu, Navigation, SideNav, rich
+  NavigationMenu/MegaMenu composition, Context Menu, Menubar, and Bottom
+  Navigation.
+- Added packed-consumer validation and an explicit compressed-package budget for
+  Menu, plus browser/accessibility-tree product evidence.
+- Generalized the protected release workflow for alpha, beta, RC, and stable
+  channels while retaining one synchronized package set and OIDC provenance.
+
+Candidate packages:
+
+- `@combric/tokens@1.4.0-beta.0`;
+- `@combric/icons@1.4.0-beta.0`;
+- `@combric/layout@1.4.0-beta.0`;
+- `@combric/react@1.4.0-beta.0`;
+- `@combric/menu@1.4.0-beta.0`;
+- `@combric/tailwind@1.4.0-beta.0`;
+- `@combric/cli@1.4.0-beta.0`;
+- `@combric/guard@1.4.0-beta.0`.
+
 ## [1.3.1] - 2026-09-29
 
 Combric Framework patch release.

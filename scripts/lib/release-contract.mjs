@@ -5,6 +5,15 @@ import { fileURLToPath } from "node:url";
 export const repositoryRoot = fileURLToPath(new URL("../../", import.meta.url));
 export const expectedRepository = "git+https://github.com/Combric/combric.git";
 
+const versionPattern =
+  /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(alpha|beta|rc)\.(0|[1-9]\d*))?$/;
+const channelDistTags = Object.freeze({
+  alpha: "alpha",
+  beta: "beta",
+  rc: "next",
+  stable: "latest",
+});
+
 export async function readJson(path) {
   return JSON.parse(await readFile(path, "utf8"));
 }
@@ -12,14 +21,18 @@ export async function readJson(path) {
 export function validateReleaseContract(contract, manifests) {
   if (contract.schemaVersion !== 1)
     throw new Error("Unsupported release manifest schema");
-  if (!/^\d+\.\d+\.\d+$/.test(contract.version))
-    throw new Error("Release version must be exact SemVer");
+  const version = versionPattern.exec(contract.version);
+  if (!version)
+    throw new Error(
+      "Release version must be SemVer or an alpha, beta, or rc prerelease",
+    );
+  const channel = version[4] ?? "stable";
   if (
     contract.tag !== `v${contract.version}` ||
-    contract.distTag !== "latest"
+    contract.distTag !== channelDistTags[channel]
   ) {
     throw new Error(
-      "Release tag or dist-tag differs from the stable release contract",
+      "Release tag or dist-tag differs from the release channel contract",
     );
   }
   if (!Array.isArray(contract.packages) || contract.packages.length === 0) {
@@ -84,6 +97,20 @@ export function validateReleaseContract(contract, manifests) {
       }
     }
   }
+}
+
+export function releaseMetadata(contract) {
+  const version = versionPattern.exec(contract.version);
+  if (!version) throw new Error("Release contract version is invalid");
+  const channel = version[4] ?? "stable";
+  return {
+    version: contract.version,
+    tag: contract.tag,
+    distTag: contract.distTag,
+    channel,
+    prerelease: channel !== "stable",
+    artifactName: `combric-${contract.tag}`,
+  };
 }
 
 export async function loadReleaseContract(root = repositoryRoot) {
