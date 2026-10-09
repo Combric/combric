@@ -1,4 +1,5 @@
 @import "@combric/react/css";
+@import "@combric/fonts/css";
 
 :root {
   --sl-color-accent-low: #deded8;

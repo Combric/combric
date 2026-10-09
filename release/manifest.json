@@ -1,10 +1,15 @@
 {
   "schemaVersion": 1,
-  "version": "1.4.0",
-  "tag": "v1.4.0",
-  "distTag": "latest",
+  "version": "1.5.0-alpha.0",
+  "tag": "v1.5.0-alpha.0",
+  "distTag": "alpha",
   "packages": [
     { "directory": "tokens", "name": "@combric/tokens", "dependencies": [] },
+    {
+      "directory": "fonts",
+      "name": "@combric/fonts",
+      "dependencies": ["@combric/tokens"]
+    },
     { "directory": "icons", "name": "@combric/icons", "dependencies": [] },
     {
       "directory": "layout",

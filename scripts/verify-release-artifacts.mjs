@@ -33,6 +33,7 @@ const output = requestedOutput
 
 const expectedFiles = {
   tokens: ["dist/index.d.ts", "dist/index.js", "dist/tokens.css"],
+  fonts: ["dist/index.css"],
   icons: [
     "dist/index.d.ts",
     "dist/index.js",

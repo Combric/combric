@@ -235,6 +235,17 @@ test("@combric/layout exposes its framework-independent CSS entry point", async 
   await access(new URL(manifest.exports["./css"], packageUrl));
 });
 
+test("@combric/fonts exposes its Fontsource CSS entry point", async () => {
+  const packageUrl = new URL("../packages/fonts/", import.meta.url);
+  const manifest = JSON.parse(
+    await readFile(new URL("package.json", packageUrl), "utf8"),
+  );
+
+  assert.equal(manifest.exports["."], "./dist/index.css");
+  assert.equal(manifest.exports["./css"], "./dist/index.css");
+  await access(new URL(manifest.exports["./css"], packageUrl));
+});
+
 test("@combric/react exposes its public CSS entry point", async () => {
   const packageUrl = new URL("../packages/react/", import.meta.url);
   const manifest = JSON.parse(

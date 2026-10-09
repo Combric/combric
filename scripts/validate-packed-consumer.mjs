@@ -8,7 +8,7 @@ const root = new URL("../", import.meta.url).pathname.replace(
   "$1",
 );
 const temporary = await mkdtemp(join(tmpdir(), "combric-packed-consumer-"));
-const packages = ["tokens", "layout", "react", "tailwind"];
+const packages = ["tokens", "fonts", "layout", "react", "tailwind"];
 const version = JSON.parse(
   await readFile(join(root, "release", "manifest.json"), "utf8"),
 ).version;
@@ -104,13 +104,14 @@ const toastMarkup = renderToStaticMarkup(createElement(Toast, null, "Packed noti
 if (!/<li[^>]*><div[^>]*role="status"/.test(toastMarkup) || /<li[^>]*role=/.test(toastMarkup) || /aria-live=/.test(toastMarkup)) throw new Error("Packed Toast semantics failed");
 if (createOverlayPlacement("bottom", "start") !== "bottom-start") throw new Error("Packed overlay contract failed");
 if (metriq.semantic.radius !== "0" || metriq.themes.light.semantic["color.canvas"] !== "#F2F0EA" || darkSemanticTokens["color.canvas"] !== "#171816") throw new Error("Token contract failed");
-for (const specifier of ["@combric/react/css", "@combric/layout/css", "@combric/tokens/css", "@combric/tailwind"]) {
+for (const specifier of ["@combric/react/css", "@combric/layout/css", "@combric/tokens/css", "@combric/tailwind", "@combric/fonts/css"]) {
   const resolved = import.meta.resolve(specifier);
   const contents = await readFile(new URL(resolved), "utf8");
   if (!contents.includes("combric")) throw new Error("CSS contract failed for " + specifier);
   if (specifier === "@combric/tokens/css" && (!contents.includes("--combric-radius-button:") || !contents.includes('[data-theme="dark"]'))) throw new Error("Packed theme tokens failed");
   if (specifier === "@combric/react/css" && (!contents.includes("--combric-radius-card") || !contents.includes(".combric-toast__announcer") || !contents.includes("--combric-slider-fill"))) throw new Error("Packed React CSS contracts failed");
   if (specifier === "@combric/tailwind" && (!contents.includes("--radius-combric-button") || !contents.includes("--color-combric-primary"))) throw new Error("Packed Tailwind mappings failed");
+  if (specifier === "@combric/fonts/css" && (!contents.includes("Inter Variable") || !contents.includes("JetBrains Mono Variable") || !contents.includes("@fontsource-variable/inter"))) throw new Error("Packed Fontsource preset failed");
 }
 `,
     "utf8",

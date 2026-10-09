@@ -7,6 +7,7 @@ Standard CSS is a first-class Combric path.
 
 ```css
 @import "@combric/tokens/css";
+@import "@combric/fonts/css";
 
 .panel {
   color: var(--combric-color-text);
@@ -16,5 +17,9 @@ Standard CSS is a first-class Combric path.
 }
 ```
 
-For layout classes, import `@combric/layout/css`. For React components, a single
-`@combric/react/css` import includes layout and tokens.
+`@combric/fonts` is the official Fontsource default and must come after the
+other Combric CSS imports so it can bind the public font stacks. Omit it only
+when the application deliberately uses its own provider or system-only fonts.
+
+For layout classes, import `@combric/layout/css`. For React components, import
+`@combric/react/css` followed by `@combric/fonts/css`.

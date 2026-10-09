@@ -149,6 +149,7 @@ for (const [tailwindName, semanticName] of tailwindThemeMappings) {
 for (const packageName of [
   "core",
   "tokens",
+  "fonts",
   "layout",
   "react",
   "cli",
