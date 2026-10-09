@@ -3,16 +3,20 @@ title: Packages
 description: Current Combric package boundaries and release status.
 ---
 
-| Package             | Stable contract                     | 1.0 release state                |
-| ------------------- | ----------------------------------- | -------------------------------- |
-| `@combric/tokens`   | Typed tokens and CSS variables      | Release candidate; not published |
-| `@combric/layout`   | Framework-independent CSS layout    | Release candidate; not published |
-| `@combric/react`    | React 19 component catalogue        | Release candidate; not published |
-| `@combric/tailwind` | Optional Tailwind v4 adapter        | Release candidate; not published |
-| `@combric/cli`      | Optional setup and diagnostics      | Release candidate; not published |
-| `@combric/guard`    | Optional read-only consumer checker | Release candidate; not published |
-| `@combric/core`     | Empty private repository boundary   | Excluded from public release     |
+| Package             | Stable contract                                         | Release boundary             |
+| ------------------- | ------------------------------------------------------- | ---------------------------- |
+| `@combric/tokens`   | Typed tokens and CSS variables                          | Public, synchronized version |
+| `@combric/fonts`    | Optional Fontsource Inter and JetBrains Mono CSS preset | Public, synchronized version |
+| `@combric/icons`    | Standalone SVG, CSS, and React Iconoir icons            | Public, synchronized version |
+| `@combric/layout`   | Framework-independent CSS layout                        | Public, synchronized version |
+| `@combric/react`    | React 19 component catalogue                            | Public, synchronized version |
+| `@combric/menu`     | Composable navigation and menu systems                  | Public, synchronized version |
+| `@combric/tailwind` | Optional Tailwind v4 adapter                            | Public, synchronized version |
+| `@combric/cli`      | Optional setup and diagnostics                          | Public, synchronized version |
+| `@combric/guard`    | Optional read-only consumer checker                     | Public, synchronized version |
+| `@combric/core`     | Empty private repository boundary                       | Excluded from public release |
 
-The six public packages use synchronized version `1.0.0`. Publication requires a
-separate Product Owner approval; this documentation does not claim npm
-availability.
+The nine public packages use one synchronized version. Publication remains a
+separate Product Owner-approved release action. `@combric/fonts` is the official
+starting provider, not a restriction: applications can load another provider and
+override the documented public font stacks.

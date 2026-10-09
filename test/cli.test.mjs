@@ -116,7 +116,10 @@ test("project root walks upward and package-manager evidence covers npm, yarn an
 });
 
 test("dry run has zero mutations and matches applied CSS plan; second init is idempotent", async () => {
-  const root = await fixture({ "@combric/tokens": "file:./tokens.tgz" });
+  const root = await fixture({
+    "@combric/fonts": "file:./fonts.tgz",
+    "@combric/tokens": "file:./tokens.tgz",
+  });
   try {
     const args = ["init", "--mode", "css", "--css-file", "style.css"];
     const before = await snapshot(root);
@@ -136,6 +139,10 @@ test("dry run has zero mutations and matches applied CSS plan; second init is id
     assert.match(
       await readFile(join(root, "style.css"), "utf8"),
       /@combric\/tokens\/css/,
+    );
+    assert.match(
+      await readFile(join(root, "style.css"), "utf8"),
+      /@combric\/fonts\/css/,
     );
     assert.equal(
       JSON.parse(await readFile(join(root, "combric.config.json"), "utf8"))
@@ -160,6 +167,7 @@ test("dry run has zero mutations and matches applied CSS plan; second init is id
 test("React and React+Tailwind modes use their public CSS entries", async () => {
   for (const mode of ["react", "react-tailwind"]) {
     const deps = {
+      "@combric/fonts": "file:./fonts.tgz",
       "@combric/react": "file:./react.tgz",
       react: "19.3.0",
       "react-dom": "19.3.0",
@@ -180,6 +188,7 @@ test("React and React+Tailwind modes use their public CSS entries", async () => 
       assert.equal(result.status, 0, result.stderr);
       const css = await readFile(join(root, "style.css"), "utf8");
       assert.match(css, /@combric\/react\/css/);
+      assert.match(css, /@combric\/fonts\/css/);
       if (mode === "react-tailwind") {
         assert.match(css, /@import "tailwindcss"/);
         assert.match(css, /@import "@combric\/tailwind"/);
@@ -198,6 +207,7 @@ test("public Icons CSS entries are additive to React setup", async () => {
     "@combric/icons/css/solid",
   ]) {
     const root = await fixture({
+      "@combric/fonts": "file:./fonts.tgz",
       "@combric/icons": "file:./icons.tgz",
       "@combric/react": "file:./react.tgz",
       react: "19.3.0",
@@ -226,6 +236,7 @@ test("public Icons CSS entries are additive to React setup", async () => {
 
 test("Tailwind-only mode, incompatible Tailwind, and CSS conflicts are conservative", async () => {
   const root = await fixture({
+    "@combric/fonts": "file:./fonts.tgz",
     "@combric/tailwind": "file:./tailwind.tgz",
     tailwindcss: "4.3.3",
   });
@@ -243,6 +254,7 @@ test("Tailwind-only mode, incompatible Tailwind, and CSS conflicts are conservat
     );
     const css = await readFile(join(root, "style.css"), "utf8");
     assert.match(css, /@combric\/tailwind/);
+    assert.match(css, /@combric\/fonts\/css/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -276,7 +288,10 @@ test("Tailwind-only mode, incompatible Tailwind, and CSS conflicts are conservat
 });
 
 test("CSS import detection ignores comments and retains unrelated CSS", async () => {
-  const root = await fixture({ "@combric/tokens": "file:./tokens.tgz" });
+  const root = await fixture({
+    "@combric/fonts": "file:./fonts.tgz",
+    "@combric/tokens": "file:./tokens.tgz",
+  });
   try {
     await writeFile(
       join(root, "style.css"),
@@ -289,6 +304,10 @@ test("CSS import detection ignores comments and retains unrelated CSS", async ()
     );
     const css = await readFile(join(root, "style.css"), "utf8");
     assert.match(css, /^@import "@combric\/tokens\/css";/);
+    assert.match(
+      css,
+      /^@import "@combric\/tokens\/css";\n@import "@combric\/fonts\/css";/,
+    );
     assert.match(css, /body \{ color: blue; \}/);
   } finally {
     await rm(root, { recursive: true, force: true });
@@ -429,7 +448,7 @@ test("package-manager boundary succeeds with fixture install and reports failed 
       await writeFile(
         mock,
         succeeds
-          ? 'const fs=require("node:fs");const p=JSON.parse(fs.readFileSync("package.json","utf8"));p.dependencies["@combric/tokens"]="file:./tokens.tgz";fs.writeFileSync("package.json",JSON.stringify(p,null,2)+"\\n");\n'
+          ? 'const fs=require("node:fs");const p=JSON.parse(fs.readFileSync("package.json","utf8"));p.dependencies["@combric/tokens"]="file:./tokens.tgz";p.dependencies["@combric/fonts"]="file:./fonts.tgz";fs.writeFileSync("package.json",JSON.stringify(p,null,2)+"\\n");\n'
           : 'process.stderr.write("registry package unavailable\\n");process.exitCode=42;\n',
       );
       const beforeCss = await readFile(join(root, "style.css"), "utf8");
@@ -443,6 +462,10 @@ test("package-manager boundary succeeds with fixture install and reports failed 
         assert.match(
           await readFile(join(root, "style.css"), "utf8"),
           /@combric\/tokens\/css/,
+        );
+        assert.match(
+          await readFile(join(root, "style.css"), "utf8"),
+          /@combric\/fonts\/css/,
         );
       } else {
         assert.equal(result.status, 2);

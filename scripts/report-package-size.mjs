@@ -11,6 +11,7 @@ const temporary = await mkdtemp(join(tmpdir(), "combric-size-report-"));
 const names = [
   "core",
   "tokens",
+  "fonts",
   "icons",
   "layout",
   "react",

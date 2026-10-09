@@ -1,11 +1,7 @@
 ---
 title: Installation
-description:
-  Stable package installation paths and current release-candidate status.
+description: Install the smallest Combric package path for your application.
 ---
-
-> These are the stable 1.0 installation contracts. The repository is release
-> candidate ready, but does not claim the packages currently exist on npm.
 
 ## React components
 
@@ -35,3 +31,13 @@ npm install @combric/tailwind tailwindcss
 
 Tailwind CSS must satisfy `>=4.3.0 <5`. Combric does not require the CLI,
 Tailwind, or source-copy installation.
+
+## Default typography
+
+```sh
+npm install @combric/fonts
+```
+
+`@combric/fonts` is the official optional Fontsource preset. It provides Inter
+Variable and JetBrains Mono Variable through the public CSS import
+`@combric/fonts/css`; import it after the selected Combric stylesheet.

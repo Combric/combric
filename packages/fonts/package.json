@@ -1,7 +1,7 @@
 {
-  "name": "@combric/tailwind",
+  "name": "@combric/fonts",
   "version": "1.5.0-alpha.0",
-  "description": "Official Tailwind CSS adapter for Combric design tokens",
+  "description": "Official Fontsource variable-font preset for Combric typography",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -12,14 +12,14 @@
     "README.md"
   ],
   "exports": {
-    ".": "./dist/index.css"
+    ".": "./dist/index.css",
+    "./css": "./dist/index.css"
   },
   "style": "./dist/index.css",
   "dependencies": {
-    "@combric/tokens": "workspace:^"
-  },
-  "peerDependencies": {
-    "tailwindcss": ">=4.3.0 <5"
+    "@combric/tokens": "workspace:^",
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0"
   },
   "engines": {
     "node": ">=24.0.0"
@@ -27,7 +27,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Combric/combric.git",
-    "directory": "packages/tailwind"
+    "directory": "packages/fonts"
   },
   "publishConfig": {
     "access": "public",

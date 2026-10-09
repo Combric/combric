@@ -29,12 +29,12 @@ and valid JSON output; JSON errors include a code and exit status.
 
 ## Setup modes
 
-| Mode             | Required public CSS imports                              | Package path                          |
-| ---------------- | -------------------------------------------------------- | ------------------------------------- |
-| `css`            | `@combric/tokens/css`                                    | Standard tokens and CSS.              |
-| `react`          | `@combric/react/css`                                     | React 19 components and standard CSS. |
-| `tailwind`       | `tailwindcss`, `@combric/tailwind`                       | Optional Tailwind v4 adapter.         |
-| `react-tailwind` | `tailwindcss`, `@combric/tailwind`, `@combric/react/css` | React plus optional adapter.          |
+| Mode             | Required public CSS imports                                                    | Package path                                |
+| ---------------- | ------------------------------------------------------------------------------ | ------------------------------------------- |
+| `css`            | `@combric/tokens/css`, `@combric/fonts/css`                                    | Standard tokens with the Fontsource preset. |
+| `react`          | `@combric/react/css`, `@combric/fonts/css`                                     | React 19 components and standard CSS.       |
+| `tailwind`       | `tailwindcss`, `@combric/tailwind`, `@combric/fonts/css`                       | Optional Tailwind v4 adapter.               |
+| `react-tailwind` | `tailwindcss`, `@combric/tailwind`, `@combric/react/css`, `@combric/fonts/css` | React plus optional adapter.                |
 
 Tailwind modes require an existing compatible Tailwind CSS `>=4.3 <5` project.
 The CLI does not convert a project to Tailwind. React modes use the real public

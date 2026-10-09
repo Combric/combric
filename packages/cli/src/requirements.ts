@@ -7,17 +7,23 @@ const OPTIONAL_CSS_IMPORTS = new Set([
 ]);
 
 export function requiredPackages(mode: Mode): string[] {
-  if (mode === "css") return ["@combric/tokens"];
-  if (mode === "react") return ["@combric/react"];
-  if (mode === "tailwind") return ["@combric/tailwind"];
-  return ["@combric/react", "@combric/tailwind"];
+  if (mode === "css") return ["@combric/tokens", "@combric/fonts"];
+  if (mode === "react") return ["@combric/react", "@combric/fonts"];
+  if (mode === "tailwind") return ["@combric/tailwind", "@combric/fonts"];
+  return ["@combric/react", "@combric/tailwind", "@combric/fonts"];
 }
 
 export function requiredImports(mode: Mode): string[] {
-  if (mode === "css") return ["@combric/tokens/css"];
-  if (mode === "react") return ["@combric/react/css"];
-  if (mode === "tailwind") return ["tailwindcss", "@combric/tailwind"];
-  return ["tailwindcss", "@combric/tailwind", "@combric/react/css"];
+  if (mode === "css") return ["@combric/tokens/css", "@combric/fonts/css"];
+  if (mode === "react") return ["@combric/react/css", "@combric/fonts/css"];
+  if (mode === "tailwind")
+    return ["tailwindcss", "@combric/tailwind", "@combric/fonts/css"];
+  return [
+    "tailwindcss",
+    "@combric/tailwind",
+    "@combric/react/css",
+    "@combric/fonts/css",
+  ];
 }
 
 export function isSupportedCssImport(mode: Mode, name: string): boolean {

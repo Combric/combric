@@ -3,6 +3,29 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.5.0-alpha.0] - 2026-10-09
+
+First candidate for the Combric Fontsource default-provider release train.
+
+- Added `@combric/fonts`, an optional CSS-only Fontsource preset that maps Inter
+  Variable and JetBrains Mono Variable to the existing Combric font stacks
+  without a runtime provider or bundled font binaries.
+- Updated new CLI setup paths and the documentation site to import the preset
+  after their selected Combric CSS entry point. Applications can still replace
+  it with local, Google Fonts, Adobe Fonts, or another licensed provider.
+
+Candidate packages:
+
+- `@combric/tokens@1.5.0-alpha.0`;
+- `@combric/fonts@1.5.0-alpha.0`;
+- `@combric/icons@1.5.0-alpha.0`;
+- `@combric/layout@1.5.0-alpha.0`;
+- `@combric/react@1.5.0-alpha.0`;
+- `@combric/menu@1.5.0-alpha.0`;
+- `@combric/tailwind@1.5.0-alpha.0`;
+- `@combric/cli@1.5.0-alpha.0`;
+- `@combric/guard@1.5.0-alpha.0`.
+
 ## [1.4.0] - 2026-10-04
 
 Stable release for the Combric 1.4.0 Menu release train.

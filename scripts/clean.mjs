@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 const packageNames = [
   "core",
   "tokens",
+  "fonts",
   "icons",
   "layout",
   "react",

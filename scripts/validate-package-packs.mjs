@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 const packageNames = [
   "core",
   "tokens",
+  "fonts",
   "layout",
   "icons",
   "react",
@@ -40,7 +41,9 @@ for (const packageName of packageNames) {
   const pack = JSON.parse(result.stdout);
   const filePaths = new Set(pack.files.map(({ path }) => path));
   const requiredFiles =
-    packageName === "layout" || packageName === "tailwind"
+    packageName === "fonts" ||
+    packageName === "layout" ||
+    packageName === "tailwind"
       ? ["dist/index.css", "LICENSE", "README.md", "package.json"]
       : ["dist/index.d.ts", "dist/index.js", "LICENSE", "package.json"];
 

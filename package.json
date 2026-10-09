@@ -11,7 +11,7 @@
     "pnpm": ">=11.0.0"
   },
   "scripts": {
-    "build": "pnpm clean && node scripts/generate-icons.mjs && tsc -b tsconfig.build.json --force --pretty false && node scripts/generate-token-css.mjs && node scripts/build-layout-css.mjs && node scripts/build-react-css.mjs && node scripts/build-menu-css.mjs && node scripts/generate-tailwind-css.mjs",
+    "build": "pnpm clean && node scripts/generate-icons.mjs && tsc -b tsconfig.build.json --force --pretty false && node scripts/generate-token-css.mjs && node scripts/build-fonts-css.mjs && node scripts/build-layout-css.mjs && node scripts/build-react-css.mjs && node scripts/build-menu-css.mjs && node scripts/generate-tailwind-css.mjs",
     "clean": "node scripts/clean.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

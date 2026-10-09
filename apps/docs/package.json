@@ -15,6 +15,7 @@
     "@astrojs/react": "6.0.6",
     "@astrojs/starlight": "0.42.3",
     "@combric/layout": "workspace:*",
+    "@combric/fonts": "workspace:*",
     "@combric/react": "workspace:*",
     "@combric/tailwind": "workspace:*",
     "@combric/tokens": "workspace:*",

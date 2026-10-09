@@ -4,6 +4,7 @@ import { loadReleaseContract } from "./lib/release-contract.mjs";
 const packages = new Map([
   ["core", "@combric/core"],
   ["tokens", "@combric/tokens"],
+  ["fonts", "@combric/fonts"],
   ["icons", "@combric/icons"],
   ["layout", "@combric/layout"],
   ["react", "@combric/react"],
@@ -16,6 +17,7 @@ const packages = new Map([
 const allowedInternalDependencies = new Map([
   ["@combric/core", new Set()],
   ["@combric/tokens", new Set()],
+  ["@combric/fonts", new Set(["@combric/tokens"])],
   ["@combric/icons", new Set()],
   ["@combric/layout", new Set(["@combric/tokens"])],
   ["@combric/react", new Set(["@combric/core", "@combric/layout"])],
@@ -64,6 +66,7 @@ for (const [directory, expectedName] of packages) {
     throw new Error(`${expectedName} must be an MIT-licensed ESM package`);
   }
   if (
+    expectedName === "@combric/fonts" ||
     expectedName === "@combric/layout" ||
     expectedName === "@combric/tailwind"
   ) {
@@ -85,6 +88,7 @@ for (const [directory, expectedName] of packages) {
   }
 
   if (
+    expectedName === "@combric/fonts" ||
     expectedName === "@combric/layout" ||
     expectedName === "@combric/tailwind"
   ) {
@@ -248,6 +252,31 @@ for (const [directory, expectedName] of packages) {
     }
   }
 
+  if (expectedName === "@combric/fonts") {
+    if (manifest.exports?.["./css"] !== "./dist/index.css") {
+      throw new Error("@combric/fonts must expose its public CSS entry point");
+    }
+    if (
+      manifest.dependencies?.["@combric/tokens"] !== "workspace:^" ||
+      manifest.dependencies?.["@fontsource-variable/inter"] !== "5.3.0" ||
+      manifest.dependencies?.["@fontsource-variable/jetbrains-mono"] !== "5.3.0"
+    ) {
+      throw new Error(
+        "@combric/fonts must pin its approved Fontsource variable preset",
+      );
+    }
+    const css = await readFile(new URL("dist/index.css", packageUrl), "utf8");
+    if (
+      !css.includes('@import "@fontsource-variable/inter";') ||
+      !css.includes('@import "@fontsource-variable/jetbrains-mono";') ||
+      /url\(/i.test(css)
+    ) {
+      throw new Error(
+        "@combric/fonts must reference, not bundle, Fontsource assets",
+      );
+    }
+  }
+
   if (expectedName === "@combric/tailwind") {
     if (manifest.dependencies?.["@combric/tokens"] !== "workspace:^") {
       throw new Error("@combric/tailwind must consume @combric/tokens");
@@ -292,6 +321,7 @@ for (const [packageName, manifest] of manifests) {
 for (const packageName of [
   "@combric/core",
   "@combric/tokens",
+  "@combric/fonts",
   "@combric/layout",
 ]) {
   const manifest = manifests.get(packageName);

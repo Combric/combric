@@ -16,9 +16,9 @@ hero:
 ---
 
 <div class="combric-docs-status">
-  <strong>Stable release-candidate documentation.</strong> Combric packages are
-  implemented and artifact-verified, but publication remains separately gated.
-  This site does not claim current public npm availability.
+  <strong>Package-first documentation.</strong> Combric keeps components,
+  layout, tokens, and optional integrations as separately installable packages.
+  Publication remains a separately approved release action.
 </div>
 
 ## Architecture
@@ -27,12 +27,13 @@ Combric is package-first. Standard CSS is a primary consumer path, React
 components do not require Tailwind, and the Tailwind v4 adapter is optional.
 
 - `@combric/tokens` — canonical typed tokens and generated CSS properties.
+- `@combric/fonts` — official optional Fontsource typography preset.
 - `@combric/layout` — framework-independent Grid and Flexbox primitives.
 - `@combric/react` — native-first accessible React components.
 - `@combric/tailwind` — optional semantic Tailwind v4 adapter.
 
 ## Release state
 
-The component catalogue, CLI, and read-only Guard contracts form the prepared
-1.0 release candidate. Package publication and production docs deployment have
-not been performed. Combric Studio is outside this release.
+The component catalogue, CLI, and read-only Guard contracts are versioned and
+released together. `@combric/fonts` remains optional and can be replaced with a
+provider chosen by each application. Combric Studio is outside this release.
