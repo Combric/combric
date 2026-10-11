@@ -183,6 +183,50 @@ test("unknown token and unsupported CSS entry produce located stable errors", as
   }
 });
 
+test("public Fonts CSS is accepted without broadening CSS entry validation", async () => {
+  const root = await fixture({
+    "@combric/fonts": "0.0.0",
+    "@combric/icons": "0.0.0",
+    "@combric/react": "0.0.0",
+    react: "19.3.0",
+    "react-dom": "19.3.0",
+  });
+  try {
+    await writeFile(
+      join(root, "style.css"),
+      '@import "@combric/react/css";\n@import "@combric/icons/css/regular";\n@import "@combric/fonts/css";\n',
+    );
+    const before = await snapshot(root);
+    const firstResult = run(root, ["check", "--json"]);
+    assert.equal(firstResult.status, 0, firstResult.stderr);
+    const first = JSON.parse(firstResult.stdout);
+    const second = JSON.parse(run(root, ["check", "--json"]).stdout);
+    assert.deepEqual(first, second);
+    assert.equal(first.schemaVersion, 1);
+    assert.equal(first.summary.errors, 0);
+    assert.ok(
+      !first.diagnostics.some((item) => item.ruleId === "GUARD_CSS_ENTRY"),
+    );
+    assert.deepEqual(await snapshot(root), before);
+
+    await writeFile(
+      join(root, "style.css"),
+      '@import "@combric/react/css";\n@import "@combric/icons/css/regular";\n@import "@combric/fonts/not-real";\n',
+    );
+    const rejected = run(root, ["check", "--json"]);
+    assert.equal(rejected.status, 1);
+    assert.ok(
+      JSON.parse(rejected.stdout).diagnostics.some(
+        (item) =>
+          item.ruleId === "GUARD_CSS_ENTRY" &&
+          item.message.includes("@combric/fonts/not-real"),
+      ),
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("public Icons CSS entries are supported and require the Icons package", async () => {
   for (const iconImport of [
     "@combric/icons/css",

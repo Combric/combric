@@ -27,6 +27,11 @@ import order, and `var(--combric-...)` references against the public
 `@combric/tokens` names. It does not ban arbitrary CSS values, parse JSX/TSX, or
 enforce general accessibility or design policy.
 
+Supported public Combric CSS entries are `@combric/tokens/css`,
+`@combric/icons/css` (including `/regular` and `/solid`), `@combric/fonts/css`,
+`@combric/react/css`, `@combric/layout/css`, and `@combric/tailwind`. Any other
+`@combric/...` CSS import is reported as `GUARD_CSS_ENTRY`.
+
 Diagnostics have stable `GUARD_*` rule IDs and `pass`, `warning`, or `error`
 severity. Exit 0 means the check completed with no errors (warnings are
 allowed), 1 means one or more rule errors, and 2 means it could not complete.

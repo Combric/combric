@@ -79,6 +79,7 @@ const ICONS_CSS = new Set([
 const PUBLIC_CSS = new Set([
   "@combric/tokens/css",
   ...ICONS_CSS,
+  "@combric/fonts/css",
   "@combric/react/css",
   "@combric/layout/css",
   "@combric/tailwind",
