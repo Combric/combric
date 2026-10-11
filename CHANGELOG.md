@@ -3,6 +3,25 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.5.0] - 2026-10-11
+
+Stable release for the Combric Fontsource default-provider release train.
+
+- Promoted the registry-verified `1.5.0-alpha.0` package set to `latest` with no
+  API changes.
+
+Published packages:
+
+- `@combric/tokens@1.5.0`;
+- `@combric/fonts@1.5.0`;
+- `@combric/icons@1.5.0`;
+- `@combric/layout@1.5.0`;
+- `@combric/react@1.5.0`;
+- `@combric/menu@1.5.0`;
+- `@combric/tailwind@1.5.0`;
+- `@combric/cli@1.5.0`;
+- `@combric/guard@1.5.0`.
+
 ## [1.5.0-alpha.0] - 2026-10-09
 
 First candidate for the Combric Fontsource default-provider release train.

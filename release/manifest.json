@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "1.5.0-alpha.0",
-  "tag": "v1.5.0-alpha.0",
-  "distTag": "alpha",
+  "version": "1.5.0",
+  "tag": "v1.5.0",
+  "distTag": "latest",
   "packages": [
     { "directory": "tokens", "name": "@combric/tokens", "dependencies": [] },
     {
