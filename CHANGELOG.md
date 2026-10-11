@@ -3,6 +3,26 @@
 All notable public changes will be documented here. Combric follows Semantic
 Versioning, and all public packages use one synchronized version.
 
+## [1.5.1] - 2026-10-11
+
+Combric Framework patch release.
+
+- Fixed `@combric/guard` so `@combric/fonts/css` is accepted as a public CSS
+  entry while unknown `@combric/...` CSS entries continue to report
+  `GUARD_CSS_ENTRY`.
+
+Published packages:
+
+- `@combric/tokens@1.5.1`;
+- `@combric/fonts@1.5.1`;
+- `@combric/icons@1.5.1`;
+- `@combric/layout@1.5.1`;
+- `@combric/react@1.5.1`;
+- `@combric/menu@1.5.1`;
+- `@combric/tailwind@1.5.1`;
+- `@combric/cli@1.5.1`;
+- `@combric/guard@1.5.1`.
+
 ## [1.5.0] - 2026-10-11
 
 Stable release for the Combric Fontsource default-provider release train.

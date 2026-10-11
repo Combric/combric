@@ -80,7 +80,7 @@ test("release finalizer stops before tagging when npm reports a registry conflic
 });
 
 test("release contract matches the coordinated package set", () => {
-  assert.equal(contract.version, "1.5.0");
+  assert.equal(contract.version, "1.5.1");
   assert.equal(contract.distTag, "latest");
   assert.deepEqual(
     contract.packages.map(({ name }) => name),
@@ -98,12 +98,12 @@ test("release contract matches the coordinated package set", () => {
   );
   assert.doesNotThrow(() => validateReleaseContract(contract, manifests));
   assert.deepEqual(releaseMetadata(contract), {
-    version: "1.5.0",
-    tag: "v1.5.0",
+    version: "1.5.1",
+    tag: "v1.5.1",
     distTag: "latest",
     channel: "stable",
     prerelease: false,
-    artifactName: "combric-v1.5.0",
+    artifactName: "combric-v1.5.1",
   });
 });
 
@@ -115,7 +115,7 @@ test("release contract rejects an invalid prerelease channel or dist-tag", () =>
   assert.throws(
     () =>
       validateReleaseContract(
-        { ...contract, version: "1.5.0-preview.0", tag: "v1.5.0-preview.0" },
+        { ...contract, version: "1.5.1-preview.0", tag: "v1.5.1-preview.0" },
         manifests,
       ),
     /alpha, beta, or rc prerelease/,
@@ -124,10 +124,10 @@ test("release contract rejects an invalid prerelease channel or dist-tag", () =>
 
 test("release channels map alpha, beta, rc, and stable versions to their public tags", () => {
   for (const [version, distTag, channel, prerelease] of [
-    ["1.5.0-alpha.0", "alpha", "alpha", true],
-    ["1.5.0-beta.0", "beta", "beta", true],
-    ["1.5.0-rc.0", "next", "rc", true],
-    ["1.5.0", "latest", "stable", false],
+    ["1.5.1-alpha.0", "alpha", "alpha", true],
+    ["1.5.1-beta.0", "beta", "beta", true],
+    ["1.5.1-rc.0", "next", "rc", true],
+    ["1.5.1", "latest", "stable", false],
   ]) {
     const candidate = {
       ...contract,
